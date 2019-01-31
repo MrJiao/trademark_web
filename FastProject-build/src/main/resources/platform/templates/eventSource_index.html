@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>结构化源库设置</title>
+<link href="${request.contextPath}/css/common_biz.css"	rel="stylesheet" type="text/css" />
+<link type="text/css" href="${request.contextPath}/css/data_interchange.css" rel="stylesheet" />
+${jsContext}${jquery}${appEasyUI}${easyUI}${jqGrid}${toast}${easyUI}${zTree}${date97}
+<script type="text/javascript"	src="${request.contextPath}/js/eventSource_index.js"></script>
+
+<style type="text/css">
+	#sourceDBTable .pd{
+		width: 30%;
+
+		border: 1px LightSkyBlue solid;
+		margin: 2px;
+	}
+	#targetName{
+		width: 80%;
+	}
+</style>
+</head>
+
+<body>
+	<div class="pd">
+		<div class="toolkit toolkit_plus" >
+			<ul class="toolkit_ul_left">
+				<!-- <li><input type="button" class="btn_blue" id="commonViewBtn"		value="查看" /></li> -->
+				<li><input type="button" class="btn_blue" id="commonDelBtn"			value="删除" title="可以批量删除"/></li>
+				<li><input type="button" class="btn_blue" id="commonRefreshBtn"		value="刷新" /></li>
+				<li><input type="button" class="btn_blue" id="add1"	value="新增配置(源库)" title="选择数据库及表及字段" /></li>
+			</ul>
+		</div>
+		<!-- 展示配置好的源数据库及表名字段名************************************	(或者叫配置了一半) -->
+		<div class="data_grid clear">
+			<table id="halfList"></table>
+			<div id="halfPager"></div>
+		</div>
+		
+		
+		<!-- 展示所有的数据库************************************************** -->
+		<div id="sourceDBList" class="form" style="display: none;">
+			<div class="pd">
+				<div class="data_grid clear">
+					<div class="btn_center" id="commonDetailBtnKit">
+						<input type="button" class="btn_blue" id="viewTables" value="选中此源数据库" title="查看此数据库中所有的表"/>
+					</div>
+					<table id="allDBList" ></table>
+					<div id="allDBListPager"></div>
+				</div>
+			</div>
+		</div>
+		
+		<!--sourceDBTable窗口有左中右三栏*******************************  -->
+		<div id="sourceDBTable" class="form" style="display: none; min-width:1300px">
+			<!--左边展示 源数据库中的所有表-----------------------------   -->
+			<div class="pd left" style="float: left">
+				<div class="data_grid clear">
+					<div class="btn_center" id="">
+						<input type="button" class="btn_blue" id="" value="① 双击选中" />
+					</div>
+					<table id="tables" style=""></table>
+					<div id="tablesPage"></div>
+				</div>
+			</div>
+			<!--中间展示表中的字段-------------------------------------  -->
+			<div class="pd Middle" style="float: left;display: none;">
+				<div class="data_grid clear">
+					<div class="btn_center" id="">
+						<input type="button" class="btn_blue" id="addColumn" value="② 选中这些字段" />
+					</div>
+					<table id="oneTable" style=""></table>
+					<div id="columnsPage"></div>
+				</div>
+			</div>
+			<!--右边展示被选中的字段------------------------------------  -->
+			<div class="pd right" style="float: left;display: none;">
+				<div class="data_grid clear">
+					<div class="btn_center" id="">
+						<input type="text"  id="remarks" placeholder="③ 给此事件起个备忘名吧..."/>
+						<input type="button" class="btn_blue" id="saveColumn" value="④ 保存字段" />
+					</div>
+					<table id="columns"  >			</table>
+				</div>
+			</div>
+		</div>
+		
+		<!--展示映射字段列表------------------------------------  -->
+		<div id="mapping" class="form" style="display: none;">
+			<div class="data_grid clear">
+				<table id="mappingTable"></table>
+			</div>
+		</div>
+		
+		
+		
+	</div>
+</body>
+</html>

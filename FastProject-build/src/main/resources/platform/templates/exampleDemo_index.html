@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>例子Demo管理</title>
+<link href="${request.contextPath}/css/common_biz.css"
+	rel="stylesheet" type="text/css" />
+${jsContext}${jquery}${appEasyUI}${easyUI}${jqGrid}${toast}${easyUI}${zTree}${date97}
+<script type="text/javascript"
+	src="${request.contextPath}/js/exampleDemo_index.js"></script>
+</head>
+<body>
+	<div class="page_top">
+		<div class="p16 fleft pd_tp10">
+			<i class="page_img"></i>例子Demo管理
+		</div>
+		<div class="fright">
+			<div class="title_right">
+				<ul>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="pd">
+		<div class="toolkit">
+			<ul>
+				<li>名称： <input type="text" id="commonSearchInput">
+				</li>
+				<li><input type="button" class="btn_blue" id="commonSearchBtn"
+					value="查询" /></li>
+				<li><input type="button" class="btn_blue" id="commonRetrieveBtn"
+					value="检索" /></li>
+				<li><input type="button" class="btn_blue" id="commonViewBtn"
+					value="查看" /></li>
+				<li><input type="button" class="btn_blue" id="commonShowAddBtn"
+					value="新增" /></li>
+				<li><input type="button" class="btn_blue" id="commonShowEditBtn"
+					value="编辑" /></li>
+				<li><input type="button" class="btn_blue" id="commonDelBtn"
+					value="删除" /></li>
+				<li><input type="button" class="btn_blue" id="commonExportBtn"
+					value="导出" /></li>
+				<li><input type="button" class="btn_blue" id="commonRefreshBtn"
+					value="刷新" /></li>
+			</ul>
+		</div>
+		<div class="data_grid clear">
+			<table id="commonList"></table>
+			<div id="commonPager"></div>
+		</div>
+	
+		<!-- 详细表单 -->
+		<div id="commonDetail" class="form"
+			style="width: 600px; display: none;">
+			<form id="commonDetailForm" action="" method="post">
+				<input type="hidden" name="id" id="id" />
+				<table class="t4">
+					<tr>
+						<th>名称</th>
+						<td><input class="easyui-validatebox" data-options="required:true" type="text" id="name" name="name" /></td>
+						<th>密码</th>
+						<td><input class="easyui-validatebox" data-options="" type="text" id="password" name="password" /></td>
+						<th>描述</th>
+						<td><input class="easyui-validatebox" data-options="" type="text" id="remarks" name="remarks" /></td>
+					</tr>
+
+				</table>
+				<div class="btn_center" id="commonDetailBtnKit">
+					<input type="button" class="btn_blue" id="commonSaveBtn" value="保存" />
+					<input type="button" class="btn_blue  pd_l10" id="commonResetBtn"
+						value="重置" />
+				</div>
+			</form>
+		</div>
+	</div>
+</body>
+</html>

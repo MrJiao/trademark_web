@@ -1,0 +1,149 @@
+@charset "utf-8";
+/* CSS Document */
+.ul_float2,.ul_float{
+	float:left;
+	width:100%;
+}
+.ul_float li{
+	margin:5px 20px 5px 0;
+}
+.ul_float2 li{
+	width:50%;
+	margin:5px 0 5px 0;
+}
+.ul_float2 li input{
+	width:200;}
+.li_title{
+	display:inline-block;
+	vertical-align:middle;
+	padding-left: 5px;
+}
+.data_div{
+	clear:both;
+	float:left;
+	width:100%;
+	border-top:1px solid #ddd;
+	border-bottom:1px solid #ddd;
+}
+.left_div{
+	float:left;
+	width:50%;
+	border-right:1px solid #ddd;
+}
+.right_div{
+	float:right;
+	width:49.87%; 
+}
+.btn_center{
+	clear:both;}
+.data_p{
+	background-color: #e1eaff;
+	height: 30px;
+	line-height: 30px;
+	padding-left: 5px;
+	font-size: 15px;
+	color: #333333;
+}
+.ul_li_zi{
+	float: left;
+}
+.ul_li_zi li{
+	width: 33%;}
+.ul_li_zi li input{
+	width: 10%
+}
+.ul_float21{
+	float: left;
+	width: 30%;
+}
+.span_float{
+	float: left;
+	width: 15.5%;
+	margin-top: 10px;
+	margin-left: 1.4%
+}
+.ul_float3{
+	float: left;
+	width: 83.1%;
+	margin:10px 0 ;
+}
+.ul_float3 li{
+	width: 100%;}
+/*   弹出table    */
+.pop_up{
+	display: none;
+	position: absolute;
+	width: 800px;
+	top: 20%;
+	left: 16%;
+	right:16%;
+	max-height:500px;
+	z-index: 1003;
+	text-align:center;
+}
+.pop_div{
+	display: none;;
+	position: absolute;
+	width: 100%;
+	top: 0;
+	left: 0;
+	bottom:0;
+	right:0;
+	height:100%;
+	z-index: 1000;
+	background: rgba(204, 204, 204,0.4);
+}
+.table_title{
+	text-align: left;
+	text-indent: 10px;
+	font-size: 14px;
+	font-weight: bold;
+	height: 36px;
+	line-height: 36px;
+	color: #fff;
+	background-color: #167fc7;
+}
+.table_title a{
+	float: right;
+	text-align: center;
+	width: 30px;
+	margin-right: 5px;
+	font-weight: bold;
+	height: 30px;
+	color: #fff;
+}
+.table_title a:hover{
+	color: #FF9900;
+}
+.data_table tr th,.data_table tr td{
+	text-align: center;
+}
+.btn{
+	border: 1px solid #e1e1e1;
+	background-color: #e1e1e1;
+	font-size: 12px;
+	color: #888;
+	line-height: 14px;
+	height: 18px;
+	border-radius: 8px;
+	padding: 0px 10px;
+	font-family: "微软雅黑", Arial, Helvetica, sans-serif;
+	cursor: pointer;
+	margin: 3px 0;
+}
+.btn_cz{
+	border: 1px solid #47a8ea;
+	background-color: #47a8ea;
+	font-size: 12px;
+	color: #fff;
+	line-height: 14px;
+	height: 18px;
+	border-radius: 8px;
+	padding: 0px 10px;
+	font-family: "微软雅黑", Arial, Helvetica, sans-serif;
+	cursor: pointer;
+	margin: 3px 0;
+}
+.btn_cz:hover{
+	background-color: #73bef1;
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>获取模式-数据提供方</title>
+<link href="${request.contextPath}/css/common_biz.css" rel="stylesheet"	type="text/css" />
+${jsContext}${jquery}${appEasyUI}${easyUI}${jqGrid}${toast}${zTree}${date97}
+</head>
+<style>
+	#table tr th {
+		width: 6%;
+	}
+	table.t2.benchmark {
+		margin-top: 10px;
+	}
+	table.t2.benchmark input.required {
+		width: 96%;
+	}
+</style>
+<body>
+	<div class="pd">
+		<div class="toolkit toolkit_plus">
+			<ul class="toolkit_ul_left">
+				<li><input type="button" class="btn_blue" id="commonViewBtn"	value="查看" /></li>
+				<li><input type="button" class="btn_blue" id="commonShowAddBtn"	value="新增" /></li>
+				<li><input type="button" class="btn_blue"id="commonShowEditBtn" value="编辑" /></li>
+				<li><input type="button" class="btn_blue" id="commonDelBtn"		value="删除" /></li>
+				<li><input type="button" class="btn_blue" id="commonRefreshBtn"	value="刷新" /></li>
+				<li><input type="button" class="btn_blue" id="alreadyApplyDataUser" value="已申请人" title="查看已申请此数据的用户" /></li>
+			</ul>
+		</div>
+
+		<div class="data_grid clear">
+			<table id="commonList"></table>
+			<div id="commonPager"></div>
+		</div>
+
+		<!-- 获取模式...数据提供方填写******************************************************* -->
+		<div id="commonDetail" class="form"	style="display: none;">
+			<form id="commonDetailForm" action="" method="post">
+				<input type="hidden" name="id" id="id" />
+				<table class="t2" id="table" style="width: 94%; margin: 10px 3%;">
+					<tr>
+						<th>名字:</th>
+						<td><input class="required" type="text" id="name" name="name" /></td>
+					</tr>
+					<tr>
+						<th>url:</th>
+						<td><input class="required" style="width: 98%;" type="text"	id="customUrl" name="url" /></td>
+					</tr>
+					<tr>
+						<th>备注:</th>
+						<td><input class="required" style="width: 98%;" type="text"	id="remark" name="remark" /></td>
+					</tr>
+				</table>
+				
+				<!-- 参数容器 -->
+				<div id="table_new" style="margin: 10px 3% 0 3%;"></div>
+				
+				<div class="btn_center" id="commonDetailBtnKit">
+					<input type="button" class="btn_blue" id="commonSaveBtn" value="保存" />
+					<input type="button" class="btn_blue  pd_l10" id="commonResetBtn" value="重置" />
+				</div>
+			</form>
+		</div>
+
+		<!--展示已经申请此数据的用户-->
+		<div class="pd showUser" style="float: left;display: none;">
+			<!--动态生成-->
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript"	src="${request.contextPath}/js/realTime/provider.js"></script>
+<script type="text/javascript" src="${request.contextPath}/js/dataxCommon/customFormatDate.js"></script>
+</html>

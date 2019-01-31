@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <modules>
+        <module>FastProject-build</module>
+        <module>FastProject-security</module>
+        <module>gaia-infrastructure</module>
+        <module>trademark_data</module>
+        <module>trademark_core</module>
+        <module>trademark-common</module>
+        <module>remove_watermarker</module>
+    </modules>
+    <parent>
+        <groupId>org.apel</groupId>
+        <artifactId>gaia</artifactId>
+        <version>1.0.1-SNAPSHOT</version>
+    </parent>
+    <groupId>com.bjhy.jackson.company</groupId>
+    <artifactId>trademark_web</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <fast>1.0.1-SNAPSHOT</fast>
+        <gaia>1.0.1-SNAPSHOT</gaia>
+        <gaia.version>1.0.1-SNAPSHOT</gaia.version>
+        <oracle>11.2.0.3.0</oracle>
+        <swagger>2.8.0</swagger>
+        <okhttp>3.11.0</okhttp>
+        <jdk.version>1.8</jdk.version>
+
+        <gaia>1.0.1-SNAPSHOT</gaia>
+        <poseidon.security.plug>1.0.2-SNAPSHOT</poseidon.security.plug>
+        <poseidon>1.0.2-SNAPSHOT</poseidon>
+        <gaia.version>1.0.1-SNAPSHOT</gaia.version>
+        <hades.dubbo.starter>1.0.2-SNAPSHOT	</hades.dubbo.starter>
+        <oracle>11.2.0.3.0</oracle>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.bjhy</groupId>
+                <artifactId>data-sync-db</artifactId>
+                <version>1.0.2-SNAPSHOT</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.alibaba</groupId>
+                        <artifactId>druid</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.bjhy</groupId>
+                <artifactId>platform-util</artifactId>
+                <version>1.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apel</groupId>
+                <artifactId>gaia-persist</artifactId>
+                <version>${gaia}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apel</groupId>
+                <artifactId>gaia-commons</artifactId>
+                <version>${gaia.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apel</groupId>
+                <artifactId>gaia-js-lib</artifactId>
+                <version>${gaia}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apel</groupId>
+                <artifactId>gaia-container-boot</artifactId>
+                <version>${gaia}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.oracle</groupId>
+                <artifactId>ojdbc14</artifactId>
+                <version>${oracle}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apel</groupId>
+                <artifactId>gaia-util</artifactId>
+                <version>${gaia}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/commons-lang/commons-lang -->
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.6</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-net</groupId>
+                <artifactId>commons-net</artifactId>
+                <version>3.6</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${swagger}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${swagger}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${okhttp}</version>
+            </dependency>
+
+        </dependencies>
+
+    </dependencyManagement>
+
+</project>

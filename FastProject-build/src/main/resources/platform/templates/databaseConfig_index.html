@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>数据库账号管理</title>
+<link href="${request.contextPath}/css/common_biz.css"	rel="stylesheet" type="text/css" />
+${jsContext}${jquery}${easyUI}${jqGrid}${toast}${easyUI}${appJs}
+<script type="text/javascript"	src="${request.contextPath}/js/databaseConfig_index.js"></script>
+<style type="text/css">	
+	table input{
+		width:95%;
+	}	
+</style>
+</head>
+
+<body>
+	<div class="pd">
+		<div class="toolkit toolkit_plus" >
+			<ul class="toolkit_ul_left">
+				<li><input type="button" class="btn_blue" id="commonViewBtn" value="查看" /></li>
+				<li><input type="button" class="btn_blue" id="commonShowAddBtn"	value="新增" /></li>
+				<li><input type="button" class="btn_blue" id="commonShowEditBtn" value="编辑" /></li>
+				<li><input type="button" class="btn_blue" id="commonDelBtn"	value="删除" /></li>
+				<li><input type="button" class="btn_blue" id="commonRefreshBtn"	value="刷新" /></li>
+			</ul>
+		</div>
+		<div class="data_grid clear">
+			<table id="commonList"></table>
+			<div id="commonPager"></div>
+		</div>
+	
+		<!-- 详细表单 -->
+		<div id="commonDetail" class="form"		style="width: 600px; display: none;">
+			<form id="commonDetailForm" action="" method="post">
+				<table class="t2">
+					<tr>
+						<th>数据库用户名</th>
+						<td><input class="easyui-validatebox" data-options="required:true" type="text" id="userName" name="userName" /></td>
+					</tr>
+					<tr>
+						<th>数据库密码</th>
+						<td><input class="easyui-validatebox" data-options="required:true" type="text" id="passWord" name="passWord" /></td>
+					</tr>
+					<tr>
+						<th>数据库IP</th>
+						<td><input class="easyui-validatebox" data-options="required:true" type="text" id="ipAddr" name="ipAddr" validType="ip" /></td>
+					</tr>
+					<tr>
+						<th>数据库端口</th>
+						<td><input class="easyui-validatebox" data-options="required:true" type="text" id="port" name="port" validType="range" /></td>
+					</tr>
+					<tr>
+						<th>数据库实例名</th>
+						<td><input class="easyui-validatebox" data-options="required:true" type="text" id="instName" name="instName" /></td>
+					</tr>
+					<tr>
+						<th>数据库别名</th>
+						<td><input class="easyui-validatebox" data-options="required:true" type="text" id="nickName" name="nickName" /></td>
+					</tr>
+
+				</table>
+				<div class="btn_center" id="" style="float: left">
+					<input type="button"  id="testDataBase" value="测试此链接" />
+				</div>
+				<div class="btn_center" id="commonDetailBtnKit">
+					<input type="button"  id="commonSaveBtn" value="保存" />
+					<input type="button"  id="commonResetBtn"	value="重置" />
+				</div>
+			</form>
+		</div>
+	</div>
+</body>
+</html>

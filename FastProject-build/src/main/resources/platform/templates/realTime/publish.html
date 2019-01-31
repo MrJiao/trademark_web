@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>发布订阅模式</title>
+	<link href="${request.contextPath}/css/common_biz.css"	rel="stylesheet" type="text/css" />
+	${jsContext}${jquery}${appEasyUI}${easyUI}${jqGrid}${toast}${zTree}${date97}
+</head>
+<style>
+	/*#table tr th{width:6%;}*/
+	#table tr th{width:15%;}
+	table.t2.benchmark{margin-top:10px;}
+	table.t2.benchmark input.required{width:96%;}
+
+	#tokenTable tr th{width:6.2%;}
+	.pushType label{margin: 0px 0px 0px 40px;font-size:12px}
+	.pushType label:first-child{margin: 0px;}
+
+	.noTokenTable tr th{width: 6.2%}
+	.hasTokenTable tr th{width: 6.2%}
+
+	/*span 发布者申请 取消申请(蓝色文字 | 浅灰分割) , 鼠标悬停小手*/
+	.applyToken,.cancelToken{color:#47a8ea;cursor:pointer}
+	span.customLine{color:#e4e4e4;margin:0px 8px}
+
+	/*json-data数据展示, xml-data数据展示 textareaStyle*/
+	.customTextbox div{float:left;background:#f4f4f4;width:50%;padding-top:7.5px}
+	.customTextbox textarea{width:98.9%;height:200px;margin-top:7.5px;resize:none}
+	.customTextbox a{margin-left:5px}
+
+</style>
+<body>
+<div class="pd">
+	<div class="toolkit toolkit_plus" >
+		<ul class="toolkit_ul_left">
+			<li><input type="button" class="btn_blue" id="commonViewBtn"		value="查看" /></li>
+			<li><input type="button" class="btn_blue" id="commonShowAddBtn"		value="新增" /></li>
+			<li><input type="button" class="btn_blue" id="commonShowEditBtn"	value="编辑" /></li>
+			<li><input type="button" class="btn_blue" id="commonDelBtn"			value="删除" /></li>
+			<li><input type="button" class="btn_blue" id="commonRefreshBtn"		value="刷新" /></li>
+			<li><input type="button" class="btn_blue" id="alreadySubscribeDataUser"	value="已订阅人" title="查看已订阅此数据的用户" /></li>
+		</ul>
+	</div>
+
+	<div class="data_grid clear">
+		<table id="commonList"></table>
+		<div id="commonPager"></div>
+	</div>
+
+	<!-- 获取模式...数据提供方填写********************************'********************************* -->
+	<div id="commonDetail" class="form"	style="width: 600px; display: none;">
+
+		<!--<div class="toolkit toolkit_plus" >-->
+			<!--<ul class="toolkit_ul_left">-->
+				<!--<li><input type="button" class="btn_blue" id="pushFormData"	value="推送form-data" /></li>-->
+				<!--<li><input type="button" class="btn_blue" id="pushJsonData"	value="推送json-data" /></li>-->
+				<!--<li><input type="button" class="btn_blue" id="pushXmlData"	value="推送xml-data" /></li>-->
+			<!--</ul>-->
+		<!--</div>-->
+
+		<form id="tokenForm" action="" method="post">
+
+			<!--展示token, 未申请, 橘色表头********************************************************************************************************************-->
+			<table class="t2 noTokenTable" style="width:94%;margin:10px 3%; display: none">
+				<tr>
+					<th colspan="2" style="background-color: #f0a022;border: 1px solid #f0a022;color: white;text-align: left">
+						<span> >>请求令牌及参数信息展示</span>
+					</th>
+				</tr>
+				<tr>
+					<th>请求URL:</th>
+					<td><input class="required" style="width:89%;" type="text" placeholder="申请之后才能查看   示例: http://192.0.0.1/xxx/识别码"/></td>
+				</tr>
+				<tr>
+					<th>令牌Token:</th>
+					<td style="color: #f0a022;padding-left: 5px;">未申请</td>
+				</tr>
+			</table>
+
+			<!--展示token, 已申请, 绿色表头********************************************************************************************************************-->
+			<table class="t2 hasTokenTable" id="tokenTable" style="width:94%;margin:10px 3%; display: none">
+				<tr>
+					<th colspan="2" id="customTableHead" style="background-color: #3EB65E;border: 1px solid #3EB65E;color: white;text-align: left">
+						<span> >>请求令牌及参数信息展示</span>
+						<input type="button" id="btn_copyAll" class="btn_blue"
+							   style="display: none; border: 1px solid rgb(218,218,218);width:60px;height: 20px;float: right;margin-right: 10px" value="复制"/>
+						<input type="button" id="btn_export" class="btn_blue"
+							   style="display: none; border: 1px solid rgb(218,218,218);width:60px;height: 20px;float: right;margin-right: 10px" value="导出"/>
+					</th>
+				</tr>
+				<tr>
+					<th>请求URL:</th>
+					<td>
+						<input class="required" id="requestURL" style="width:89%;" type="text" placeholder="申请之后才能查看   示例: http://192.0.0.1/xxx/识别码"/>
+					</td>
+				</tr>
+				<tr id="Token">
+					<th>令牌Token:</th>
+					<td>
+						<span style="color: #3EB65E;padding-left: 2px;margin-right: 10px;">已申请</span>
+						<span id="tokenDate">
+                            <a id="tokenCreateDate"></a>
+                            <a style="margin: 0px 8px 0px 8px;color:#e4e4e4">|</a>
+                            <a id="tokenExpireDate"></a>
+                        </span>
+					</td>
+				</tr>
+			</table>
+		</form>
+
+		<form id="commonDetailForm" action="" method="post">
+			<input type="hidden" name="id" id="id" />
+
+			<!--展示参数-->
+			<table class="t2" id= "table" style="width:94%;margin:10px 3%;">
+
+				<tr>
+					<th id="th_pushType" style="width: 7.5%">
+						<select id="select_pushType" style="background: #f4f4f4;border: #f4f4f4;width: 72px;" title="选择推送方式">
+							<option value="Post">Post</option>
+							<option value="Delete">Delete</option>
+							<option value="Put">Put</option>
+							<option value="Head">Head</option>
+							<option value="Trace">Trace</option>
+							<option value="Connect">Connect</option>
+							<option value="Options">Options</option>
+						</select>
+					</th>
+					<th style="width: 7.5%;">数据名称:</th>
+					<td style="width: 35%;"><input class="required" style="width:98%;" type="text" id="name" name="name" /></td>
+
+
+					<th id="th_pushDataType" style="width: 10%;text-align: left">
+						<select id="select_pushDataType" style="background: #f4f4f4;border: #f4f4f4;width: 100%;" title="选择推送哪种类型的数据">
+							<option value="noChoice">选择数据</option>
+							<option value="form">form</option>
+							<option value="json">json</option>
+							<option value="xml">xml</option>
+						</select>
+					</th>
+
+					<th style="width: 5%;">备注:</th>
+					<td style="width: 35%;"><input class="required" style="width:98%;" type="text" id="remark" name="remark" /></td>
+				</tr>
+
+			</table>
+
+			<!--token 作为入参, 展示-->
+			<table class="t2" id="tokenKeyAndValue" style="width:94%;margin:10px 3%;">
+				<tr>
+					<th>参数名:</th>
+					<td>token</td>
+					<th>参数值:</th>
+					<td id="tokenValue" >申请后自动生成</td>
+				</tr>
+			</table>
+
+			<!--form-data DIV 动态创建表单-->
+			<div id= "table_new" style="margin:10px 3% 0 3%;">
+			</div>
+
+			<!--json-data DIV 动态创建textarea 填充json数据-->
+			<div id= "json_textarea_new" style="margin:10px 3% 0 3%;overflow: hidden">
+			</div>
+
+			<!--xml-data DIV 动态创建textarea 填充xml数据-->
+			<div id= "xml_textarea_new" style="margin:10px 3% 0 3%;overflow: hidden">
+			</div>
+			<div class="btn_center" id="commonDetailBtnKit">
+				<input type="button" class="btn_blue" id="commonSaveBtn" value="保存" />
+				<input type="button" class="btn_blue  pd_l10" id="commonResetBtn" value="重置" />
+			</div>
+		</form>
+	</div>
+
+	<!--展示已经订阅此数据的用户-->
+	<div class="pd showUser" style="float: left;display: none;">
+		<!--动态生成-->
+	</div>
+
+</div>
+</body>
+
+<script type="text/javascript" src="${request.contextPath}/js/realTime/publish.js"></script>
+<script type="text/javascript" src="${request.contextPath}/js/dataxCommon/customFormatDate.js"></script>
+</html>

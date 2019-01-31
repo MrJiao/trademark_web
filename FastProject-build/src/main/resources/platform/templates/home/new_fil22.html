@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"> 
+<title>文件列表动态展示</title>
+
+<link rel="stylesheet" type="text/css" href="css/base.css">
+<script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript" src="js/step/custominput.js"></script>
+		
+<style>
+	
+/*********************分列布局*********************/
+
+.fileList ul{width: 94%;}
+/*如果显示三列 则width改为70px*/
+.fileList li{width:50%;float: left;display: block;font-size: 14px;font-family: "微软雅黑";}
+		
+		
+/*********************步骤*********************/	
+
+.stepStyle{border-radius: 0px;background: gainsboro;color: gray;border-color: gainsboro;}
+
+
+/*********************源ftp文件夹展示*********************/	
+.selectSourceFtpFile,.showConfigInfo,.showConfigInfoUser,.showConfigInfoSrc,.showConfigInfoTarget,.showFileInfo,.filePath,.filePathHead,.filePathBody,.filePathTail,.fileList{border: 1px solid gainsboro;}
+
+.selectSourceFtpFile{ width: 100%;height: 380px;margin-left: 18px;}
+.showConfigInfo{ width: 30%;height: 100%;float: left;}
+.showConfigInfo .showConfigInfoUser{ width: 100%;height: 18%;}
+.showConfigInfo .showConfigInfoSrc{ width: 100%;height: 40%;}
+.showConfigInfo .showConfigInfoTarget{ width: 100%;height: 40%;}
+
+
+.showFileInfo{ width: 69%;height: 100%;float: left;}
+.showFileInfo .filePath{ width: 100%;height: 35px;float: left;}
+/*.showFileInfo .filePath .filePathHead{ width: 8%;float: left;}*/
+.showFileInfo .filePath .filePathBody{ width: 80%; float: left;}
+.showFileInfo .filePath .filePathTail{ width: 10%;float: left;}
+.showFileInfo .fileList{ width: 100%;height: 340px;float: left;overflow:auto}
+    
+.showFileInfo .filePath .filePathBody ul li {display: block;font-size: 14px;margin-right: 5px ;padding-right: 5px;border-right:1px solid gainsboro;list-style: none;float: left;cursor:pointer;}
+.showFileInfo .filePath .filePathBody ul li:hover{background: #EBF2F7;}
+		
+	</style> 
+	
+<script> 
+	var filePath = "root/fdgs/gdg/ffs/dhfdr/今天333/dddd/tttt/yyyy/mmmm/eee/wwwww/cccccc/sssss";
+//	var filePath = "root/fdgs/gdg/ffs/wwwww/cccccc/sssss";
+	
+	// 中间显示省略号--------filePath只显示10个，超过省略
+	function getFileName (str){
+		var filePathSplit = str.split('/');//截取获得数组
+		//在地址栏按条件展示'文件夹名称'
+		//为每个'文件夹名称'绑定点击事件
+		return filePathSplit;
+	}
+
+function showFilePath(content){
+	var filePathSplit = getFileName(filePath);
+	var start = filePathSplit.length - 8;
+	
+	content+='<li onclick="myFunction()">'+'ftpA&nbsp;:&nbsp;'+filePathSplit[0]+'</li>';
+	console.log("9999999999999"+content)
+	if (filePathSplit.length>10) {//文件层级大于10，则显示：头/.../以及末尾8级    例如：ftpA:/root/.../a/b/c/d/e/f/g/k
+		content+='<li onclick="myFunction()">'+'...'+'</li>';
+		for (var i = start;i<filePathSplit.length;i++) {
+			content += '<li onclick="myFunction()">'+filePathSplit[i]+'</li>';
+		}
+	} else{
+		for (var i = 1;i<filePathSplit.length;i++) {
+			content += '<li onclick="myFunction()">'+filePathSplit[i]+'</li>';
+		}
+	}
+	return content;
+}
+
+
+function  myFunction(){
+	console.log("lalalal")
+}
+	// 中间显示省略号
+	function getSubStr (str){
+	
+		var penult = 0;
+		var all = str.length;
+		var fisrt = str.substring(0,str.indexOf('/')+1);//截取第一个'/'前面的字（包括'/'）
+		
+		//if (str.lastIndexOf('/') == -1)  //str.lastIndexOf('/') == -1 表示没有斜杠
+		
+		// 如果长度大于13个字符才显示省略号
+		if (all > 13) {
+			//倒数第二个'/'
+		    penult = str.lastIndexOf('/',str.lastIndexOf('/')-1);//第二个参数表示从第几位开始向前找,默认从最后一位向前找
+		    return fisrt+"..."+str.substring(penult,all);
+		    
+		    //如果当前文件夹名称超长，css超长截断，鼠标经过，div浮动显示的全名称
+		}
+		return str;
+	}
+ 
+ 
+ /***************************************************************/
+	var root = 	{
+				  "name": "root",
+				  "url": "/",
+				  "type": "folder",
+				  "parent": null,
+				  "childs": [
+				    {
+				      "name": "folder2",
+				      "url": "/folder2",
+				      "type": "folder",
+				      "parent": null,
+				      "childs": [
+				        {
+				          "name": "file2",
+				          "url": "/file2",
+				          "type": "txt",
+				          "parent": null,
+				          "childs": []
+				        }
+				      ]
+				    },
+				    {
+				      "name": "file2",
+				      "url": "/file2",
+				      "type": "txt",
+				      "parent": null,
+				      "childs": []
+				    }
+				  ]
+				}
+	
+	
+	function getAndShowData(root){
+			var content = '';
+			
+				var childCount = root.childs.length;
+				for (var i = 0;i<childCount;i++) {
+					var  fileType = root.childs[i].type;
+					var  fileName = root.childs[i].name;
+					var  fileId = parseInt(Math.random()*10001);
+//					var  fileId = root.childs[i].id;
+					
+					 content += '<input type="checkbox" name="opinions" id="'+fileId+'" />';
+						 if(fileType==="folder"){
+						 	content += '<label for="'+fileId+'">'+'<img src="../images/f01.png"/>'+fileName+'</label>';
+						 	
+						 	//添加一个class名称 ：
+						 	//如果为文件夹是空的，双击展示"空白页"
+						 	//如果有子级文件，递归渲染一层，并隐藏，当双击文件夹时，覆盖父级窗口展示
+						 	var thisChildCount = root.childs[i].childs.length;
+						 	if(thisChildCount>0){
+						 		console.log(thisChildCount)
+//						 		showThis();
+						 	}
+						 	
+						 	
+						 	//初始化，绑定点击事件，记录当前文件层级路径（方便返回跳转）
+						 }else if(fileType==="txt"){
+						 	
+						 	content += '<label for="'+fileId+'">'+'<img src="../images/f03.png"/>'+fileName+'</label>';
+						 }
+				}
+				$(".showFiles").append(content);//填充内容到form表单
+				
+//				$('input').customInput();//选择框  样式
+		}
+	
+	
+		$(function(){
+		
+		var content ='';
+		content +='<div class="filePathBody"><ul>';
+		content = showFilePath(content);
+		content+='</ul></div>';
+		console.log("content:"+content);
+	
+		$(".filePath").html(content);
+		$(".filePath").append('<div class="filePathTail"><input type="button" class="btn_blue" id="selectSourceFtpBtn" value="保存" /></div>');
+		
+		console.log("filePath最终内容："+$(".filePath").html())
+		
+		/***************************************************************/
+		getAndShowData(root);
+		
+	});
+
+</script>
+</head>
+<body>
+
+
+
+<div class="selectSourceFtpFile">
+	<div class="showConfigInfo">
+		<div class="showConfigInfoUser">选择的用户：王小二</div>
+		<div class="showConfigInfoSrc">选择的源FTP：.......</div>
+		<div class="showConfigInfoTarget">选择的目标FTP：.......</div>
+	</div>
+	<div class="showFileInfo">
+		<div class="filePath">
+		</div>
+		<div class="fileList">
+			<form action="" method="post" class="showFiles"></form>
+		</div>
+	</div>
+	
+</div>
+
+
+
+
+
+
+</body>
+</html>

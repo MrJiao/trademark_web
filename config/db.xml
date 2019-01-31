@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data-sources>
+    <native-template task="notive_store_task" isEnable="true" databaseType="oracle">
+        <sort-number>1</sort-number>
+        <data-source-name>本地源库</data-source-name>
+        <data-source-number>crane_database_oracle</data-source-number>
+        <connect-driver>oracle.jdbc.driver.OracleDriver</connect-driver>
+        <connect-url>jdbc:oracle:thin:@192.168.0.49:1521:orcl</connect-url>
+        <connect-username>sjjhpt3</connect-username>
+        <connect-password>123456789</connect-password>
+        <connect-dialect>org.hibernate.dialect.OracleDialect</connect-dialect>
+    </native-template>
+<!--
+&lt;!&ndash;	<from-template>
+		<data-source task="from_crane_task" isEnable="true" databaseType="oracle">
+			<sort-number>1</sort-number>
+			<data-source-name>四川省广元监狱</data-source-name>
+			<data-source-number>5109</data-source-number>
+			<connect-driver>oracle.jdbc.driver.OracleDriver</connect-driver>
+			<connect-url>jdbc:oracle:thin:@192.168.0.82:1521:orcl</connect-url>
+			<connect-username>sjjhpt</connect-username>
+			<connect-password>123456789</connect-password>
+			<connect-dialect>org.hibernate.dialect.OracleDialect</connect-dialect>
+		</data-source>
+	</from-template>
+
+	<to-template>
+		<data-source task="to_crane_task" isEnable="true" databaseType="oracle">
+			<sort-number>1</sort-number>
+			<data-source-name>四川罪犯基础服务平台oracle库</data-source-name>
+			<data-source-number>crane_database_oracle</data-source-number>
+			<connect-driver>oracle.jdbc.driver.OracleDriver</connect-driver>
+			<connect-url>jdbc:oracle:thin:@192.168.0.82:1521:orcl</connect-url>
+			<connect-username>sjjhpt2</connect-username>
+			<connect-password>123456789</connect-password>
+			<connect-dialect>org.hibernate.dialect.OracleDialect</connect-dialect>
+		</data-source>
+	</to-template>&ndash;&gt;-->
+</data-sources>

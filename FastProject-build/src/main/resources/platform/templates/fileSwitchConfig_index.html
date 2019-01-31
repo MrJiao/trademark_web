@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>非结构化数据交换  参数设置</title>
+<link href="${request.contextPath}/css/common_biz.css"	rel="stylesheet" type="text/css" />
+<link href="${request.contextPath}/css/fileManager.css" rel="stylesheet" type="text/css" >
+${jsContext}${jquery}${easyUI}${jqGrid}${toast}${easyUI}${appJs}
+
+<style type="text/css">
+	.form{
+		overflow:hidden
+	}
+	.leftTable{
+		position:relative;
+		float: left;
+		width: 50%;
+	}
+	.rightTable{
+		position:relative;
+		float:right;
+		width: 50%;
+	}
+	.leftTable td>input{
+		width: 80%
+	}
+	.rightTable td>input{
+		width: 80%
+	}
+	.leftTable select{
+		width: 83%;
+	}
+	.rightTable select{
+		width: 83%;
+	}
+	/*select,td>input{*/
+		/*width: 80%*/
+	/*}*/
+</style>
+
+</head>
+<body>
+	<div class="pd">
+		<div class="toolkit toolkit_plus" >
+			<ul class="toolkit_ul_left">
+				<li><input type="button" class="btn_blue" id="commonViewBtn" value="查看" /></li>
+				<li><input type="button" class="btn_blue" id="commonShowAddBtn"	value="新增" /></li>
+				<li><input type="button" class="btn_blue" id="commonShowEditBtn" value="编辑" /></li>
+				<li><input type="button" class="btn_blue" id="commonDelBtn"	value="删除" /></li>
+				<li><input type="button" class="btn_blue" id="commonRefreshBtn"	value="刷新" /></li>
+			</ul>
+		</div>
+		<div class="data_grid clear">
+			<table id="commonList"></table>
+			<div id="commonPager"></div>
+		</div>
+
+		<!-- 非结构化数据交换参数设置 的 详细表单 -->
+		<div id="commonDetail" class="form"	style=" display: none;">
+			<div id="customTitle"
+				 style="height: 60px;text-align: center;line-height: 60px;font-weight:bold;letter-spacing:2px; background: #e0ecfa;">
+				非结构化数据交换 参数设置
+			</div>
+			<form id="commonDetailForm" action="" method="post" >
+				<input type="hidden" name="id" id="id" />
+				<div class="leftTable" >
+					<table class="t2">
+						<tr>
+							<th colspan="2" style="text-align: center;" >源设置</th>
+						</tr>
+						<tr>
+							<th>事件名称</th>
+							<td><input class="easyui-validatebox" data-options="" type="text" id="sourceName" name="evtSrcName" />
+						</tr>
+						<tr>
+							<th>源FTP账号</th>
+							<td><select id="sourceFtpSelect" ></select></td>
+						</tr>
+						<tr>
+							<th>源文件夹</th>
+							<td><input type="text" id="fromFileUrl"  value="" disabled="disabled"/></td>
+						</tr>
+						<tr>
+							<th>已选文件类型</th>
+							<td><input type="text" id="hasSelectSuffix"  value="(不填则交换全部内容)" disabled="disabled"/></td>
+						</tr>
+						<tr id="fileSwitchConfigLeftBtn">
+							<th colspan="2">
+								<input type="button" class="fromButton"  value="点击获取源文件夹" id="getSourceFolders"
+									   style="cursor: pointer;background: #eee; border-radius: 5px;border:1px solid #d4e6ff;height: 80px; width: 79.5%;"/>
+								<input type="button"  value="过滤文件" id="filterSuffix"
+									   style="cursor: pointer;background: #eee; border-radius: 5px;border:1px solid #d4e6ff;height: 80px; width: 19%;"/>
+							</th>
+						</tr>
+					</table>
+				</div>
+				<div class="rightTable">
+					<table class="t2 ">
+						<tr>
+							<th colspan="2" style="text-align: center;" >目标设置</th>
+						</tr>
+						<tr>
+							<th>事件名称</th>
+							<td><input class="easyui-validatebox"  id="targetName" disabled="disabled" />
+						</tr>
+						<tr>
+							<th>目标FTP账号</th>
+							<td><select id="targetFtpSelect" ></select></td>
+						</tr>
+						<tr>
+							<th>目标文件夹</th>
+							<td><input type="text" id="toFileUrl"  value="" disabled="disabled"/></td>
+						</tr>
+						<tr>
+							<th></th>
+							<td></td>
+						</tr>
+						<tr  id="fileSwitchConfigRightBtn">
+							<th colspan="2">
+								<input type="button" class="fromButton"  value="点击获取目标文件夹" id="getToFolders"
+									   style="cursor: pointer;background: #eee; border-radius: 5px;border:1px solid #d4e6ff;height: 80px; width: 100%;"/>
+							</th>
+						</tr>
+
+					</table>
+				</div>
+				<div class="btn_center" id="commonDetailBtnKit" >
+					<input type="button" class="btn_blue" id="commonSaveBtn" value="保存" />
+					<input type="button" class="btn_blue  pd_l10" id="commonResetBtn" value="重置" />
+				</div>
+			</form>
+		</div>
+
+		<!--文件类型过滤弹窗-->
+		<div id="showSuffix" class="form" style=" display: none;">
+			<table id="suffixList"></table>
+			<div id="suffixPager"></div>
+		</div>
+		<!--展示文件夹-->
+		<div id="showFolder" class="form" style=" display: none; overflow: auto;margin:0 auto">
+		</div>
+	</div>
+
+</body>
+	<script type="text/javascript" src="${request.contextPath}/js/dataxCommon/dataxCommon.js"></script>
+	<script type="text/javascript"	src="${request.contextPath}/js/fileSwitchConfig_index.js"></script>
+	<script type="text/javascript" src="${request.contextPath}/js/userManager/fileAuthority_index.js"></script>
+
+	<script  type="text/javascript" src="${request.contextPath}/js/fileManager/FileManager.js" ></script>
+	<script  type="text/javascript" src="${request.contextPath}/js/fileManager/Folder.js" ></script>
+	<script  type="text/javascript" src="${request.contextPath}/js/fileManager/Check.js" ></script>
+	<script type="text/javascript">
+			$(function () {
+				//控制消息显示时长**********
+                toastr.options={
+                    hideDuration:500,
+                    positionClass:"toast-top-center",
+                    timeOut:800,
+                };
+				DATAX.FileSwitchConfig.view.init();
+
+			});
+	</script>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>结构化目标库设置</title>
+<link href="${request.contextPath}/css/common_biz.css"	rel="stylesheet" type="text/css" />
+<link type="text/css" href="${request.contextPath}/css/data_interchange.css" rel="stylesheet" />
+${jsContext}${jquery}${appEasyUI}${easyUI}${jqGrid}${toast}${easyUI}${zTree}${date97}
+<script type="text/javascript"	src="${request.contextPath}/js/structure_target_index.js"></script>
+
+<style type="text/css">
+	#targetName{
+		width: 80%;
+	}
+	.my_center{
+		margin-top: 10px;
+		margin-left: 15px;
+	}
+	.my_center li{
+		margin-right: 10px;
+	}
+</style>
+
+</head>
+
+<body>
+	<div class="pd">
+		<div class="toolkit toolkit_plus" >
+			<ul class="toolkit_ul_left">
+				<li><input type="button" class="btn_blue" id="commonRefreshBtn"	value="刷新" /></li>
+				<li><input type="button" class="btn_blue" id="deleteTask" value="删除任务" title="可以批量删除"/></li>
+				<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+				<li><input type="button" class="btn_blue" id="target" value="新增配置(目标库)" title="给源设置目标数据库" /></li>
+			</ul>
+		</div>
+		
+		<div class="data_grid clear">
+			<table id="eventList"></table>
+			<div id="eventPager"></div>
+		</div>
+		
+		<!-- 展示所有的配置了源库的事件************************************************** -->
+		<div id="sourceList" class="form pd" style="display: none;">
+			<div class="my_center">
+				<li><input type="button" class="btn_blue" id="copy"		value="复制到" 
+					title="一库多表 复制到 另一库多表"/></li>
+				<li><input type="button" class="btn_blue" id="together"	value="聚合到" 
+					title="多库一表 聚合到 一库一表" /></li>
+				<li><input type="button" class="btn_blue" id="distribute"value="分发到" 
+					title="一库一表 分发到 多库一表"/></li>
+			</div>
+			
+			<div class="pd">
+				<div class="data_grid clear">
+					<table id="halfEventList" ></table>
+					<div id="halfEventPager"></div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- 展示当前用户拥有的目标库************************************************** -->
+		<div id="targetDBWindow" class="form" style="display: none;">
+			<div class="pd">
+				<div class="data_grid clear">
+					<table id="targetDBList" ></table>
+					<div id="targetDBPager"></div>
+				</div>
+			</div>
+			<div class="btn_center" id="commonDetailBtnKit">
+				<input type="text"  id="targetName" placeholder="这是配置任务的最后一步, 请输入任务名" />
+				<br/>
+				<br/>
+				<input type="button" class="btn_blue" id="sure" value="选中此目标数据库" />
+			</div>
+		</div>
+		
+		<!--展示映射字段列表------------------------------------  -->
+		<div id="mapping" class="form" style="display: none; ">
+			<div class="data_grid clear">
+				<table id="mappingTable"></table>
+			</div>
+		</div>
+		
+		<!--展示表名映射列表------------------------------------  -->
+		<div id="tableMapping" class="form" style="display: none; ">
+			<div class="data_grid clear">
+				<table id="tableNameMapping"></table>
+			</div>
+		</div>
+		
+	</div>
+</body>
+</html>

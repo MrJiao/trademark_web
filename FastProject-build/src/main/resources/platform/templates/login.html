@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>登录页</title>
+
+${jsContext}${jquery}${appEasyUI}${easyUI}${jqGrid}${toast}${easyUI}${zTree}${date97}
+<link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="../css/style.css">
+
+</head>
+
+<body class="bg">
+<div class="text-center logo">
+	<img src="../images/login_logo.png" width="150" height="145">
+    <h1><img src="../images/login_title.png" width="750"/> </h1>
+    <!--<p>The prison of Sichuan integrated information management platform</p>-->
+</div>
+<div class="container w500">
+    <div class="text-center">
+        <form class="form-horizontal" role="form" action="${request.contextPath}/login" method="post">
+        <div class="form-group inp_bg"> 
+      		<label class="pull-left control-label">用户账号</label> 
+        	<div class="iput"> 
+            	<input type="text" class="form-control" name="username" placeholder="请输入用户名"> 
+        	</div>       
+    	</div> 
+    	<div class="form-group inp_bg"> 
+      		<label class="pull-left control-label">登录密码</label> 
+        	<div class="iput">  
+            	<input type="password" class="form-control" name="password" placeholder="请输入登录密码"> 
+        	</div> 
+    	</div> 
+       <!--  <p class="error_ts">
+        	<input type="checkbox" /><span>记住登录账号密码</span> 
+        	<span>&emsp; &emsp; &emsp; &emsp;<a href="${request.contextPath}/register/page" style="text-decoration: none;color: white;">注册新用户</a></span>
+        </p> -->
+        <p class="error_ts"></p>
+        <div class="form-group login_bg">
+        	<div class="col-sm-12 pdt_10" >
+				<input type="submit" value="登录" class="btn btn-block btn_login">
+			</div>
+			
+        </div>
+        </form>
+    </div>
+</div>
+	<div>
+		<img class="img1" src="../images/login_1.jpg" width="400"/>
+		<img class="img2" src="../images/yun.png" width="1100"/>
+		<img class="img3" src="../images/login_hpg.png" width="146"/>
+	</div>
+</body>
+</html>

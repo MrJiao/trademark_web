@@ -1,0 +1,56 @@
+package com.bjhy.trademark.watermarker;
+
+
+import com.bjhy.tlevel.datax.common.utils.L;
+import com.bjhy.trademark.watermarker.core.ImageComponent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+/**
+ * Create by: Jackson
+ */
+@Component
+public class WaterMarker {
+
+    @Autowired
+    ImageComponent imageComponent;
+
+    public void removeWaterMarker(List<File> fileList,File folder){
+        boolean mkdirs = folder.mkdirs();
+        for (File file : fileList) {
+            try {
+                ImageComponent.MyImage image = imageComponent.removeWarterMarker(file);
+                storeImage(image,new File(folder,file.getName()));
+                L.d("处理完成:"+file.getName());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void clipPic(List<File> fileList,File folder){
+        boolean mkdirs = folder.mkdirs();
+        for (File file : fileList) {
+            try {
+                ImageComponent.MyImage image = imageComponent.clipPic(file);
+                storeImage(image,new File(folder,file.getName()));
+                L.d("处理完成:"+file.getName());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+    private void storeImage(ImageComponent.MyImage image, File file) throws IOException {
+        ImageIO.write(image.getOutput(), "jpg",file );
+    }
+
+
+}

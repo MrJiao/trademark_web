@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>角色管理</title>
+<link href="${request.contextPath}/css/common_biz.css"	rel="stylesheet" type="text/css" />
+<link href="${request.contextPath}/css/add_userinfo.css" rel="stylesheet" type="text/css" />
+${jsContext}${jquery}${easyUI}${jqGrid}${toast}${easyUI}${appJs}
+
+<style type="text/css">
+	#dataBaseTable .pd{
+		width: 45%;
+		border: 1px LightSkyBlue solid;
+		margin: 2px;
+	}
+</style>
+</head>
+<body>
+	<div class="pd">
+		<div class="toolkit toolkit_plus" >
+			<ul class="toolkit_ul_left">
+				<li><input type="button" class="btn_blue" id="roleAdd" value="新增" /></li>
+			</ul>
+			<ul class="toolkit_ul_right">
+				<li><input type="button" class="btn_blue" id="roleUpdate" value="修改" /></li>
+			</ul>
+			<ul class="toolkit_ul_right">
+				<li><input type="button" class="btn_blue" id="roleDelete" value="删除" title="可删除一个或多个"/></li>
+			</ul>
+			<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+			<ul class="toolkit_ul_right">
+				<li><input type="button" class="btn_blue" id="databaseAuth" value="新增库权限" title="给角色添加数据库权限"/></li>
+			</ul>
+			<ul class="toolkit_ul_right">
+				<li><input type="button" class="btn_blue" id="tableAuth" value="新增表权限" title="给角色添加表权限"/></li>
+			</ul>
+		</div>
+		
+		<div class="data_grid clear">
+			<table id="rolesList"></table>
+			<div id="rolesPager"></div>
+		</div>
+
+		<!-- 新增角色************************************************************************* -->
+		<div id="commonDetail" class="form" style="width: 300px; display: none; ">
+			<div class="user_content_head">
+				<div class="user_content_text" style="padding-top: 10px;" id="addOrUpdate"></div>
+			</div>
+			
+			<form id="commonDetailForm" action="" method="post">
+				<table class="t4" >
+					<tr >
+						<th id ="usernameTh" style="width: 60px; padding-right: 10px;">角 色 名 称</th>
+						<td><input class="easyui-validatebox" data-options="required:true"  type="text" id="name" name="name" /></td>
+					</tr>
+					<tr>
+						<th id ="passwordTh" style="width: 60px; padding-right: 10px;">角 色 代 码</th>
+						<td><input class="easyui-validatebox" data-options="required:true"  type="text" id="roleCode" name="roleCode" /></td>
+					</tr>
+				</table>
+				
+				<div class="btn_center" id="commonDetailBtnKit">
+					<input type="button" class="btn_blue" id="roleSaveBtn" value="保存" />
+					<input type="button" class="btn_blue  pd_l10" id="roleResetBtn"	value="重置" />
+				</div>
+			</form>
+		</div>
+	</div>
+	
+	<!--这个表单, 用于展示所有的数据库配置************************************  -->
+	<div id="database" class="form" style=" display: none;">
+		<div class="pd" style="float: left;">
+			<div class="data_grid clear">
+				<table id="databaseList" ></table>
+				<div id="databasePager"></div>
+			</div>
+		</div>
+	</div>
+	
+	<!--databaseTable窗口有左右两栏*******************************  -->
+	<!--给可读库下的表配置权限**************************************  -->
+	<div id="dataBaseTable" class="form" style="display: none;">
+		<!--左边展示: 当前用户的可读库-----------------------------   -->
+		<div class="pd" style="float: left">
+			<div class="data_grid clear">
+				<table id="dbs" style=""></table>
+				<div id="dbsPage"></div>
+			</div>
+		</div>
+		<!--右边展示:可读库下的表-------------------------------------  -->
+		<div class="pd Middle" style="float: left;display: none;">
+			<div class="data_grid clear">
+				<table id="tables" style=""></table>
+				<div id="columnsPage"></div>
+			</div>
+		</div>
+	</div>
+	
+</body>
+<script type="text/javascript" src="${request.contextPath}/js/dataxCommon/dataxCommon.js"></script>
+<script type="text/javascript" src="${request.contextPath}/js/role_structure.js"></script>
+<script type="text/javascript" src="${request.contextPath}/js/userManager/roles_index.js"></script>
+<script type="text/javascript">
+	$(function () {
+        //控制消息显示时长**********
+        toastr.options={
+            hideDuration:500,
+            positionClass:"toast-top-center",
+            timeOut:800,
+        };
+		DATAX.Role.view.init();	
+	});	
+</script>
+</html>

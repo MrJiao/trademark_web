@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>FTP账号管理管理</title>
+<link href="${request.contextPath}/css/common_biz.css"	rel="stylesheet" type="text/css" />
+${jsContext}${jquery}${easyUI}${jqGrid}${toast}${easyUI}${appJs}
+
+<style type="text/css">
+	.info{	width: 90%	}
+</style>
+
+</head>
+<body>
+	<div class="pd">
+		<div class="toolkit toolkit_plus" >
+			<ul class="toolkit_ul_left">
+				<li><input type="button" class="btn_blue" id="FTPAccountAddBtn"	value="新增" /></li>
+				<li><input type="button" class="btn_blue" id="FTPAccountEditBtn" value="编辑" /></li>
+				<li><input type="button" class="btn_blue" id="FTPAccountDelBtn"	value="删除" /></li>
+				<li><input type="button" class="btn_blue" id="FTPAccountRefreshBtn"	value="刷新" /></li>
+			</ul>
+		</div>
+		<div class="data_grid clear">
+			<table id="commonList"></table>
+			<div id="commonPager"></div>
+		</div>
+
+		<!-- 详细表单 -->
+		<!-- 以下表格 td 的name属性值 , 与ajax查询结果 data 一致, 才能使用填充数据方法: PlatformUI.populateForm("userInfoDetailForm", data); -->
+		<div id="ftpDetail" class="form" style="width: 600px; display: none;">
+			<form id="ftpDetailForm" action="" method="post">
+				<table class="t4">
+					<tr>
+						<th>ftp名称</th>
+						<td><input class="easyui-validatebox info" name="username" id="ftpName"  /></td>
+						<th>ftp别名</th>
+						<td><input class="easyui-validatebox info" name="nickName" id="ftpNickName" /></td>
+					</tr>
+					<tr>
+						<th>ip</th>
+						<td><input class="easyui-validatebox info" name="ip" id="ftpIp"  /></td>
+						<th>端口</th>
+						<td><input class="easyui-validatebox info" name="port" id="ftpPort" /></td>
+					</tr>
+					<tr>
+						<th>密码</th>
+						<td><input class="easyui-validatebox info" name="password" id="ftpPassWord"  /></td>
+						<th>id</th>
+						<td><input class="easyui-validatebox info" name="id" id="ftpId" /></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+
+
+		<!-- 详细表单 -->
+		<div id="commonDetail" class="form"		style="width: 600px; display: none;">
+			<form id="commonDetailForm" action="" method="post">
+				<input type="hidden" name="id" id="id" />
+				<table class="t4">
+					<tr>
+						<th>FTP服务器IP</th>
+						<td><input class="easyui-validatebox info" data-options="required:true" type="text" id="ip" name="ip" validType="ip"/></td>
+					</tr>
+					<tr>
+						<th>服务器端口</th>
+						<td><input class="easyui-validatebox info" data-options="required:true" type="text" id="port" name="port"  validType="port" /></td>
+					</tr>
+					<tr>
+						<th>用户名</th>
+						<td><input class="easyui-validatebox info" data-options="required:true" type="text" id="username" name="username" /></td>
+					</tr>
+					<tr name = 'password'>
+						<th >密&nbsp;&nbsp;&nbsp;&nbsp;码</th>
+						<td><input class="easyui-validatebox info" data-options="required:true" type="password" id="password" name="password" /></td>
+					</tr>
+					<tr>
+						<th>昵&nbsp;&nbsp;&nbsp;&nbsp;称</th>
+						<td><input class="easyui-validatebox info" data-options="required:true" type="text" id="nickName" name="nickName" /></td>
+					</tr>
+				</table>
+
+				<div class="btn_center" id="commonDetailBtnKit">
+					<input type="button" class="btn_blue" id="FTPAccountSaveBtn" value="保存" />
+					<input type="button" class="btn_blue  pd_l10" id="FTPAccountResetBtn" value="重置" />
+				</div>
+			</form>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="${request.contextPath}/js/dataxCommon/dataxCommon.js"></script>
+<script type="text/javascript"	src="${request.contextPath}/js/userManager/fTPAccount_index.js"></script>
+<script type="text/javascript">
+	$(function () {
+        //控制消息显示时长**********
+        toastr.options={
+            hideDuration:500,
+            positionClass:"toast-top-center",
+            timeOut:800,
+        };
+		DATAX.FTPAccount.view.init();
+		
+	});	
+</script>
+</html>

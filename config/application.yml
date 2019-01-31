@@ -1,0 +1,53 @@
+static_service_url: http://192.168.0.82:9898
+
+cas_server_url: http://192.168.0.82:8085/cas
+
+appId: nothing
+
+appName: 测试平台
+
+index_title: 测试平台
+
+index_name: 测试平台
+
+index_scaffold: homeIndexScaffold
+
+dubbo:
+  zookeeper-address: 192.168.0.82:2181
+  application:
+    name: tlevel-datax
+    
+server:
+  context-path: /tlevel-datax
+  port: 7981
+
+  
+cache: 
+  toolkit: 
+    open: false
+    host: 192.168.0.49
+    port: 6379
+
+peter_pan:
+  max_switch_thread: 50
+
+conveyor:
+  max_switch_thread: 30
+
+real_time:
+  max_real_time_thread: 200
+
+logging:
+  level:
+    root: info
+
+
+hibernate:
+  show_sql: false
+
+spring:
+  jpa:
+    open-in-view: true
+  devtools:
+    restart:
+      exclude: static/**,platform/**

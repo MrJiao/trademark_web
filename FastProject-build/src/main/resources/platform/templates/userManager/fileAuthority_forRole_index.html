@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>文件传输权限设置(角色)</title>
+    <link href="${request.contextPath}/css/common_biz.css" rel="stylesheet" type="text/css"/>
+    <link href="${request.contextPath}/css/fileManager.css" rel="stylesheet" type="text/css">
+    ${jsContext}${jquery}${appEasyUI}${easyUI}${jqGrid}${toast}${easyUI}${zTree}${date97}
+    <script type="text/javascript">
+        String.prototype.endWith=function(s){
+            if(s==null||s==""||this.length==0||s.length>this.length)
+                return false;
+            if(this.substring(this.length-s.length)==s)
+                return true;
+            else
+                return false;
+            return true;
+        }
+
+
+        String.prototype.startWith=function(s){
+            if(s==null||s==""||this.length==0||s.length>this.length)
+                return false;
+            if(this.substr(0,s.length)==s)
+                return true;
+            else
+                return false;
+            return true;
+        }
+    </script>
+</head>
+
+<body>
+
+    <div id="" class="form initializationPage" style="overflow: hidden;padding: 0px;">
+
+        <!--角色信息展示******************************************************************************************-->
+        <div class="pd" style="float: left;width: 33%">
+            <div class="toolkit toolkit_plus">
+                <ul class="toolkit_ul_left">
+                    <li><input type="button" class="btn_blue" id="addFtpConfigBtn" value="新增权限"/></li>
+                    <li><input type="button" class="btn_blue" id="showRoleFtpConfigBtn" value="查看权限"/></li>
+                    <li><input type="button" class="btn_blue" id="deleteAllConfigBtn" value="删除权限" title="删除所选角色的文件权限"/></li>
+                    <li><input type="button" class="btn_blue" id="refreshBtn" value="刷新"/></li>
+                </ul>
+            </div>
+            <div class="data_grid clear">
+                <table id="rolesList"></table>
+                <div id="rolesPager"></div>
+            </div>
+        </div>
+
+        <!--老用户的FTP信息展示, html中只有按钮, 容器div由js生成 ****************************************************** -->
+        <div class="pd ftpPd" style="float: left;width: 57% ;display: none;">
+            <div class="toolkit toolkit_plus">
+                <ul class="toolkit_ul_left">
+                    <li><input type="button" id="pointOutFtpPd" class="btn_blue"></li>
+                </ul>
+            </div>
+
+            <!--填充所选用户的ftp配置信息, 子表格展示该ftp下配置的文件-->
+
+            <!-- 详细表单 -->
+            <!-- 以下表格 td 的name属性值 , 与ajax查询结果 data 一致, 才能使用填充数据方法: PlatformUI.populateForm("xxForm", data); -->
+            <div id="ftpDetail" class="form" style="width: 600px; display: none;">
+                <form id="ftpDetailForm" action="" method="post">
+                    <table class="t4">
+                        <tr>
+                            <th>FTP服务器IP</th>
+                            <td><input class="easyui-validatebox info" type="text" id="ip" name="ip" validType="ip"/></td>
+                        </tr>
+                        <tr>
+                            <th>服务器端口</th>
+                            <td><input class="easyui-validatebox info" type="text" id="port" name="port"  validType="port" /></td>
+                        </tr>
+                        <tr>
+                            <th>用户名</th>
+                            <td><input class="easyui-validatebox info" type="text" id="username" name="username" /></td>
+                        </tr>
+                        <tr>
+                            <th>昵&nbsp;&nbsp;&nbsp;&nbsp;称</th>
+                            <td><input class="easyui-validatebox info" type="text" id="nickName" name="nickName" /></td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 点击'去配置'按钮,弹窗 -->
+    <div id="roleFtpFileConfigForm" class="form" style="display: none;">
+
+        <div class="pd" style="overflow: hidden">
+            <div class="showFileAuthorityAndFile" style="float: left;width: 49%;">
+                <!--左边栏: 已配置的文件
+                    选择的用户:cc | 选择的FTP:测试ftp21 | 设置FTP类型为:源
+                    展示,已经选择的文件
+                -->
+            </div>
+            <div class="showFtpAllFolders" style="float: right;width: 49%;">
+                <!--右边栏:ftp下的文件夹
+                    填充文件路径,模拟文件地址栏
+                    [上级目录][新建文件夹]
+                    填充ftp的文件
+                -->
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="${request.contextPath}/js/dataxCommon/dataxCommon.js"></script>
+<script type="text/javascript" src="${request.contextPath}/js/userManager/fileAuthority_forRole_index.js"></script>
+
+<script type="text/javascript" src="${request.contextPath}/js/userManager/roles_index.js"></script>
+<script type="text/javascript"	src="${request.contextPath}/js/userManager/fTPAccount_index.js"></script>
+
+<script type="text/javascript" src="${request.contextPath}/js/fileManager/FileManager.js"></script>
+<script type="text/javascript" src="${request.contextPath}/js/fileManager/Folder.js"></script>
+<script type="text/javascript" src="${request.contextPath}/js/fileManager/Check.js"></script>
+<script type="text/javascript">
+    $(function () {
+        //控制消息显示时长**********
+        toastr.options = {
+            hideDuration: 500,
+            positionClass: "toast-top-center",
+            timeOut: 800,
+        };
+
+        DATAX.FileAuthorityForRole.view.init();
+    });
+</script>
+</html>

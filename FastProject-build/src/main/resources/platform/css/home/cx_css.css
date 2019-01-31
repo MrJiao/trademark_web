@@ -1,0 +1,214 @@
+@charset "utf-8";
+/* CSS Document */
+body {
+	font-family: "微软雅黑", Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	font-weight: normal;
+	color: #4e4e4e;
+	margin: 0px;
+	padding: 0px;
+	background: #fff;
+}
+p, from, h1, h2, h3, h4, h5, h6 {
+	margin: 0px;
+	padding: 0px;
+}
+body, html, data_grid {
+	height: 100%;
+	width: 100%;
+}
+ul, ol, li {
+	margin: 0px;
+	padding: 0px;
+	list-style-type: none;
+	cursor: pointer
+}
+li {
+	float: left
+}
+li a {
+	color: #4e4e4e;
+}
+img {
+	border: none;
+	padding-right: 5px;
+	vertical-align: middle
+}
+.cx_main{
+	margin:0 auto;
+	width:45%;
+	height:100%;
+	text-align:center;
+	background-color:#e8edf2;
+	border:1px solid #0e7fd6;
+	border-radius:8px;
+	overflow:hidden;}
+.cx_main p{
+	height:50px;
+	font-size:16px;
+	font-weight:bold;
+	line-height:50px;
+	margin-bottom:35px;
+	color:#fff;
+	background-color:#0e7fd6;
+	border-bottom:1px solid #fff;}
+.cx_main .destoryForm{
+	line-height: 30px;
+}
+.cx_main .destoryForm span input{
+	line-height:22px;
+}
+.cx_main .textbox{
+	width: 210px;
+	height:30px;
+}
+.cx_main a.combo-arrow{
+	width: 18px;
+	height:30px;
+}
+.center-vertical {
+	position:relative;
+	top:45%;
+	right:0;
+	width:90%;
+	height:160px;
+	margin:0 auto;
+	border-radius:10px;
+	padding-left:0;
+    transform:translateY(-55%);
+}
+.xq_main{
+	padding:15px;}
+.top_xz p{
+	height:30px;
+	font-size:14px;
+	font-weight:bold;}
+.top_xz{
+	float:left;
+	width:100%;
+	border-bottom:1px solid #ddd;}
+.data_tab{
+	clear:both;
+	width:100%;
+	padding-top:8px;
+	height:36px;
+	border-bottom:1px solid #0096da;}
+.data_tab div{
+	float:left;
+	height:28px;
+	line-height:20px;
+	padding:3px 15px;
+	border-radius:3px 3px 0 0;
+	border:1px solid #0096da;
+	border-bottom:none;
+	margin-right:10px;}
+.data_tab div:hover{
+	border:1px solid #52c6fa;
+	border-bottom:none;
+	background-color:#52c6fa;
+	color:#fff;
+	cursor:pointer;}
+.data_tab div.data_tab1,.data_tab div.data_tab1:hover{
+	border:1px solid #0096da;
+	border-bottom:none;
+	background-color:#0096da;
+	color:#fff;}
+.tabshow{
+	margin-top:10px;}
+/* .tabshow .table{ */
+/* 	width:96%; */
+/* 	margin:2% 0 0 2%; */
+/* 	border-radius:4px 4px 0 0; */
+/* 	border:1px solid #ddd;} */
+.table th img{
+	width:250px;
+	height:250px;}
+caption{
+	height:35px;
+	text-align:center;
+	border-radius:5px 5px 0 0 ;
+	background-color:#e3e3e3;
+	font-size:15px;
+	font-weight:bold;}
+.tabshow .table td{
+	text-align:center;}
+.table-bordered > thead > tr > th, .table-bordered > thead > tr > td{
+	border-bottom-width:1px;}
+.tabshow .table th{
+	text-align:center;}
+/* #menutab_1_1 .table td{ */
+/* 	text-align:left;} */
+.tabshow .table thead{
+	background-color:#f3f3f3;
+	overflow:hidden;
+	border-radius:4px 4px 0 0;}
+#menutab_1_1 .table thead{
+	background-color:#fff;}
+.tab_ul{
+	height:30px;
+	margin-top:1%;
+	background-color:#ededed;}
+.tab_ul li{
+	float:left;}
+.tab_ul li a{
+	display:inline-block;
+	padding:0 15px;
+	height:30px;
+	line-height:30px;}
+.tab_ul li a:hover{
+
+	color:#1880d0;
+	text-decoration:underline;}
+.tab_ul li.active a{
+	background-color:#66b1ea;
+	color:#fff;
+	height:26px;
+	margin-top:2px;
+	line-height:26px;
+	border-radius:3px;}
+.btn_blue,.btn_blue1 {
+    border: 1px solid #47a8ea;
+    background-color: #47a8ea;
+    font-size: 13px;
+    color: #FFFFFF;
+    line-height: 18px;
+    height: 22px;
+    border-radius: 10px;
+    padding: 0px 15px;
+    font-family: "微软雅黑", Arial, Helvetica, sans-serif;
+    cursor: pointer;
+}
+input[type='text'] {
+    color: #4e4e4e;
+    padding: 0px 3px;
+}
+.text1{
+	width:190px;
+	height:24px;
+	line-height:24px;
+	padding:2px 0;
+	border:1px solid #DADADA;}
+.text2{
+	width:40%;
+	height:30px;
+	line-height:30px;
+	padding:2px 0;
+	border-radius:4px;
+	margin-right:5px;
+	border:1px solid #0e7fd6;}
+.btn_blue:hover,.btn_blue1:hover{
+	border: 1px solid #f0a022;
+	background-color: #f0a022;
+	font-size: 13px;
+	color: #FFFFFF;
+	line-height: 18px;
+	height: 22px;
+	border-radius: 10px;
+	padding: 0px 15px;
+	font-family: "微软雅黑", Arial, Helvetica, sans-serif;
+	cursor:pointer;
+}
+.btn_blue1,.btn_blue1:hover {
+	height:30px;
+	line-height:28px;
+	border-radius: 5px;}

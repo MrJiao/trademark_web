@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>组织机构管理</title>
+<link href="${request.contextPath}/css/common_biz.css" rel="stylesheet"	type="text/css" />
+${jsContext}${jquery}${easyUI}${jqGrid}${toast}${easyUI}${appJs}${zTree}
+
+<style type="text/css">
+	#menu {
+		float: left;
+		/* height:70%; */
+		width:20%;
+		margin:0 1%;
+		background-color:#EEEEEE;
+		padding: 10px 1%;
+	}
+	#content{
+		float: right;
+		height:200px;
+		width:75%;
+		margin:0 1% 0 0;
+	}
+	table.t2{
+		width:80%;
+	}
+	table input{
+		width:95%;
+	}
+	.btn_center{
+		width:80%;
+	}
+	table .orgNedd{
+		color:red;
+	}
+</style>
+</head>
+
+<body>
+	<div class="pd"></div>
+	<div id="container">
+		<!-- 这是左侧的zTree结构,样式文件中class=tree中定义了格式, 这里加上 -->
+		<div id="menu" >  
+			<ul id="treeDemo" class="ztree tree"></ul>	
+		</div>
+		
+		<div id="content" >
+			<div class="toolkit">
+				<ul>
+					<li><input type="button" class="btn_blue" id="organizationDel"	value="删除" /></li>
+					<li><input type="button" class="btn_blue" id="organizationRefresh"	value="刷新" /></li>
+					<li>
+						<input type="button" class="btn_blue" id="organizationAddChild"
+							value="新增子节点" title="为当前选中的节点增加子节点" />
+					</li>
+					<li>
+						<input type="button" class="btn_blue" id="orgAddRole"
+							value="新增角色" title="为当前选中的节点添加角色" />
+					</li>
+				</ul>
+			</div>
+			
+			<!-- 这是一个新增的表单-->
+			<div class="data_grid clear add" style="display: none">
+				<table class="t2">
+					<tr>
+						<th class="orgNedd">* 机构名称:</th>
+						<td><input name="name" id="nameAdd"/></td>
+						<th class="orgNedd">* 机构代码:</th>
+						<td><input name="orgCode" id="orgCodeAdd"/></td>
+					</tr>
+					<tr>
+						<th class="orgNedd">* 排序:</th>
+						<td><input name="pxNum" id="pxNumAdd"/></td>
+						<th> 备注: </th>
+						<td><input name="remark" id="remarkAdd"/></td>
+					</tr>
+					<tr>
+						<th>父节点名:</th>
+						<td><input name="parentOrgId" disabled="disabled" id="parentOrgId"/></td>
+						<th></th>
+						<!--这个隐藏input , 是为了支持restFul的del 和put  -->
+						<td><input name="_method" hidden="hidden" id="restFulStyle"/></td>
+					</tr>
+				</table>
+				
+				<!--<div class="btn_center" id="commonDetailBtnKit">-->
+				<div class="btn_center" >
+					<input type="button" class="btn_blue" id="organizationAdd" value="确定新增" />
+				</div>
+			</div>
+			<!-- 这个表格用来更新  -->
+			<div class="data_grid clear update"  >
+				<table class="t2">
+					<tr>
+						<th class="orgNedd">* 机构名称:</th>
+						<td><input name="name" id="nameUpdate" class="updateInput" disabled="disabled"/></td>
+						<th class="orgNedd">* 机构代码:</th>
+						<td><input name="orgCode" id="orgCodeUpdate" class="updateInput" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<th class="orgNedd">* 排序:</th>
+						<td><input name="pxNum" id="pxNumUpdate" class="updateInput" disabled="disabled"/></td>
+						<th> 备注: </th>
+						<td><input name="memoValue" id="remarkUpdate" class="updateInput" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<th class="orgNedd">已关联的角色</th>
+						<td><input  id="roleUpdate"  disabled="disabled"/></td>
+					</tr>
+				</table>
+				<div class="btn_center" id="commonDetailBtnKit">
+					<input type="button" class="btn_blue" id="commitUpdate" value="更新" />
+				</div>
+			</div>
+			
+			<!-- 用来展示角色*************************************************************** -->
+			<div id="roleDetail" class="form" style="display: none;overflow: auto;">
+				<div class="pd" style="float: left;">
+					<div class="data_grid clear">
+ 						<table id="findRolesByOrgIdList" style="width: 100%;"></table>
+						<div id="findRolesByOrgIdPager"></div> 
+						<div align="center"><input type="button" class="btn_blue" id="addRoleToOrg"
+						 value="确定" title="选中的角色将被挂到当前机构下"/></div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="${request.contextPath}/js/dataxCommon/dataxCommon.js"></script>
+<script type="text/javascript"	src="${request.contextPath}/js/userManager/organization_index.js"></script>
+
+<script type="text/javascript" src="${request.contextPath}/js/userManager/roles_index.js"></script>
+<script type="text/javascript">
+	$(function () {
+        //控制消息显示时长**********
+        toastr.options={
+            hideDuration:500,
+            positionClass:"toast-top-center",
+            timeOut:800,
+        };
+		DATAX.Organization.view.init();
+		
+	});
+</script>
+</html>

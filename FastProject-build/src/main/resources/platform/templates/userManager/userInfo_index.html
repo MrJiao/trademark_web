@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>账号管理</title>
+<link href="${request.contextPath}/css/common_biz.css" rel="stylesheet" type="text/css" />
+<link href="${request.contextPath}/css/add_userinfo.css" rel="stylesheet" type="text/css" />
+${jsContext}${jquery}${easyUI}${jqGrid}${toast}${easyUI}${appJs}${zTree}
+
+<style type="text/css">
+	#menu {
+		width:100%;
+		background-color:#EEEEEE;
+		padding: 10px 1%;
+		margin:10px 1%;
+	}
+	#dataBaseTable .pd{
+		width: 45%;
+		border: 1px LightSkyBlue solid;
+		margin: 2px;
+	}
+</style>
+
+</head>
+<body>
+	<div class="pd">
+		<div class="toolkit toolkit_plus">
+			<ul class="toolkit_ul_left">
+				<li><input type="button" class="btn_blue" id="userInfoAddBtn" value="新增" /></li>
+				<li><input type="button" class="btn_blue" id="userInfoEditBtn" value="编辑" /></li>
+				<li><input type="button" class="btn_blue" id="userInfoDelBtn" value="删除" /></li>
+				<li><input type="button" class="btn_blue" id="userInfoRefreshBtn" value="刷新" /></li>
+				<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+				<li><input type="button" class="btn_blue" id="associationRoleBtn" value="关联角色" /></li>
+				<li><input type="button" class="btn_blue" id="associationOrg" value="关联组织" /></li>
+				<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+				<li><input type="button" class="btn_blue" id="dataBaseAuth" value="分配库权限" /></li>
+				<li><input type="button" class="btn_blue" id="tableAuth" value="分配表权限" /></li>
+				<!--<li><input type="button" class="btn_blue" id="fileAuthority" value="查看文件权限" title="点击: 展示所选用户的文件传输权限" /></li>-->
+			</ul>
+		</div>
+		<div class="data_grid clear">
+			<table id="userInfoList"></table>
+			<div id="userInfoPager"></div>
+		</div>
+	</div>
+
+
+	<!-- 详细表单 -->
+	<div id="commonDetail" class="form" style="width: 300px; display: none; ">
+		<div class="user_content_head">
+			<div class="user_content_text" style="padding-top: 10px;">账号信息</div>
+		</div>
+		<form id="commonDetailForm" action="" method="post">
+			<input type="hidden" name="id" id="id" />
+			<table class="t4" >
+				<tr >
+					<th id ="usernameTh" style="width: 60px; padding-right: 10px;" >用户名</th>
+					<td><input class="easyui-validatebox" data-options="required:true"  type="text" id="username" name="username" /></td>
+				</tr>
+				<tr>
+					<th id ="passwordTh" style="width: 60px; padding-right: 10px;" >密&nbsp;&nbsp;&nbsp;码</th>
+					<td><input class="easyui-validatebox" data-options="required:true"  type="password" id="password" name="password" /></td>
+				</tr>
+				<tr>
+					<th id ="nickNameTh" style="width: 60px; padding-right: 10px;" >昵&nbsp;&nbsp;&nbsp;称</th>
+					<td><input class="easyui-validatebox" data-options="required:true"  type="text" id="nickName" name="nickName" /></td>
+				</tr>
+
+			</table>
+			<div class="btn_center" id="commonDetailBtnKit">
+				<input type="button" class="btn_blue" id="userInfoSaveBtn" value="保存" />
+				<input type="button" class="btn_blue  pd_l10" id="userInfoResetBtn"	value="重置" />
+			</div>
+		</form>
+	</div>
+
+
+	<!--这个表单, 用于展示 '可用角色列表'和'已关联角色列表'************************************  -->
+	<div id="roleDetail" class="form" style=" display: none;width:900px">
+		<div class="pd" style="float: left;width: 45%;padding: 5px 2% 5px 2%;">
+			<div class="data_grid clear">
+				<table id="leftRolesList"></table>
+				<div id="leftRolesPager"></div>
+			</div>
+		</div>
+
+		<div class="pd" style="float: left;width: 45%;padding: 5px 2% 5px 2%;">
+			<div class="data_grid clear">
+				<table id="rightRolesList"></table>
+				<div id="rightRolesPager"></div>
+			</div>
+		</div>
+	</div>
+	
+	<!--这个表单, 用于展示组织机构************************************  -->
+	<div id="orgDetail" class="form " style="display: none; overflow: hidden;">
+		<div id="menu" >  
+			<h3 style="background: #47a8ea;color: white;width: 96%;height: 22px;margin-bottom: 10px;padding-left: 10px">
+				说明: 用户挂靠组织机构后,将继承该组织机构拥有的角色
+			</h3>
+			<ul id="treeDemo" class="ztree tree"></ul>
+		</div>
+		
+		<div class="btn_center" >
+		<!--<div class="btn_center" id="commonDetailBtnKit">-->
+			<input type="button" class="btn_blue" id="organizationAdd"value="保存" title="选中的用户将会关联到选中的机构下面" />
+		</div>
+	</div>
+	
+	<!--这个表单, 用于展示文件传输权限*********************************  -->
+	<div id="fileAuthorityForm" class="form" style="display: none;">
+		<table id="currentUserIdTable" style="width: 100%;"></table>
+	</div>
+	
+	<!--这个表单, 用于展示所有的数据库配置************************************  -->
+	<div id="database" class="form" style=" display: none;">
+		<div class="pd" style="float: left;">
+			<div class="data_grid clear">
+				<table id="databaseList" style="width: 445px;"></table>
+				<div id="databasePager"></div>
+			</div>
+		</div>
+	</div>
+	
+	<!--databaseTable窗口有左右两栏*******************************  -->
+	<!--给可读库下的表配置权限**************************************  -->
+	<div id="dataBaseTable" class="form" style="display: none;">
+		<!--左边展示: 当前用户的可读库-----------------------------   -->
+		<div class="pd" style="float: left">
+			<div class="data_grid clear">
+				<table id="dbs" style=""></table>
+				<div id="dbsPage"></div>
+			</div>
+		</div>
+		<!--右边展示:可读库下的表-------------------------------------  -->
+		<div class="pd Middle" style="float: left;display: none;">
+			<div class="data_grid clear">
+				<table id="tables" style=""></table>
+				<div id="columnsPage"></div>
+			</div>
+		</div>
+	</div>
+	
+	
+	
+</body>
+<script type="text/javascript" src="${request.contextPath}/js/dataxCommon/dataxCommon.js"></script>
+<script type="text/javascript" src="${request.contextPath}/js/userManager/userInfo_index.js"></script>
+
+<script type="text/javascript" src="${request.contextPath}/js/userManager/roles_index.js"></script>
+<script type="text/javascript" src="${request.contextPath}/js/userManager/organization_index.js"></script>
+<script type="text/javascript" src="${request.contextPath}/js/userManager/fileAuthority_index.js"></script>
+<script type="text/javascript">
+	$(function () {
+        //控制消息显示时长**********
+        toastr.options={
+            hideDuration:500,
+            positionClass:"toast-top-center",
+            timeOut:800,
+        };
+		DATAX.UserInfo.view.init();	
+	});	
+</script>
+</html>
+

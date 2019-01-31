@@ -1,0 +1,34 @@
+	
+	
+	/*---------用户账号添加----------*//* start */
+
+.user_content_head{
+    width:286px;
+    height:40px;
+    margin:0 auto;
+    background:#e0ecfa;
+    text-align:center;
+    color:balck;
+    font-size:14px;
+    }
+    
+  .user_content_text:before,.user_content_text:after
+  {
+    content:"";
+    width:60px;
+    height:1px;
+    background:#dadada;
+    display:block;              /*1.首先使伪类显示方式为块级元素*/
+    position:relative ;     /*2.通过相对定位的方式控制两侧内容的位置*/
+  }
+  .user_content_text:before{                /*3.控制左侧横线的位置*/
+    top:12px;
+      left:30px;
+    }
+  .user_content_text:after                  /*4.控制右侧横线的位置*/
+  {
+       top: -9px;
+	   right: -195px;
+  }
+  
+  /*---------用户账号添加--------------------------------*//* end */
