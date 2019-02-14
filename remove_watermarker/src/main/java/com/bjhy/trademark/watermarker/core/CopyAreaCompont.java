@@ -14,10 +14,17 @@ import java.util.List;
 public class CopyAreaCompont {
 
 
-    List<CopyArea> copyAreaList = new ArrayList<>();
 
     int width;//新图的宽
     int height;//新图的高
+
+    ImageComponent.MyImage pic;
+    BufferedImage bufImage;
+
+    public CopyAreaCompont(ImageComponent.MyImage pic) {
+        this.pic = pic;
+        this.bufImage = pic.getOutput();
+    }
 
     public int getWidth() {
         return width;
@@ -27,15 +34,47 @@ public class CopyAreaCompont {
         return height;
     }
 
-    public List<CopyArea> getCopyArea() {
+    public List<CopyArea> getDataCopyArea() {
+        List<CopyArea> copyAreaList = new ArrayList<>();
+
+        CopyArea textArea = getTextArea();
+        CopyArea dateArea2 = getDateArea2();
+        CopyArea yiyi = getYiyi();
+        CopyArea qiHaoArea = getQiHaoArea();
+
+        qiHaoArea.toX = 5;
+        qiHaoArea.toY = qiHaoArea.topPadding;
+
+
+
+        yiyi.topPadding = 2;
+        yiyi.bottomPadding = 6;
+
+        yiyi.toX = 5;
+        yiyi.toY = qiHaoArea.height+qiHaoArea.bottomPadding+yiyi.topPadding+qiHaoArea.bottomPadding;
+
+
+
+        dateArea2.toX = 0;
+        dateArea2.toY = yiyi.toY+yiyi.height+yiyi.bottomPadding+dateArea2.topPadding;
+
+
+        textArea.toX = 0;
+        textArea.toY = dateArea2.toY+dateArea2.height+dateArea2.bottomPadding;
+
+
+        copyAreaList.add(textArea);
+        copyAreaList.add(dateArea2);
+        copyAreaList.add(yiyi);
+        copyAreaList.add(qiHaoArea);
+
+        calculateWidthAndHeight(copyAreaList);
+
         return copyAreaList;
     }
 
-    ImageComponent.MyImage pic;
-    BufferedImage bufImage;
-    public void init(ImageComponent.MyImage pic) {
-        this.pic = pic;
-        this.bufImage = pic.getOutput();
+    public List<CopyArea> getClipCopyArea() {
+        List<CopyArea> copyAreaList = new ArrayList<>();
         CopyArea dateArea = getDateArea();
         CopyArea textArea = getTextArea();
         CopyArea iconArea = getIconArea();
@@ -54,8 +93,12 @@ public class CopyAreaCompont {
         textArea.toX=0;
         textArea.toY = iconArea.toY +iconArea.height+iconArea.bottomPadding+textArea.topPadding;
 
-
+        return copyAreaList;
     }
+
+
+
+
 
     private void calculateWidthAndHeight(List<CopyArea> copyAreaList) {
         for (CopyArea area : copyAreaList) {
@@ -65,12 +108,42 @@ public class CopyAreaCompont {
             height+=area.height+area.bottomPadding+area.topPadding;
         }
 
-        width +=8;
-        height +=8;
+        width +=15;
+        height +=15;
 
     }
 
+    //忽略商标号
+    private CopyArea getDateArea2(){
+        CopyArea area = new CopyArea();
+        area.x = 91;
+        area.y = 348;
+        area.width = 331;
+        area.height = 76;
 
+        return area;
+    }
+
+    //异议期限
+    private CopyArea getYiyi(){
+        CopyArea area = new CopyArea();
+        area.x = 197;
+        area.y = 265;
+        area.width = 633;
+        area.height = 37;
+        return area;
+    }
+
+    //期号
+    private CopyArea getQiHaoArea(){
+        CopyArea area = new CopyArea();
+        area.x = 82;
+        area.y = 75;
+        area.width = 210;
+        area.height = 36;
+
+        return area;
+    }
 
     private CopyArea getDateArea(){
         CopyArea area = new CopyArea();
@@ -82,12 +155,14 @@ public class CopyAreaCompont {
         return area;
     }
 
+
+
+
+
     private CopyArea getTextArea(){
         CopyArea area = new CopyArea();
         area.x = 91;
         area.y = 874;
-
-        //差toY；
 
         a :for(int xi=bufImage.getWidth()-1;xi>0;xi--){
             for (int yi=874;yi<1569;yi++){

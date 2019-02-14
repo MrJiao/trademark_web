@@ -8,12 +8,14 @@ import com.bjhy.fast.security.dao.UserInfoRepository;
 import com.bjhy.fast.security.domain.Role;
 import com.bjhy.fast.security.domain.SystemMenu;
 import com.bjhy.fast.security.domain.UserInfo;
+import com.bjhy.trademark.core.TrademarkConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,9 +33,13 @@ public class Version1 implements VersionInf {
 
     @Override
     public void init() {
-
         new InitData().init();
+
     }
+
+
+
+
 
     @Override
     public boolean isEnable() {
@@ -64,7 +70,7 @@ public class Version1 implements VersionInf {
         void init(){
             systemMenu();
             roles = role();
-            userinfo("admin");
+            userinfo("xuli");
         }
 
         private UserInfo userinfo(String username) {
@@ -112,31 +118,36 @@ public class Version1 implements VersionInf {
 
             //1.参数设置-------------------------------------------------------
             SystemMenu paramSetting = new SystemMenu();
-            paramSetting.setMenuName("审核监狱");
+            paramSetting.setMenuName("任务");
             paramSetting.setPxNum(1);
             paramSetting.setMenuType(SystemMenu.MENU_TYPE_URL);
-            paramSetting.setMenuValue("criminalInfo/prison_auditing/index");
+            paramSetting.setMenuValue("taskData/index");
             systemMenuRepository.save(paramSetting);
             userMenu.add(paramSetting);
 
             SystemMenu paramSetting2 = new SystemMenu();
-            paramSetting2.setMenuName("审核监狱(省)");
+            paramSetting2.setMenuName("商标信息");
             paramSetting2.setPxNum(2);
             paramSetting2.setMenuType(SystemMenu.MENU_TYPE_URL);
-            paramSetting2.setMenuValue("criminalInfo/province_prison_auditing/index");
+            paramSetting2.setMenuValue("trademarkBean/index");
             systemMenuRepository.save(paramSetting2);
             userMenu.add(paramSetting2);
 
             SystemMenu paramSetting3 = new SystemMenu();
-            paramSetting3.setMenuName("犯人信息");
+            paramSetting3.setMenuName("数据上传");
             paramSetting3.setPxNum(3);
             paramSetting3.setMenuType(SystemMenu.MENU_TYPE_URL);
-            paramSetting3.setMenuValue("");
+            paramSetting3.setMenuValue("upload/index");
             systemMenuRepository.save(paramSetting3);
             userMenu.add(paramSetting3);
 
-
-
+            SystemMenu paramSetting4 = new SystemMenu();
+            paramSetting4.setMenuName("翻译管理");
+            paramSetting4.setPxNum(4);
+            paramSetting4.setMenuType(SystemMenu.MENU_TYPE_URL);
+            paramSetting4.setMenuValue("trademarkBean/index");
+            systemMenuRepository.save(paramSetting4);
+            userMenu.add(paramSetting4);
 
         }
 

@@ -111,6 +111,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.bjhy.jackson.company</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <artifactId>trademark_core</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.apel</groupId>
             <artifactId>gaia-app-boot</artifactId>
             <version>1.0.1-SNAPSHOT</version>

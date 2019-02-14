@@ -18,8 +18,8 @@ import java.util.List;
 public class WaterMarker {
 
     @Autowired
-    ImageComponent imageComponent;
-
+    //ImageComponent imageComponent;
+    ImageComponent imageComponent = new ImageComponent();
     public void removeWaterMarker(List<File> fileList,File folder){
         boolean mkdirs = folder.mkdirs();
         for (File file : fileList) {
@@ -45,6 +45,18 @@ public class WaterMarker {
             }
         }
     }
+
+    public void getDataPic(File file,File toFile){
+        boolean mkdirs = toFile.getParentFile().mkdirs();
+        try {
+            ImageComponent.MyImage image = imageComponent.getDataPic(file);
+            storeImage(image,toFile);
+            L.d("处理完成:"+file.getName());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 

@@ -1,11 +1,8 @@
-package com.bjhy.trademark.data.core.net;
+package com.bjhy.trademark.data.downloadPic;
 
 import com.bjhy.tlevel.datax.common.utils.L;
 import com.bjhy.trademark.common.net.WaitStrategy;
-import com.bjhy.trademark.data.core.net.request.GetImageSearchId;
-import com.bjhy.trademark.data.core.net.request.GetImageUrl;
 
-import com.bjhy.trademark.data.domain.GetPicBean;
 import org.apache.http.impl.client.CloseableHttpClient;
 
 import java.util.HashSet;
@@ -16,19 +13,17 @@ import java.util.Set;
  * 指定任务区间进行下载 开始位 和结束位,根据配置的分组大小进行返回结果
  * Create by: Jackson
  */
-public class GetImageUrlTask implements Runnable {
+public class GetImageUrlTask {
 
 
     WaitStrategy waitStrategy;
     CloseableHttpClient client;
-    GetPicBeanCallBack callBack;
     int startNum;
     int endNum;
     String annm;
 
-    public GetImageUrlTask(CloseableHttpClient client, GetPicBeanCallBack callBack, WaitStrategy waitStrategy, int startNum, int endNum,String annm) {
+    public GetImageUrlTask(CloseableHttpClient client,WaitStrategy waitStrategy, int startNum, int endNum,String annm) {
         this.client = client;
-        this.callBack = callBack;
         this.waitStrategy = waitStrategy;
         this.startNum = startNum;
         this.endNum = endNum;
@@ -54,15 +49,15 @@ public class GetImageUrlTask implements Runnable {
     int start;
     int current;
 
-    @Override
-    public void run() {
+
+    public Set<String>  get() {
         String searchId = new GetImageSearchId(annm).request(client);
         L.d("开始获取图片url");
         try {
 
 
             int pageSize = 20;
-            int total = 30000;
+            int total = 300000;
 
             if (endNum > total) {
                 endNum = total;
@@ -86,15 +81,15 @@ public class GetImageUrlTask implements Runnable {
                 Set<String> urlSet = addMemory(bean.getImaglist());
 
                 if (isLast) {
-                    callBack.imageUrl(urlSet);
-                    break;
+                    L.d("获取图片url完成");
+                    return urlSet;
                 }
                 current += pageSize;
             }
-            L.d("获取图片url完成");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
 

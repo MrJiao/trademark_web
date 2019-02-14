@@ -19,27 +19,37 @@ import static java.math.BigDecimal.ROUND_HALF_DOWN;
 @Component
 public class ImageComponent {
 
-    public MyImage handle(File file) throws IOException {
-        BufferedImage image = ImageIO.read(file);
-        MyImage pic = remove(image);
-        pic = clip(pic);
-      //  pic = scale(pic);
-        return pic;
-    }
+
 
 
 
     public MyImage removeWarterMarker(File file) throws IOException {
         BufferedImage image = ImageIO.read(file);
         MyImage pic = remove(image);
+
+
+
         return pic;
     }
 
     public MyImage clipPic(File file) throws IOException {
         BufferedImage image = ImageIO.read(file);
         MyImage pic = remove(image);
-        return clip(pic);
+        CopyAreaCompont copyAreaCompont = new CopyAreaCompont(pic);
+        List<CopyArea> copyAreaList = copyAreaCompont.getClipCopyArea();
+        return clip(pic,copyAreaList,copyAreaCompont.getWidth(),copyAreaCompont.getHeight());
     }
+
+    public MyImage getDataPic(File file) throws IOException {
+        BufferedImage image = ImageIO.read(file);
+        MyImage pic = remove(image);
+        CopyAreaCompont copyAreaCompont = new CopyAreaCompont(pic);
+        List<CopyArea> dataCopyArea = copyAreaCompont.getDataCopyArea();
+        MyImage clip = clip(pic, dataCopyArea, copyAreaCompont.getWidth(), copyAreaCompont.getHeight());
+        return   clip;
+    }
+
+
 
 
     /**
@@ -48,14 +58,10 @@ public class ImageComponent {
      * @param pic
      * @return
      */
-    private MyImage clip(MyImage pic) {
-        CopyAreaCompont copyAreaCompont = new CopyAreaCompont();
-        copyAreaCompont.init(pic);
-
-        List<CopyArea> copyAreaList = copyAreaCompont.getCopyArea();
+    private MyImage clip(MyImage pic,List<CopyArea> copyAreaList,int width,int height) {
         BufferedImage removeBuf = pic.getOutput();
 
-        MyImage clipImage = create(copyAreaCompont.getWidth(), copyAreaCompont.getHeight(), removeBuf.getType());
+        MyImage clipImage = create(width, height, removeBuf.getType());
         clipImage.setBackGround(new Color(-1));
         for (CopyArea copyArea : copyAreaList) {
             BufferedImage subimage = removeBuf.getSubimage(copyArea.x, copyArea.y, copyArea.width, copyArea.height);
@@ -86,7 +92,7 @@ public class ImageComponent {
     }
 
     /**
-     * 去水印
+     * 指定区域去水印
      *
      * @param image
      * @return
@@ -116,6 +122,32 @@ public class ImageComponent {
         myImage.getGraphics().dispose();
         return myImage;
     }
+
+    private MyImage remove(MyImage myImage) throws IOException {
+        BufferedImage image = myImage.getOutput();
+        int height = image.getHeight();
+        int width = image.getWidth();
+        int a = 200;
+        myImage.getGraphics().drawImage(image, 0, 0, null); //画图
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                int rgb = image.getRGB(i, j);
+                Color color = new Color(rgb);
+                int red = color.getRed();
+                int blue = color.getBlue();
+                int green = color.getGreen();
+                if (red > a || blue > a || green > a) {
+                    myImage.getOutput().setRGB(i, j, -1);
+
+                }
+            }
+        }
+        myImage.getGraphics().dispose();
+        return myImage;
+    }
+
+
+
 
 
     public static class MyImage {

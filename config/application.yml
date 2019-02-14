@@ -18,10 +18,13 @@ dubbo:
     name: tlevel-datax
     
 server:
-  context-path: /tlevel-datax
-  port: 7981
+  context-path: /trademark
+  port: 80
 
-  
+trademark:
+  storePath: /Users/jiaoyubing/work_space/localworkspace/trademark_web/trademark_core/target/classes
+  tempPath: /Users/jiaoyubing/work_space/localworkspace/trademark_web/trademark_core/target/classes/temp
+
 cache: 
   toolkit: 
     open: false

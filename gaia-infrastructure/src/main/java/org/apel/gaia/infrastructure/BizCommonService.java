@@ -76,5 +76,8 @@ public interface BizCommonService<T,PK extends Serializable> {
 	 * @param pageBean 分页对象
 	 */
 	void pageQuery(PageBean pageBean);
-	
+
+
+	List<T> findByAllId(List<Serializable> ids);
+
 }

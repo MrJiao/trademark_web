@@ -11,5 +11,174 @@
 
     <artifactId>trademark_core</artifactId>
 
+    <properties>
+        <tlevel.datax>1.0.1-SNAPSHOT</tlevel.datax>
+        <gaia>1.0.1-SNAPSHOT</gaia>
+        <gaia.version>1.0.1-SNAPSHOT</gaia.version>
+        <oracle>11.2.0.3.0</oracle>
+        <swagger>2.8.0</swagger>
+        <okhttp>3.11.0</okhttp>
+        <jdk.version>1.8</jdk.version>
+    </properties>
+    <dependencies>
+        <!-- 启动web需要注释此依赖,core junit 测试需要放开依赖 -->
+        <dependency>
+            <groupId>org.apel</groupId>
+            <artifactId>gaia-app-boot</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apel</groupId>
+            <artifactId>gaia-commons</artifactId>
+            <version>${gaia}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apel</groupId>
+            <artifactId>gaia-util</artifactId>
+            <version>${gaia}</version>
+        </dependency>
+<!--
+        <dependency>
+            <groupId>com.bjhy</groupId>
+            <version>${gaia}</version>
+            <artifactId>gaia-infrastructure</artifactId>
+        </dependency>-->
+
+        <dependency>
+            <artifactId>gaia-infrastructure</artifactId>
+            <groupId>com.bjhy.jackson.company</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apel</groupId>
+            <artifactId>gaia-persist</artifactId>
+            <version>${gaia}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc14</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bjhy</groupId>
+            <artifactId>platform-util</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bjhy.jackson.company</groupId>
+            <artifactId>trademark-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bjhy.jackson.company</groupId>
+            <artifactId>trademark_data</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bjhy.jackson.fast</groupId>
+            <artifactId>code-generator</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+
+    </dependencies>
+
+   <!-- <dependencies>
+
+        <dependency>
+            <groupId>com.bjhy.jackson.company</groupId>
+            <artifactId>trademark-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bjhy.jackson.company</groupId>
+            <artifactId>trademark_data</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bjhy.jackson.fast</groupId>
+            <artifactId>code-generator</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+
+
+        &lt;!&ndash; 启动web需要注释此依赖,core junit 测试需要放开依赖 &ndash;&gt;
+        <dependency>
+            <groupId>org.apel</groupId>
+            <artifactId>gaia-app-boot</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apel</groupId>
+            <artifactId>hades-dubbo-starter</artifactId>
+            <version>${hades.dubbo.starter}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apel</groupId>
+            <artifactId>poseidon-api</artifactId>
+            <version>${poseidon}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apel</groupId>
+            <artifactId>gaia-commons</artifactId>
+            <version>${gaia}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apel</groupId>
+            <artifactId>gaia-util</artifactId>
+            <version>${gaia}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apel</groupId>
+            <artifactId>gaia-persist</artifactId>
+            <version>${gaia}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc14</artifactId>
+            <version>${oracle}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bjhy.jackson.company</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <artifactId>gaia-infrastructure</artifactId>
+        </dependency>
+
+    </dependencies>-->
 </project>

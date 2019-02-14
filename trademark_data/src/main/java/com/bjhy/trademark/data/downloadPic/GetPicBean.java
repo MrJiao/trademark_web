@@ -1,4 +1,4 @@
-package com.bjhy.trademark.data.domain;
+package com.bjhy.trademark.data.downloadPic;
 
 import java.util.ArrayList;
 

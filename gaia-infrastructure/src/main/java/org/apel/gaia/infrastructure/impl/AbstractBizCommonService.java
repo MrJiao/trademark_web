@@ -163,6 +163,7 @@ public abstract class AbstractBizCommonService<T,PK extends Serializable> implem
 	@SuppressWarnings("unchecked")
 	@Override
 	public void deleteById(PK... ids) {
+
 		for (PK pk : ids) {
 			getRepository().delete(pk);
 		}
@@ -173,5 +174,8 @@ public abstract class AbstractBizCommonService<T,PK extends Serializable> implem
 		getRepository().doPager(pageBean, getPageQl());
 	}
 
-
+	@Override
+	public List<T> findByAllId(List<Serializable> ids) {
+		return getRepository().findAll(ids);
+	}
 }
