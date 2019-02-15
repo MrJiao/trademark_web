@@ -1,10 +1,13 @@
 package com.bjhy.trademark.core.controller;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
+import com.bjhy.trademark.common.utils.ChineseUtil;
 import com.bjhy.trademark.core.TrademarkConfig;
 import com.bjhy.trademark.core.service.DownloadService;
 import org.apache.commons.io.FileUtils;
@@ -107,17 +110,20 @@ public class TrademarkBeanController {
 		return trademarkBeanService.findByCondition(condition);
 	}
 
+	//TODO 不能多人同时使用,文件会被覆盖
+	@Autowired
 	DownloadService downloadService;
 	@GetMapping("/trademark_name")
 	public ResponseEntity<InputStreamResource> download(@RequestParam("ids[]") String[] ids) throws Exception {
 		String tempPath = trademarkConfig.getTempPath();
 		File trademarkNameFile = new File(tempPath, "trademarkName.txt");
 		List<TrademarkBean> trademarkBeanList = findAllByIds(ids);
-		ArrayList<String> names = new ArrayList<>();
+		trademarkBeanList = trademarkBeanService.filterTrademarkName(trademarkBeanList);
+		HashSet<String> names = new HashSet<>();
 		for (TrademarkBean trademarkBean : trademarkBeanList) {
-			names.add(trademarkBean.getName());
+			names.add(ChineseUtil.removeChinese(trademarkBean.getName()));
 		}
-		FileUtils.writeLines(trademarkNameFile,"gbk",names);
+		FileUtils.writeLines(trademarkNameFile, Charset.defaultCharset().name(),names);
 		return downloadService.downloadFile(trademarkNameFile,trademarkNameFile.getName());
 	}
 
@@ -128,6 +134,14 @@ public class TrademarkBeanController {
 	Message create(@PathVariable String id, TrademarkBean trademarkBean) {
 		trademarkBean.setId(id);
 		trademarkBeanService.update(trademarkBean);
-		return MessageUtil.message("criminalInfo.update.success");
+		return MessageUtil.message("common.update.success");
 	}
+
+	@RequestMapping(value = "/sameName/{annm}", method = RequestMethod.GET)
+	public @ResponseBody PageBean sameName(@PathVariable String annm,QueryParams queryParams){
+		PageBean pageBean = JqGridUtil.getPageBean(queryParams);
+		trademarkBeanService.findSameName(annm,pageBean);
+		return pageBean;
+	}
+
 }

@@ -20,7 +20,6 @@ public class DownloadServiceImpl implements DownloadService {
         InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-        //headers.add("Content-Disposition", "filename=起诉书.pdf");
         headers.add("Content-Disposition",
                 "attachment; filename=\"" + new String((fileName).getBytes("gb2312"),"ISO-8859-1") + "\"");
         headers.add("Pragma", "no-cache");

@@ -29,13 +29,15 @@ public class TrademarkBean {
     @Id
     @Column(name = "ID",length=32)
     String id;//
-
+    @FieldParam(value="页码编号")
+    Integer page_no;
     @FieldParam("商标号")
     @Column(name = "mNumber",length=32)
     String number="";//
     @FieldParam("期号")
     String anNum="";//
     @FieldParam("申请日期")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date applicationDate;//
     @FieldParam("商标名")
     String name="";//
@@ -46,29 +48,80 @@ public class TrademarkBean {
     @FieldParam("代理机构")
     String agency="";//
     @FieldParam("异议期限-开始")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date yiyiStartDate;//
     @FieldParam("异议期限-截止")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date yiyiEndDate;//
+    @FieldParam("公告日期")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    Date ann_date;//
 
     @FieldParam(value="类型",hidden = true)
     @Column(name = "mType",length = 400)
     String type="";//
 
-    @FieldParam(value="图片url",hidden = true)
+    //@FieldParam(value="图片url",hidden = true)
+    @Column(name = "mUrl")
     String url="";//
-    @FieldParam(value="图片地址",hidden = true)
+    //@FieldParam(value="图片地址",hidden = true)
+    @JsonIgnore
     String picPath="";//
-    @FieldParam(value="数据图片地址",hidden = true)
+    //@FieldParam(value="数据图片地址",hidden = true)
+    @JsonIgnore
     String dataPicPath="";//
+    //@FieldParam(value="粘贴图片地址",hidden = true)
+    @JsonIgnore
+    String pastePicPath="";//
+
+
+
     @FieldParam(value="被选择的类型",hidden = true)
     String choosedType="";//
 
     String analysType;
-
+    @FieldParam(value="外国申请人")
     String client;//外国申请人 可能有多个人 逗号分隔
+    @FieldParam(value="外国代理所")
     String representatives;//外国代理所
+    @FieldParam(value="外国邮箱")
     String email;//外国邮箱 可能有多个 逗号分隔
 
+    @FieldParam(value="级别")
+    @Column(name = "mRemark")
+    String remark;
+
+    public Date getAnn_date() {
+        return ann_date;
+    }
+
+    public void setAnn_date(Date ann_date) {
+        this.ann_date = ann_date;
+    }
+
+    public Integer getPage_no() {
+        return page_no;
+    }
+
+    public void setPage_no(Integer page_no) {
+        this.page_no = page_no;
+    }
+
+    public String getPastePicPath() {
+        return pastePicPath;
+    }
+
+    public void setPastePicPath(String pastePicPath) {
+        this.pastePicPath = pastePicPath;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 
     public String getClient() {
         return client;

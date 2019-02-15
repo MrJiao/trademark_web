@@ -1,97 +1,111 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>商标数据管理</title>
-    <link href="${request.contextPath}/css/common_biz.css"
-          rel="stylesheet" type="text/css"/>
-    ${jsContext}${jquery}${easyUI}${jqGrid}${toast}${easyUI}${appJs}${jackson_generator}
-    <script type="text/javascript"
-            src="${request.contextPath}/js/trademarkBean_index.js"></script>
+	<meta charset="UTF-8">
+	<title>商标数据管理</title>
+	<link href="${request.contextPath}/css/common_biz.css"
+		  rel="stylesheet" type="text/css" />
+	${jsContext}${jquery}${easyUI}${jqGrid}${toast}${easyUI}${appJs}${jackson_generator}
+	<script type="text/javascript"
+			src="${request.contextPath}/js/trademarkBean_index.js"></script>
 </head>
 <body>
 <div class="pd">
-    <div class="toolkit toolkit_plus">
-        <ul class="toolkit_ul_left">
-            <li><input type="button" class="btn_blue" id="commonViewBtn"
-                       value="查看"/></li>
-            <li><input type="button" class="btn_blue" id="commonShowAddBtn"
-                       value="新增"/></li>
-            <li><input type="button" class="btn_blue" id="commonShowEditBtn"
-                       value="编辑"/></li>
-            <li><input type="button" class="btn_blue" id="commonDelBtn"
-                       value="删除"/></li>
-            <li><input type="button" class="btn_blue" id="commonRefreshBtn"
-                       value="刷新"/></li>
-        </ul>
-        <ul class="toolkit_ul_right">
-            <li>商标号 <input type="text" id="commonSearchInput">
-            </li>
-            <li><input type="button" class="btn_blue" id="commonSearchBtn"
-                       value="查询"/></li>
-            <li><input type="button" class="btn_blue" id="commonRetrieveBtn"
-                       value="检索"/></li>
-        </ul>
-    </div>
-    <div class="data_grid clear">
-        <table id="commonList"></table>
-        <div id="commonPager"></div>
-    </div>
+	<div class="toolkit toolkit_plus" >
+		<ul class="toolkit_ul_left">
+<!--			<li><input type="button" class="btn_blue" id="commonViewBtn"
+					   value="查看" /></li>-->
+<!--			<li><input type="button" class="btn_blue" id="commonShowAddBtn"
+					   value="新增" /></li>-->
+			<li><input type="text" class="btn_blue" id="inputAnnm" pattern="[0-9]{4}" placeholder="请输入期号"
+					    /></li>
+			<li><input type="button" class="btn_blue" id="sameNameSearchBtn"
+					   value="查询相同名称" /></li>
+			<li><input type="button" class="btn_blue" id="commonShowEditBtn"
+					   value="编辑" /></li>
+			<li><input type="button" class="btn_blue" id="commonDelBtn"
+					   value="删除" /></li>
+			<li><input type="button" class="btn_blue" id="commonRefreshBtn"
+					   value="刷新" /></li>
+			<li><input type="button" class="btn_blue" id="exportBtn"
+					   value="导出商标名称" /></li>
 
-    <!-- 详细表单 -->
-    <div id="commonDetail" class="form"
-         style="width: 600px; display: none;">
-        <form id="commonDetailForm" action="" method="post">
-            <!--TODO 这里错了-->
-            <table class="t4">
-                <tr>
-                    <th>id</th>
-                    <td><input class="easyui-validatebox" data-options="" type="text" id="id" name="id"/></td>
-                    <th>商标号</th>
-                    <td><input class="easyui-validatebox" data-options="" type="text" id="number" name="number"/></td>
-                    <th>期号</th>
-                    <td><input class="easyui-validatebox" data-options="" type="text" id="anNum" name="anNum"/></td>
-                </tr>
-                <tr>
-                <th>申请日期</th>
-                <td><input class="easyui-validatebox" data-options="" type="text" id="applicationDate"
-                           name="applicationDate"/></td>
-                <th>商标名</th>
-                <td><input class="easyui-validatebox" data-options="" type="text" id="name" name="name"/></td>
-                <th>申请人</th>
-                <td><input class="easyui-validatebox" data-options="" type="text" id="applicant" name="applicant"/></td>
+		</ul>
+		<ul class="toolkit_ul_right">
+			<li>商标号 <input type="text" id="commonSearchInput">
+			</li>
+			<li><input type="button" class="btn_blue" id="commonSearchBtn"
+					   value="查询" /></li>
+			<li><input type="button" class="btn_blue" id="commonRetrieveBtn"
+					   value="检索" /></li>
+		</ul>
+	</div>
+	<div class="data_grid clear">
+		<table id="commonList"></table>
+		<div id="commonPager"></div>
+	</div>
 
-                </tr>
-                <tr>
-                <th>地址</th>
-                <td><input class="easyui-validatebox" data-options="" type="text" id="address" name="address"/></td>
-                <th>代理机构</th>
-                <td><input class="easyui-validatebox" data-options="" type="text" id="agency" name="agency"/></td>
-                <th>异议期限-开始</th>
-                <td><input class="easyui-validatebox" data-options="" type="text" id="yiyiStartDate"
-                           name="yiyiStartDate"/></td>
-
-                </tr>
-                <tr>
-                <th>异议期限-截止</th>
-                <td><input class="easyui-validatebox" data-options="" type="text" id="yiyiEndDate" name="yiyiEndDate"/>
-                </td>
-                <th>类型</th>
-                <td><input class="easyui-validatebox" data-options="" type="text" id="type" name="type"/></td>
-                </tr>
-                <tr>
-                <th>被选择的类型</th>
-                <td><input class="easyui-validatebox" data-options="" type="text" id="choosedType" name="choosedType"/>
-                </td>
-                </tr>
-            </table>
-            <div class="btn_center" id="commonDetailBtnKit">
-                <input type="button" class="btn_blue" id="commonSaveBtn" value="保存"/>
-                <input type="button" class="btn_blue  pd_l10" id="commonResetBtn"
-                       value="重置"/>
-            </div>
-        </form>
-    </div>
+	<!-- 详细表单 -->
+	<div id="commonDetail" class="form"
+		 style="width: 600px; display: none;">
+		<form id="commonDetailForm" action="" method="post">
+			<table class="t4">
+				<tr>
+					<th>id</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="id" name="id" /></td>
+					<th>页码编号</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="page_no" name="page_no" /></td>
+					<th>商标号</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="number" name="number" /></td>
+				</tr>
+				<tr>
+					<th>期号</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="anNum" name="anNum" /></td>
+					<th>申请日期</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="applicationDate" name="applicationDate" /></td>
+					<th>商标名</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="name" name="name" /></td>
+				</tr>
+				<tr>
+					<th>申请人</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="applicant" name="applicant" /></td>
+					<th>地址</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="address" name="address" /></td>
+					<th>代理机构</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="agency" name="agency" /></td>
+				</tr>
+				<tr>
+					<th>异议期限-开始</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="yiyiStartDate" name="yiyiStartDate" /></td>
+					<th>异议期限-截止</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="yiyiEndDate" name="yiyiEndDate" /></td>
+					<th>公告日期</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="ann_date" name="ann_date" /></td>
+				</tr>
+				<tr>
+					<th>类型</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="type" name="type" /></td>
+					<th>被选择的类型</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="choosedType" name="choosedType" /></td>
+					<th>外国申请人</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="client" name="client" /></td>
+				</tr>
+				<tr>
+					<th>外国代理所</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="representatives" name="representatives" /></td>
+					<th>外国邮箱</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="email" name="email" /></td>
+					<th>级别</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="level" name="level" /></td>
+				</tr>
+			</table>
+			<div class="btn_center" id="commonDetailBtnKit">
+				<input type="button" class="btn_blue" id="commonSaveBtn" value="保存" />
+				<input type="button" class="btn_blue  pd_l10" id="commonResetBtn"
+					   value="重置" />
+			</div>
+		</form>
+	</div>
 </div>
 </body>
 </html>

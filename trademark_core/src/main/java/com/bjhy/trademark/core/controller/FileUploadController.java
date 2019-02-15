@@ -1,6 +1,7 @@
 package com.bjhy.trademark.core.controller;
 
 import com.bjhy.trademark.core.TrademarkConfig;
+import com.bjhy.trademark.core.service.AnalysService;
 import org.apel.gaia.commons.i18n.Message;
 import org.apel.gaia.commons.i18n.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Create by: Jackson
@@ -26,6 +27,8 @@ public class FileUploadController {
     @Autowired
     TrademarkConfig trademarkConfig;
 
+    @Autowired
+    AnalysService analysService;
 
     //首页
     @RequestMapping(value = "index", method = RequestMethod.GET)
@@ -35,27 +38,35 @@ public class FileUploadController {
 
     //处理文件上传
     @RequestMapping(value="/upload_trademark_data", method = RequestMethod.POST)
-    public @ResponseBody Message uploadImg(@RequestParam("file") MultipartFile file,
-                      HttpServletRequest request) {
-
+    public @ResponseBody Message uploadData(@RequestParam("file") MultipartFile file) throws IOException {
         String contentType = file.getContentType();   //图片文件类型
         String fileName = file.getOriginalFilename();  //图片名字
-
         //文件存放路径
-        String storePath = trademarkConfig.getStorePath();
+        String tempPath = trademarkConfig.getTempPath();
         //调用文件处理类FileUtil，处理文件，将文件写入指定位置
-        try {
-            storeFile(file.getBytes(), storePath, System.currentTimeMillis()+"");
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
+        File storeFile = new File(tempPath, System.currentTimeMillis() + ".txt");
+        storeFile(file.getBytes(), tempPath,storeFile.getName());
+        analysService.trademarkData(storeFile);
+        storeFile.delete();
+        return MessageUtil.message("common.update.success");
+    }
 
-        // 返回图片的存放路径
-        return MessageUtil.message("common.create.success");
+    @RequestMapping(value="/upload_trademark_name", method = RequestMethod.POST)
+    public @ResponseBody Message uploadNum(@RequestParam("file") MultipartFile file,@RequestParam("annm")String annm) throws IOException {
+        String contentType = file.getContentType();   //图片文件类型
+        String fileName = file.getOriginalFilename();  //文件
+        //文件存放路径
+        String tempPath = trademarkConfig.getTempPath();
+        //调用文件处理类FileUtil，处理文件，将文件写入指定位置
+        File storeFile = new File(tempPath, System.currentTimeMillis() + ".txt");
+        storeFile(file.getBytes(), tempPath,storeFile.getName());
+        analysService.trademarkName(annm,storeFile);
+        storeFile.delete();
+        return MessageUtil.message("common.update.success");
     }
 
 
-    private static void storeFile(byte[] file, String filePath, String fileName) throws Exception{
+    private static void storeFile(byte[] file, String filePath, String fileName) throws IOException {
         File targetFile = new File(filePath);
         if(!targetFile.exists()){
             targetFile.mkdirs();

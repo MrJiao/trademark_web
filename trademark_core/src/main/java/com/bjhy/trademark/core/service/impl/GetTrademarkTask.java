@@ -9,7 +9,6 @@ import com.bjhy.trademark.core.domain.TaskData;
 import com.bjhy.trademark.core.domain.TrademarkBean;
 import com.bjhy.trademark.core.service.TaskDataService;
 import com.bjhy.trademark.core.service.TrademarkBeanService;
-import com.bjhy.trademark.data.downloadPic.GetImageSearchId;
 import com.bjhy.trademark.data.downloadPic.GetImageUrlTask;
 import com.bjhy.trademark.data.pic_orc.PicOrc;
 import com.bjhy.trademark.data.pic_orc.domain.OrcData;
@@ -96,6 +95,7 @@ public class GetTrademarkTask implements Runnable {
             taskData.setExeState(TaskData.STATE_ERROR);
         }
         taskData.setExeState(TaskData.STATE_END);
+        taskData.setCompleteTime(new Date());
         taskDataService.saveOrUpdate(taskData);
     }
 

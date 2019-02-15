@@ -30,7 +30,7 @@ public class TaskData {
     Integer startNum;
     @FieldParam("结束位置")
     Integer endNum;
-    //@FieldParam("执行状态")
+    @FieldParam("执行状态")
     String exeState;//
     public static String STATE_STARTING = "正在执行";
     public static String STATE_END = "执行完成";
@@ -41,6 +41,20 @@ public class TaskData {
     @Column(nullable=false)
     @AutoCompleteField(type= AutoCompleteFieldType.DATE)
     private Date gmt_create;
+
+
+    @FieldParam("完成时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @AutoCompleteField(type= AutoCompleteFieldType.DATE)
+    private Date completeTime;
+
+    public Date getCompleteTime() {
+        return completeTime;
+    }
+
+    public void setCompleteTime(Date completeTime) {
+        this.completeTime = completeTime;
+    }
 
     public String getId() {
         return id;

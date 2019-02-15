@@ -17,9 +17,10 @@ trademarkBean_index.V = (function (){
                 height:document.body.clientHeight-230,
                 mtype: "GET",
                 multiselect: true,
-                colNames: ["id","商标号","期号","申请日期","商标名","申请人","地址","代理机构","异议期限-开始","异议期限-截止","类型","图片url","图片地址","数据图片地址","被选择的类型","创建时间"],
+                colNames: ["id","页码编号","商标号","期号","申请日期","商标名","申请人","地址","代理机构","异议期限-开始","异议期限-截止","公告日期","类型","被选择的类型","外国申请人","外国代理所","外国邮箱","级别","创建时间"],
                 colModel: [
                     { name: "id", index:"id",align:"center",hidden: true, sortable: true},
+                    { name: "page_no", index:"page_no",align:"center", sortable: true},
                     { name: "number", index:"number",align:"center",hidden: false, sortable: true},
                     { name: "anNum", index:"anNum",align:"center",hidden: false, sortable: true},
                     { name: "applicationDate", index:"applicationDate",align:"center",hidden: false, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d H:i:s" }},
@@ -29,18 +30,20 @@ trademarkBean_index.V = (function (){
                     { name: "agency", index:"agency",align:"center",hidden: false, sortable: true},
                     { name: "yiyiStartDate", index:"yiyiStartDate",align:"center",hidden: false, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d H:i:s" }},
                     { name: "yiyiEndDate", index:"yiyiEndDate",align:"center",hidden: false, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d H:i:s" }},
+                    { name: "ann_date", index:"ann_date",align:"center",hidden: false, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d H:i:s" }},
                     { name: "type", index:"type",align:"center",hidden: true, sortable: true},
-                    { name: "url", index:"url",align:"center",hidden: true, sortable: true},
-                    { name: "picPath", index:"picPath",align:"center",hidden: true, sortable: true},
-                    { name: "dataPicPath", index:"dataPicPath",align:"center",hidden: true, sortable: true},
                     { name: "choosedType", index:"choosedType",align:"center",hidden: true, sortable: true},
+                    { name: "client", index:"client",align:"center",hidden: false, sortable: true},
+                    { name: "representatives", index:"representatives",align:"center",hidden: false, sortable: true},
+                    { name: "email", index:"email",align:"center",hidden: false, sortable: true},
+                    { name: "level", index:"level",align:"center",hidden: false, sortable: true},
                     { name: "gmt_create", index:"gmt_create",align:"center",hidden: true, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d H:i:s" }}
                 ],
                 pager: "#commonPager",
                 rowNum: 10,
-                rowList: [10, 20, 30,300000],
-                sortname:"id",
-                sortorder:"asc",
+                rowList: [10, 20, 30],
+                sortname:"page_no",
+                sortorder:"desc",
                 viewrecords: true,
                 gridview: true,
                 autoencode: true,
@@ -90,12 +93,13 @@ trademarkBean_index.V = (function (){
             $.messager.confirm(title,content,callback);
         },
         refreshGrid:function () {
-            PlatformUI.refreshGrid(this.getJqGrid(), {sortname:"gmt_create",sortorder:"desc"});
+            PlatformUI.refreshGrid(this.getJqGrid(), {sortname:"page_no",sortorder:"desc"});
         },
         populateForm: function (data) {
             data["applicationDate"] = ExtendDate.getSmpFormatDateByLong(data["applicationDate"], false);
             data["yiyiStartDate"] = ExtendDate.getSmpFormatDateByLong(data["yiyiStartDate"], false);
             data["yiyiEndDate"] = ExtendDate.getSmpFormatDateByLong(data["yiyiEndDate"], false);
+            data["ann_date"] = ExtendDate.getSmpFormatDateByLong(data["ann_date"], false);
             data["gmt_create"] = ExtendDate.getSmpFormatDateByLong(data["gmt_create"], false);
             PlatformUI.populateForm("commonDetailForm", data);
         },
@@ -110,6 +114,16 @@ trademarkBean_index.V = (function (){
 
 trademarkBean_index.M = (function (){
     var V = trademarkBean_index.V;
+    function downloadFile(url) {
+        try{
+            var elemIF = document.createElement("iframe");
+            elemIF.src = url;
+            elemIF.style.display = "none";
+            document.body.appendChild(elemIF);
+        }catch(e){
+
+        }
+    }
     return{
         //获取选中的ids
         getJQSelectIds: function () {
@@ -167,7 +181,7 @@ trademarkBean_index.M = (function (){
                     data: params + "&_method=put",
                     afterOperation: function(){
                         PlatformUI.refreshGrid(V.getJqGrid(), {
-                            sortname:"gmt_create",
+                            sortname:"page_no",
                             sortorder:"desc",
                             page:this.getJqPage()
                         });
@@ -192,6 +206,21 @@ trademarkBean_index.M = (function (){
                 data: {_method:"delete",ids:ids},
                 afterOperation:callback
             });
+        },
+        exportName:function(ids,callback){
+            var url=contextPath + "/trademarkBean/trademark_name?";
+            for( var index in ids){
+                url = url+'ids[]='+ids[index]+'&';
+            }
+            url = url.substr(0,url.length-1);
+            downloadFile(url);
+        },
+        sameNameSearch: function (annm) {
+            V.getJqGrid().setGridParam({url:contextPath +"/trademarkBean/sameName/"+annm}).trigger("reloadGrid");
+
+        },
+        getAnnm: function () {
+            return $("#inputAnnm").val();
         }
     };
 })();
@@ -201,8 +230,8 @@ trademarkBean_index.P = (function (){
     var V = trademarkBean_index.V;
     function checkSelected() {
         var ids = M.getJQSelectIds();
-        if (ids.length != 1) {
-            V.showWarning("选择一条要查看的数据!");
+        if (ids.length < 1) {
+            V.showWarning("选择一条数据!");
             return false;
         }
         return true;
@@ -253,6 +282,7 @@ trademarkBean_index.P = (function (){
                 M.postFormData();
             }else{
                 M.updateItemData(M.getJQSelectIds()[0]);
+                V.closeCommonDetailWindow();
             }
         });
 
@@ -295,7 +325,7 @@ trademarkBean_index.P = (function (){
         //批量删除事件
         $("#commonDelBtn").click(function(){
             var ids = M.getJQSelectIds();
-            //if(!checkSelected())return;//TODO 改
+            if(!checkSelected())return;
             //批量删除ajax
 
             V.showConfirm('操作','请确认删除数据',function(isOk){
@@ -306,6 +336,16 @@ trademarkBean_index.P = (function (){
                 }
             });
         });
+        //导出商标名称
+        $("#exportBtn").click(function(){
+            var ids = M.getJQSelectIds();
+            M.exportName(ids);
+        });
+
+        $("#sameNameSearchBtn").click(function () {
+            var annm = M.getAnnm();
+            M.sameNameSearch(annm);
+        })
     }
 
     return {

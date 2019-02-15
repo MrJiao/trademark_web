@@ -17,14 +17,15 @@ taskData_index.V = (function (){
                 height:document.body.clientHeight-230,
                 mtype: "GET",
                 multiselect: true,
-                colNames: ["id","期号","开始位置","结束位置","执行状态","创建时间"],
+                colNames: ["id","期号","开始位置","结束位置","执行状态","创建时间","完成时间"],
                 colModel: [
                     { name: "id", index:"id",align:"center",hidden: true, sortable: true},
                     { name: "annm", index:"annm",align:"center",hidden: false, sortable: true},
                     { name: "startNum", index:"startNum",align:"center",hidden: false, sortable: true},
                     { name: "endNum", index:"endNum",align:"center",hidden: false, sortable: true},
                     { name: "exeState", index:"exeState",align:"center",hidden: false, sortable: true},
-                    { name: "gmt_create", index:"gmt_create",align:"center",hidden: false, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d H:i:s" }}
+                    { name: "gmt_create", index:"gmt_create",align:"center",hidden: false, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d H:i:s" }},
+                    { name: "completeTime", index:"completeTime",align:"center",hidden: false, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d H:i:s" }}
                 ],
                 pager: "#commonPager",
                 rowNum: 10,
@@ -84,6 +85,7 @@ taskData_index.V = (function (){
         },
         populateForm: function (data) {
             data["gmt_create"] = ExtendDate.getSmpFormatDateByLong(data["gmt_create"], false);
+            data["completeTime"] = ExtendDate.getSmpFormatDateByLong(data["completeTime"], false);
             PlatformUI.populateForm("commonDetailForm", data);
         },
         validateForm: function () {
@@ -240,6 +242,7 @@ taskData_index.P = (function (){
                 M.postFormData();
             }else{
                 M.updateItemData(M.getJQSelectIds()[0]);
+                V.closeCommonDetailWindow();
             }
         });
 

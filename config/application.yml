@@ -46,7 +46,7 @@ logging:
 
 
 hibernate:
-  show_sql: false
+  show_sql: true
 
 spring:
   jpa:
