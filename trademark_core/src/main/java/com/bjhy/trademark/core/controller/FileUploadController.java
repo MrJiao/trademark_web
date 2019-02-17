@@ -1,7 +1,10 @@
 package com.bjhy.trademark.core.controller;
 
+import com.bjhy.tlevel.datax.common.utils.SpringBeanUtil;
+import com.bjhy.trademark.common.utils.ZipUtil;
 import com.bjhy.trademark.core.TrademarkConfig;
 import com.bjhy.trademark.core.service.AnalysService;
+import com.bjhy.trademark.core.service.impl.GetTrademarkTask;
 import org.apel.gaia.commons.i18n.Message;
 import org.apel.gaia.commons.i18n.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,14 +42,21 @@ public class FileUploadController {
     //处理文件上传
     @RequestMapping(value="/upload_trademark_data", method = RequestMethod.POST)
     public @ResponseBody Message uploadData(@RequestParam("file") MultipartFile file) throws IOException {
-        String contentType = file.getContentType();   //图片文件类型
-        String fileName = file.getOriginalFilename();  //图片名字
+        String contentType = file.getContentType();   //文件类型
+        String fileName = file.getOriginalFilename();  //名字
+        String annum = fileName.replaceAll(".zip","");
         //文件存放路径
         String tempPath = trademarkConfig.getTempPath();
         //调用文件处理类FileUtil，处理文件，将文件写入指定位置
-        File storeFile = new File(tempPath, System.currentTimeMillis() + ".txt");
+        File storeFile = new File(tempPath, annum + ".zip");
         storeFile(file.getBytes(), tempPath,storeFile.getName());
-        analysService.trademarkData(storeFile);
+        ZipUtil.unZip(storeFile,tempPath,1024);
+        File data = new File(tempPath+File.separator+annum, "data.txt");
+        File url = new File(tempPath+File.separator+annum, "url.txt");
+
+        String storePath = trademarkConfig.getStorePath()+File.separator+annum;
+        GetTrademarkTask bean = SpringBeanUtil.getBean(GetTrademarkTask.class, url,data,annum, storePath);
+        new Thread(bean).start();
         storeFile.delete();
         return MessageUtil.message("common.update.success");
     }

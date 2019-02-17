@@ -25,25 +25,25 @@ public class ConvertUtil {
             for (OrcData.WordsResultBean bean : words_result) {
                 String words = bean.getWords();
                 words = words.replaceAll(" ","");
-                if(words.contains("商标公告")){
+                if(words.matches("第\\d+期商标公告")){
                     String anNum = getAnNum(words);
                     trademarkBean.setAnNum(anNum);
                     continue;
                 }
 
-                if(words.contains("第")&&words.contains("号")){
+                if(words.matches("第\\d+号")){
                     String num = getNum(words);
                     trademarkBean.setNumber(num);
                     trademarkBean.setId(num);
                     continue;
                 }
 
-                if(words.contains("申请日期")){
+                if(words.matches("申请日期\\d+年\\d+月\\d+日")){
                     words = words.substring(4);
                     trademarkBean.setApplicationDate(formatter.parse(words));
                 }
 
-                if(words.contains("异议期限")){
+                if(words.contains("异议期限自")){
                     Date start = getYiyiStart(words);
                     Date end = getYiyiEnd(words);
                     trademarkBean.setYiyiStartDate(start);
@@ -66,8 +66,6 @@ public class ConvertUtil {
             L.e("解析失败",e.getMessage());
             return false;
         }
-        if(trademarkBean.getNumber().length()!=8)
-            return false;
         return true;
     }
 

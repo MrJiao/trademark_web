@@ -21,9 +21,8 @@ public class Temp {
 
     @Test
     public void regx(){
-        TrademarkBean trademarkBean = new TrademarkBean();
-        List<TrademarkBean.TrademarkType> trademarkType = trademarkBean.getTrademarkType();
-
+        String s = "第16645306号";
+        System.out.println(s.matches("第\\d+号"));
     }
 
 

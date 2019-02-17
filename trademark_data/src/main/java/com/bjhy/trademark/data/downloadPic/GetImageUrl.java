@@ -43,7 +43,8 @@ public class GetImageUrl extends RequestAdapter<GetPicBean> {
         headers.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         headers.put("Cookie", "tmas_cookie=51947.7680.15402.0…f3e1653e44f7a6d023b760fde36e5");
         headers.put("Host", "sbgg.saic.gov.cn:9080");
-        headers.put("Referer", "http://sbgg.saic.gov.cn:9080/t…iew/annSearch.html?annNum=1614");
+        headers.put("Origin", "http://sbgg.saic.gov.cn:9080");
+        headers.put("Referer", "http://sbgg.saic.gov.cn:9080/tmann/annInfoView/annSearch.html");
         headers.put("User-Agent", "Mozilla/5.0 (Macintosh; Intel …) Gecko/20100101 Firefox/62.0");
         headers.put("X-Requested-With", "XMLHttpRequest");
         return headers;

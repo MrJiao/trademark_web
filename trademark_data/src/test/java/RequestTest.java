@@ -3,12 +3,14 @@ import com.bjhy.trademark.data.downloadPic.GetImageUrlTask;
 import com.bjhy.trademark.data.downloadPic.GetImageSearchId;
 import com.bjhy.trademark.data.pic_orc.PicOrc;
 import com.bjhy.trademark.data.pic_orc.domain.OrcData;
+import com.bjhy.trademark.data.pic_orc.domain.Temp;
 import com.bjhy.trademark.watermarker.WaterMarker;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -27,7 +29,7 @@ public class RequestTest {
             public long waitTime() {
                 return 1000;
             }
-        },1,200,searchId);
+        },1,20,searchId);
         Set<String> strings = getImageUrlTask.get();
 
 
@@ -76,6 +78,17 @@ public class RequestTest {
 
     @Test
     public void regx(){
+        PicOrc picOrc = new PicOrc();
+
+        Temp text = picOrc.text("/Users/jiaoyubing/Downloads/WechatIMG13279.jpeg");
+
+        List<Temp.WordsResultBean> words_result = text.getWords_result();
+
+        for (Temp.WordsResultBean wordsResultBean : words_result) {
+            System.out.println(wordsResultBean.getWords());
+        }
+
+
 
 
     }

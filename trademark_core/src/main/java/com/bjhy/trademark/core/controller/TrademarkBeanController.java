@@ -1,16 +1,15 @@
 package com.bjhy.trademark.core.controller;
 
 import java.io.File;
+import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import com.bjhy.trademark.common.utils.ChineseUtil;
 import com.bjhy.trademark.core.TrademarkConfig;
 import com.bjhy.trademark.core.service.DownloadService;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Sort;
@@ -133,6 +132,11 @@ public class TrademarkBeanController {
 	public @ResponseBody
 	Message create(@PathVariable String id, TrademarkBean trademarkBean) {
 		trademarkBean.setId(id);
+		TrademarkBean bean = trademarkBeanService.findById(id);
+		trademarkBean.setPicPath(bean.getPicPath());
+		trademarkBean.setPastePicPath(bean.getPastePicPath());
+		trademarkBean.setDataPicPath(bean.getPastePicPath());
+		trademarkBean.setAnalysType(bean.getType());
 		trademarkBeanService.update(trademarkBean);
 		return MessageUtil.message("common.update.success");
 	}
@@ -141,7 +145,42 @@ public class TrademarkBeanController {
 	public @ResponseBody PageBean sameName(@PathVariable String annm,QueryParams queryParams){
 		PageBean pageBean = JqGridUtil.getPageBean(queryParams);
 		trademarkBeanService.findSameName(annm,pageBean);
+		List<Object> items = pageBean.getItems();
+		removeTuxing(items);
 		return pageBean;
 	}
+
+	private void removeTuxing(List<Object> items) {
+		ListIterator<Object> iterator = items.listIterator();
+		while (iterator.hasNext()){
+			TrademarkBean bean = (TrademarkBean) iterator.next();
+			if(StringUtils.equals(bean.getName(),"图形")){
+				iterator.remove();
+			}
+		}
+	}
+
+
+	@GetMapping("/image/{id}")
+	public ResponseEntity<InputStreamResource> getImage(@PathVariable String id) throws Exception {
+		TrademarkBean trademarkBean = trademarkBeanService.findById(id);
+		return downloadService.downloadFile(new File(trademarkBean.getPastePicPath()),trademarkBean.getName());
+	}
+
+	@RequestMapping(value = "/gao",method = RequestMethod.PUT)
+	public @ResponseBody Message gao(@RequestParam("ids[]") String[] ids) throws Exception {
+		List<Serializable> strings = Arrays.asList(ids);
+		List<TrademarkBean> trademarkBeanList = trademarkBeanService.findByAllId(strings);
+		trademarkBeanService.orcGao(trademarkBeanList);
+		return MessageUtil.message("common.update.success");
+	}
+
+	@RequestMapping(value = "/gao/{id}",method = RequestMethod.PUT)
+	public @ResponseBody TrademarkBean gao(@PathVariable String id) {
+		TrademarkBean trademarkBean = trademarkBeanService.findById(id);
+		TrademarkBean bean = trademarkBeanService.orcGao(trademarkBean);
+		return bean;
+	}
+
 
 }

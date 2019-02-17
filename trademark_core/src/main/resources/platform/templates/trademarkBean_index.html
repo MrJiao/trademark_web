@@ -6,6 +6,10 @@
 	<link href="${request.contextPath}/css/common_biz.css"
 		  rel="stylesheet" type="text/css" />
 	${jsContext}${jquery}${easyUI}${jqGrid}${toast}${easyUI}${appJs}${jackson_generator}
+
+    <script type="text/javascript"
+            src="${request.contextPath}/js/common/jackson.common.js"></script>
+
 	<script type="text/javascript"
 			src="${request.contextPath}/js/trademarkBean_index.js"></script>
 </head>
@@ -27,6 +31,8 @@
 					   value="删除" /></li>
 			<li><input type="button" class="btn_blue" id="commonRefreshBtn"
 					   value="刷新" /></li>
+            <li><input type="button" class="btn_blue" id="commonBatchGao"
+                       value="高精度匹配" /></li>
 			<li><input type="button" class="btn_blue" id="exportBtn"
 					   value="导出商标名称" /></li>
 
@@ -51,29 +57,33 @@
 		<form id="commonDetailForm" action="" method="post">
 			<table class="t4">
 				<tr>
-					<th>id</th>
-					<td><input class="easyui-validatebox" data-options="" type="text" id="id" name="id" /></td>
+					<th>期号</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="anNum" name="anNum" /></td>
 					<th>页码编号</th>
 					<td><input class="easyui-validatebox" data-options="" type="text" id="page_no" name="page_no" /></td>
 					<th>商标号</th>
 					<td><input class="easyui-validatebox" data-options="" type="text" id="number" name="number" /></td>
 				</tr>
 				<tr>
-					<th>期号</th>
-					<td><input class="easyui-validatebox" data-options="" type="text" id="anNum" name="anNum" /></td>
 					<th>申请日期</th>
 					<td><input class="easyui-validatebox" data-options="" type="text" id="applicationDate" name="applicationDate" /></td>
 					<th>商标名</th>
 					<td><input class="easyui-validatebox" data-options="" type="text" id="name" name="name" /></td>
+                    <th>备注</th>
+                    <td><input class="easyui-validatebox" data-options="" type="text" id="remark" name="remark" /></td>
 				</tr>
 				<tr>
 					<th>申请人</th>
-					<td><input class="easyui-validatebox" data-options="" type="text" id="applicant" name="applicant" /></td>
-					<th>地址</th>
-					<td><input class="easyui-validatebox" data-options="" type="text" id="address" name="address" /></td>
-					<th>代理机构</th>
-					<td><input class="easyui-validatebox" data-options="" type="text" id="agency" name="agency" /></td>
+					<td colspan="5"><input style="width: 900px"  class="easyui-validatebox" data-options="" type="text" id="applicant" name="applicant" /></td>
 				</tr>
+                <tr>
+                    <th>地址</th>
+                    <td colspan="5"><input style="width: 900px" class="easyui-validatebox" data-options="" type="text" id="address" name="address" /></td>
+                </tr>
+                <tr>
+                    <th>代理机构</th>
+                    <td colspan="5"><input style="width: 900px"  class="easyui-validatebox" data-options="" type="text" id="agency" name="agency" /></td>
+                </tr>
 				<tr>
 					<th>异议期限-开始</th>
 					<td><input class="easyui-validatebox" data-options="" type="text" id="yiyiStartDate" name="yiyiStartDate" /></td>
@@ -95,14 +105,20 @@
 					<td><input class="easyui-validatebox" data-options="" type="text" id="representatives" name="representatives" /></td>
 					<th>外国邮箱</th>
 					<td><input class="easyui-validatebox" data-options="" type="text" id="email" name="email" /></td>
-					<th>级别</th>
-					<td><input class="easyui-validatebox" data-options="" type="text" id="level" name="level" /></td>
+					<th>精度类别</th>
+					<td><input class="easyui-validatebox" data-options="" type="text" id="analysType" name="analysType" /></td>
 				</tr>
 			</table>
 			<div class="btn_center" id="commonDetailBtnKit">
 				<input type="button" class="btn_blue" id="commonSaveBtn" value="保存" />
-				<input type="button" class="btn_blue  pd_l10" id="commonResetBtn"
-					   value="重置" />
+				<input type="button" class="btn_blue  pd_l10" id="commonGao" value="高精度识别" />
+                <input type="button" class="btn_blue  pd_l10" id="commonPrePage" value="上一页" />
+                <input type="button" class="btn_blue" id="commonNextPage" value="下一页" />
+
+
+			</div>
+			<div class="btn_center">
+				<img id="img_trademark" height="300px">
 			</div>
 		</form>
 	</div>

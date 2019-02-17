@@ -54,8 +54,6 @@ public class GetImageUrlTask {
         String searchId = new GetImageSearchId(annm).request(client);
         L.d("开始获取图片url");
         try {
-
-
             int pageSize = 20;
             int total = 300000;
 

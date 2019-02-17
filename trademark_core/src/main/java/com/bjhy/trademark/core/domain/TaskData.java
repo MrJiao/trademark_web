@@ -26,13 +26,14 @@ public class TaskData {
     String id;
     @FieldParam("期号")
     String annm;
-    @FieldParam("开始位置")
-    Integer startNum;
-    @FieldParam("结束位置")
-    Integer endNum;
+    @FieldParam("商标数量")
+    Integer trademarkNumber;
+    @FieldParam("图片数量")
+    Integer picNumber;
     @FieldParam("执行状态")
     String exeState;//
-    public static String STATE_STARTING = "正在执行";
+    public static String STATE_STARTING_DATA = "正在解析商标数据";
+    public static String STATE_STARTING_PIC = "正在解析图片";
     public static String STATE_END = "执行完成";
     public static String STATE_ERROR = "执行失败";
 
@@ -72,20 +73,20 @@ public class TaskData {
         this.annm = annm;
     }
 
-    public Integer getStartNum() {
-        return startNum;
+    public Integer getTrademarkNumber() {
+        return trademarkNumber;
     }
 
-    public void setStartNum(Integer startNum) {
-        this.startNum = startNum;
+    public void setTrademarkNumber(Integer trademarkNumber) {
+        this.trademarkNumber = trademarkNumber;
     }
 
-    public Integer getEndNum() {
-        return endNum;
+    public Integer getPicNumber() {
+        return picNumber;
     }
 
-    public void setEndNum(Integer endNum) {
-        this.endNum = endNum;
+    public void setPicNumber(Integer picNumber) {
+        this.picNumber = picNumber;
     }
 
     public String getExeState() {
@@ -94,14 +95,6 @@ public class TaskData {
 
     public void setExeState(String exeState) {
         this.exeState = exeState;
-    }
-
-    public static String getStateStarting() {
-        return STATE_STARTING;
-    }
-
-    public static void setStateStarting(String stateStarting) {
-        STATE_STARTING = stateStarting;
     }
 
     public static String getStateEnd() {

@@ -4,6 +4,8 @@ import com.bjhy.trademark.core.domain.TrademarkBean;
 import org.apel.gaia.commons.pager.PageBean;
 import org.apel.gaia.infrastructure.BizCommonService;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public interface TrademarkBeanService extends BizCommonService<TrademarkBean,String>{
@@ -18,4 +20,12 @@ public interface TrademarkBeanService extends BizCommonService<TrademarkBean,Str
     List<TrademarkBean> findByAnnm(String annm);
 
     PageBean findSameName(String annm, PageBean pageBean);
+
+    void save(Iterable<TrademarkBean> trademarkList);
+
+    void update(Iterable<TrademarkBean> trademarkList);
+
+    void orcGao(List<TrademarkBean> trademarkBeanList);
+
+    TrademarkBean orcGao(TrademarkBean trademarkBean);
 }

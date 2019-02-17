@@ -1,9 +1,7 @@
 package com.bjhy.trademark.core.controller;
 
-import java.util.Date;
 import java.util.List;
 
-import com.bjhy.trademark.core.service.TrademarkDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -34,8 +32,6 @@ public class TaskDataController {
 	
 	@Autowired
 	private TaskDataService taskDataService;
-	@Autowired
-	TrademarkDataService trademarkDataService;
 	
 	//首页
 	@RequestMapping(value = "index", method = RequestMethod.GET)
@@ -54,10 +50,7 @@ public class TaskDataController {
 	//新增
 	@RequestMapping(method = RequestMethod.POST)
 	public @ResponseBody Message create(TaskData taskData){
-		taskData.setGmt_create(new Date());
-		taskData.setExeState(TaskData.STATE_STARTING);
 		taskDataService.save(taskData);
-		trademarkDataService.getTrademark(taskData);
 		return MessageUtil.message("common.create.success");
 	}
 	

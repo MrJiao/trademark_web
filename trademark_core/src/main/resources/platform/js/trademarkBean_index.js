@@ -17,7 +17,7 @@ trademarkBean_index.V = (function (){
                 height:document.body.clientHeight-230,
                 mtype: "GET",
                 multiselect: true,
-                colNames: ["id","页码编号","商标号","期号","申请日期","商标名","申请人","地址","代理机构","异议期限-开始","异议期限-截止","公告日期","类型","被选择的类型","外国申请人","外国代理所","外国邮箱","级别","创建时间"],
+                colNames: ["id","页码编号","商标号","期号","申请日期","商标名","申请人","地址","代理机构","异议期限-开始","异议期限-截止","公告日期","类型","被选择的类型","外国申请人","外国代理所","外国邮箱","级别","备注","创建时间"],
                 colModel: [
                     { name: "id", index:"id",align:"center",hidden: true, sortable: true},
                     { name: "page_no", index:"page_no",align:"center", sortable: true},
@@ -37,13 +37,14 @@ trademarkBean_index.V = (function (){
                     { name: "representatives", index:"representatives",align:"center",hidden: false, sortable: true},
                     { name: "email", index:"email",align:"center",hidden: false, sortable: true},
                     { name: "level", index:"level",align:"center",hidden: false, sortable: true},
+                    { name: "remark", index:"remark",align:"center",hidden: false, sortable: true},
                     { name: "gmt_create", index:"gmt_create",align:"center",hidden: true, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d H:i:s" }}
                 ],
                 pager: "#commonPager",
                 rowNum: 10,
-                rowList: [10, 20, 30],
+                rowList: [10, 20, 30,40,50,20000],
                 sortname:"page_no",
-                sortorder:"desc",
+                sortorder:"asc",
                 viewrecords: true,
                 gridview: true,
                 autoencode: true,
@@ -76,8 +77,8 @@ trademarkBean_index.V = (function (){
             $('#commonDetail').show();
             $('#commonDetail').window({
                 title:"交付规则详细信息",
-                width:750,
-                height:250,
+                width:1075,
+                height:650,
                 modal:true
             });
             //填充复杂字段信息
@@ -108,6 +109,9 @@ trademarkBean_index.V = (function (){
         },
         showWarning: function (msg) {
             toastr.warning(msg);
+        },
+        setTrademarkUrl:function(id){
+            $("#img_trademark").attr("src", contextPath+"/trademarkBean/image/"+id);
         }
     };
 })();
@@ -124,10 +128,16 @@ trademarkBean_index.M = (function (){
 
         }
     }
+    var ids;
+    var currentPage=0;
     return{
+        initPage:function(){
+            currentPage=0;
+        },
         //获取选中的ids
         getJQSelectIds: function () {
-            return V.getJqGrid().jqGrid('getGridParam', 'selarrrow');
+            ids = V.getJqGrid().jqGrid('getGridParam', 'selarrrow');
+            return ids;
         },
         //获取当前页
         getJqPage: function(){
@@ -185,7 +195,7 @@ trademarkBean_index.M = (function (){
                             sortorder:"desc",
                             page:this.getJqPage()
                         });
-                        V.closeCommonDetailWindow();
+                        //V.closeCommonDetailWindow();
                     }
                 });
             }else{
@@ -221,7 +231,36 @@ trademarkBean_index.M = (function (){
         },
         getAnnm: function () {
             return $("#inputAnnm").val();
-        }
+        },
+        nextPage:function(){
+            if(currentPage<ids.length-1)
+                currentPage++;
+        },
+        prePage:function(){
+            if(currentPage>0)
+                currentPage--;
+        },
+        getCurrentPageId:function(){
+           return ids[currentPage];
+        },
+        //批量高精度识别
+        batchGaoItemDate:function (ids,callback) {
+            PlatformUI.ajax({
+                url: contextPath + "/trademarkBean/gao",
+                type: "post",
+                data: {_method:"put",ids:ids},
+                afterOperation:callback
+            });
+        },
+        //高精度识别
+        gaoItemDate:function (id,callback) {
+            PlatformUI.ajax({
+                url: contextPath + "/trademarkBean/gao/"+id,
+                type: "post",
+                data: {_method:"put"},
+                afterOperation:callback
+            });
+        },
     };
 })();
 
@@ -281,8 +320,8 @@ trademarkBean_index.P = (function (){
             if(operation == "add"){
                 M.postFormData();
             }else{
-                M.updateItemData(M.getJQSelectIds()[0]);
-                V.closeCommonDetailWindow();
+                M.updateItemData(M.getCurrentPageId());
+
             }
         });
 
@@ -294,14 +333,14 @@ trademarkBean_index.P = (function (){
 
         //编辑按钮
         $("#commonShowEditBtn").click(function(){
+            M.initPage();
             V.changeEditForm(true);
-
-            var ids =   M.getJQSelectIds()
-            if(!checkSelected())return;
+            var ids =   M.getJQSelectIds();
             operation = "edit";
             M.getItemData(ids[0],function(data, textStatus,jqXHR){
                 V.showCommonDetailWindow();
                 V.populateForm(data);
+                V.setTrademarkUrl(ids[0]);
                 //填充复杂数据
                 //验证表单
                 V.validateForm();
@@ -345,7 +384,49 @@ trademarkBean_index.P = (function (){
         $("#sameNameSearchBtn").click(function () {
             var annm = M.getAnnm();
             M.sameNameSearch(annm);
-        })
+        });
+
+        $("#commonNextPage").click(function () {
+
+            M.nextPage();
+            operation = "edit";
+            var id = M.getCurrentPageId();
+            M.getItemData(id,function(data, textStatus,jqXHR){
+                V.showCommonDetailWindow();
+                V.populateForm(data);
+                V.setTrademarkUrl(id);
+                //填充复杂数据
+                //验证表单
+                //V.validateForm();
+            })
+        });
+
+        $("#commonPrePage").click(function () {
+            M.prePage();
+            operation = "edit";
+            var id = M.getCurrentPageId();
+            M.getItemData(id,function(data, textStatus,jqXHR){
+                V.showCommonDetailWindow();
+                V.populateForm(data);
+                V.setTrademarkUrl(id);
+            })
+        });
+
+        $("#commonGao").click(function () {
+            var id = M.getCurrentPageId();
+            M.gaoItemDate(id,function (data) {
+                V.showCommonDetailWindow();
+                V.populateForm(data);
+                V.setTrademarkUrl(id);
+            });
+        });
+
+        $("#commonBatchGao").click(function () {
+            var ids = M.getJQSelectIds();
+            M.batchGaoItemDate(ids,function () {
+                V.refreshGrid();
+            });
+        });
     }
 
     return {

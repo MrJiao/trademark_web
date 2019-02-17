@@ -22,8 +22,8 @@ server:
   port: 80
 
 trademark:
-  storePath: /Users/jiaoyubing/work_space/localworkspace/trademark_web/trademark_core/target/classes
-  tempPath: /Users/jiaoyubing/work_space/localworkspace/trademark_web/trademark_core/target/classes/temp
+  storePath: /Users/jiaoyubing/downloadTemp3
+  tempPath: /Users/jiaoyubing/downloadTemp3/temp
 
 cache: 
   toolkit: 

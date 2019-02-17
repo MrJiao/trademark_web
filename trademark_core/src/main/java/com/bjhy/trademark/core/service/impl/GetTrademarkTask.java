@@ -1,18 +1,22 @@
 package com.bjhy.trademark.core.service.impl;
 
 import com.bjhy.tlevel.datax.common.utils.L;
-import com.bjhy.trademark.common.net.WaitStrategy;
 import com.bjhy.trademark.common.utils.DownloadUtil;
 import com.bjhy.trademark.common.utils.MD5;
 import com.bjhy.trademark.core.convert.ConvertUtil;
 import com.bjhy.trademark.core.domain.TaskData;
 import com.bjhy.trademark.core.domain.TrademarkBean;
+import com.bjhy.trademark.core.pojo.TrademarkData;
+import com.bjhy.trademark.core.pojo.UrlData;
 import com.bjhy.trademark.core.service.TaskDataService;
 import com.bjhy.trademark.core.service.TrademarkBeanService;
-import com.bjhy.trademark.data.downloadPic.GetImageUrlTask;
 import com.bjhy.trademark.data.pic_orc.PicOrc;
 import com.bjhy.trademark.data.pic_orc.domain.OrcData;
 import com.bjhy.trademark.watermarker.WaterMarker;
+import com.bjhy.trademark.watermarker.core.Task;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +25,10 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
-import java.util.Set;
+import java.nio.charset.Charset;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Create by: Jackson
@@ -31,14 +37,21 @@ import java.util.Set;
 @Component
 public class GetTrademarkTask implements Runnable {
 
-    TaskData taskData;
+    File urlFile;
+    File dataFile;
     String storePath;
+    String annum;
     File folder;
-    public GetTrademarkTask(TaskData taskData, String storePath) {
-        this.taskData = taskData;
+    File pasteFolder;
+    public GetTrademarkTask(File urlFile,File dataFile,String annum, String storePath) {
+        this.urlFile = urlFile;
+        this.dataFile = dataFile;
         this.storePath = storePath;
+        this.annum = annum;
         folder = new File(storePath, "extract");
         folder.mkdirs();
+        pasteFolder = new File(storePath, "paste");
+        pasteFolder.mkdirs();
     }
 
     @Autowired
@@ -51,52 +64,175 @@ public class GetTrademarkTask implements Runnable {
     TaskDataService taskDataService;
     @Autowired
     TrademarkBeanService trademarkBeanService;
-
+    TaskData taskData;
     CloseableHttpClient client = HttpClients.createDefault();
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    private void initTaskData(ArrayList<TrademarkData.RowsBean> rowsBeans,Set<String> urls){
+        taskData = new TaskData();
+        taskData.setAnnm(annum);
+        taskData.setPicNumber(urls.size());
+        taskData.setTrademarkNumber(rowsBeans.size());
+        taskData.setGmt_create(new Date());
+        taskData.setExeState(TaskData.STATE_STARTING_DATA);
+        taskDataService.save(taskData);
+
+    }
 
     @Override
     public void run() {
         try {
-           // String searchId = new GetImageSearchId(taskData.getAnnm()).request(client);
-            GetImageUrlTask getImageUrlTask = new GetImageUrlTask(client, new WaitStrategy() {
-                @Override
-                public long waitTime() {
-                    return 1000;
-                }
-            }, taskData.getStartNum(), taskData.getEndNum(), taskData.getAnnm());
-            Set<String> imageUrls = getImageUrlTask.get();
-
+            ArrayList<TrademarkData.RowsBean> rowsBeans = readTrademarkData();
+            Set<String> imageUrls = getUrls();
+            initTaskData(rowsBeans,imageUrls);
+            HashMap<String, TrademarkBean> hm = storeData(rowsBeans);
+            taskData.setExeState(TaskData.STATE_STARTING_PIC);
+            taskDataService.update(taskData);
             for (String url : imageUrls) {
-                boolean success = true;
                 try {
-                    TrademarkBean trademarkBean = getTrademarkBean(url);
-                    //下载图片
-                    downloadPic(url, trademarkBean);
-                    //提取图片信息
-                    extract(trademarkBean);
-                    //图片文字识别
-                    OrcData normal = picOrc.normal(trademarkBean.getDataPicPath());
-                    trademarkBean.setAnalysType(TrademarkBean.ANALYS_NORMAL);
-                    //转义存库
-                    if(!ConvertUtil.convert(normal, trademarkBean)){
-                        OrcData gao = picOrc.gao(trademarkBean.getDataPicPath());
-                        trademarkBean.setAnalysType(TrademarkBean.ANALYS_GAO);
-                        if(!ConvertUtil.convert(gao, trademarkBean)){
-                            continue;
-                        }
-                    }
-                    trademarkBeanService.save(trademarkBean);
+                    TrademarkBean trademarkBean = downloadAndAnalysTrademarkBean(url);
+                    //匹配商标名称
+                    TrademarkBean bean = matchPicData(hm, trademarkBean);
+                    trademarkBeanService.update(bean);
                 } catch (Exception e) {
                     L.e("图片处理错误", url);
                     L.exception(e);
                 }
             }
+            taskData.setExeState(TaskData.STATE_END);
+            taskDataService.update(taskData);
         } catch (Exception e) {
-            taskData.setExeState(TaskData.STATE_ERROR);
+            L.e("解析错误");
+            L.exception(e);
         }
-        taskData.setExeState(TaskData.STATE_END);
-        taskData.setCompleteTime(new Date());
-        taskDataService.saveOrUpdate(taskData);
+    }
+
+    private TrademarkBean downloadAndAnalysTrademarkBean(String url) throws IOException, InterruptedException, ParseException {
+        TrademarkBean trademarkBean = getTrademarkBean(url);
+
+        if(!new File(trademarkBean.getPicPath()).exists()){
+            //下载图片
+            downloadPic(url, trademarkBean);
+        }
+        if(!new File(trademarkBean.getDataPicPath()).exists()){
+            //提取图片信息
+            extract(trademarkBean);
+        }
+        if(!new File(trademarkBean.getPastePicPath()).exists()){
+            //清除水印
+            remoteWatermark(trademarkBean);
+        }
+        //图片文字识别
+        OrcData normal = picOrc.normal(trademarkBean.getDataPicPath());
+        trademarkBean.setAnalysType(TrademarkBean.ANALYS_NORMAL);
+        //转义
+        if(!ConvertUtil.convert(normal, trademarkBean)){
+
+            if(StringUtils.isEmpty(trademarkBean.getNumber())){
+                return null;
+            } else if(trademarkBean.getNumber().length()!=8){
+                OrcData gao = picOrc.gao(trademarkBean.getDataPicPath());
+                trademarkBean.setAnalysType(TrademarkBean.ANALYS_GAO);
+                if(!ConvertUtil.convert(gao, trademarkBean)){
+                    return null;
+                }
+            }
+        }
+        return trademarkBean;
+    }
+
+
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    private TrademarkBean matchPicData(HashMap<String, TrademarkBean> hm,TrademarkBean picData) {
+        if(picData == null)return null;
+        TrademarkBean trademarkBean = hm.get(picData.getId());
+        if(trademarkBean==null)return null;
+        trademarkBean.setPastePicPath(picData.getPastePicPath());
+        trademarkBean.setClient(picData.getClient());
+        trademarkBean.setRepresentatives(picData.getRepresentatives());
+        trademarkBean.setEmail(picData.getEmail());
+        trademarkBean.setAnalysType(picData.getAnalysType());
+        trademarkBean.setChoosedType(picData.getChoosedType());
+        trademarkBean.setUrl(picData.getUrl());
+        trademarkBean.setPicPath(picData.getPicPath());
+        trademarkBean.setDataPicPath(picData.getDataPicPath());
+        trademarkBean.setYiyiStartDate(picData.getYiyiStartDate());
+        trademarkBean.setYiyiEndDate(picData.getYiyiEndDate());
+        trademarkBean.setApplicationDate(picData.getApplicationDate());
+        trademarkBean.setAddress(picData.getAddress());
+        trademarkBean.setAgency(picData.getAgency());
+        trademarkBean.setType(picData.getType());
+        return trademarkBean;
+    }
+
+
+    private HashMap<String, TrademarkBean> storeData(ArrayList<TrademarkData.RowsBean> rowsBeans){
+
+        ArrayList<TrademarkBean> trademarkBeanArr = new ArrayList<>();
+        HashMap<String, TrademarkBean> hm = new HashMap<>();
+        for (TrademarkData.RowsBean row : rowsBeans) {
+            TrademarkBean trademarkBean = new TrademarkBean();
+            try {
+                trademarkBean.setAnn_date(formatter.parse(row.getAnn_date()));//公告日期
+            } catch (ParseException e) {
+                L.e("解析公告日期错误 商标号",trademarkBean.getNumber());
+                L.exception(e);
+            }
+            trademarkBean.setId(row.getReg_num());
+            trademarkBean.setNumber(row.getReg_num());
+            trademarkBean.setPage_no(row.getPage_no());//页码
+            trademarkBean.setApplicant(row.getRegname());//申请人
+            trademarkBean.setAnNum(row.getAnn_num());//期号
+            trademarkBean.setName(row.getTmname());//商标名称
+            trademarkBean.setGmt_create(new Date());
+            trademarkBeanArr.add(trademarkBean);
+            hm.put(trademarkBean.getId(),trademarkBean);
+        }
+        trademarkBeanService.save(trademarkBeanArr);
+        return hm;
+    }
+
+
+
+
+
+
+    private ArrayList<TrademarkData.RowsBean> readTrademarkData() {
+        ArrayList<TrademarkData.RowsBean> dataArrayList = new ArrayList<>();
+        try {
+            String content = FileUtils.readFileToString(dataFile, Charset.defaultCharset());
+            String[] split = content.split(";");
+            for (String s : split) {
+                TrademarkData trademarkData = objectMapper.readValue(s, TrademarkData.class);
+                dataArrayList.addAll(trademarkData.getRows());
+            }
+
+
+        } catch (IOException e) {
+            L.e("解析商标信息失败");
+            L.exception(e);
+        }
+        return dataArrayList;
+    }
+
+    private Set<String> getUrls() {
+        HashSet<String> hs = new HashSet<>();
+        try {
+            String urlsStr = FileUtils.readFileToString(urlFile, Charset.defaultCharset());
+            String[] split = urlsStr.split(";");
+            for (String s : split) {
+                UrlData urlData = objectMapper.readValue(s, UrlData.class);
+                hs.addAll(urlData.getImaglist());
+            }
+        } catch (IOException e) {
+            L.e("解析url文件错误");
+            L.exception(e);
+        }
+        return hs;
+    }
+
+    private void remoteWatermark(TrademarkBean trademarkBean) {
+        waterMarker.clipPic(new File(trademarkBean.getPicPath()), new File(trademarkBean.getPastePicPath()));
     }
 
     private void extract(TrademarkBean trademarkBean) {
@@ -110,8 +246,12 @@ public class GetTrademarkTask implements Runnable {
         String encode = md5.encode(url);
         File file = new File(storePath, encode + ".jpg");
         File extractFile = new File(folder, encode + ".jpg");
+        File pasteFile = new File(pasteFolder, encode + ".jpg");
+
+
         trademarkBean.setPicPath(file.getAbsolutePath());
         trademarkBean.setDataPicPath(extractFile.getAbsolutePath());
+        trademarkBean.setPastePicPath(pasteFile.getAbsolutePath());
         return trademarkBean;
     }
 
