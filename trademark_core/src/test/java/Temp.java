@@ -1,5 +1,6 @@
 import com.bjhy.jackson.fast.generator.CodeGenerator;
 import com.bjhy.jackson.fast.generator.config.GeneratorConfig;
+import com.bjhy.trademark.common.utils.ZipUtil;
 import com.bjhy.trademark.core.convert.ConvertUtil;
 import com.bjhy.trademark.core.domain.TaskData;
 import com.bjhy.trademark.core.domain.TrademarkBean;
@@ -36,9 +37,18 @@ public class Temp {
 
         File targetFile = new File(targetFolder,source.getName());
 
-        waterMarker.getDataPic(source,targetFolder);
+        try {
+            waterMarker.getDataPic(source,targetFolder);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        OrcData normal = picOrc.gao(targetFile.getAbsolutePath());
+        OrcData normal = null;
+        try {
+            normal = picOrc.gao(targetFile.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         TrademarkBean trademarkBean = new TrademarkBean();
         ConvertUtil.convert(normal, trademarkBean);
@@ -64,6 +74,14 @@ public class Temp {
 
         CodeGenerator codeGenerator = new CodeGenerator();
         codeGenerator.generatorCode(classes,generatorConfig);
+    }
+
+
+    @Test
+    public void zip() throws IOException {
+        String zipfolder = "/Users/jiaoyubing/downloadTemp3/temp/1550466499373的副本";
+        String targetPath = "/Users/jiaoyubing/downloadTemp3/temp";
+        ZipUtil.directory2Zip(zipfolder,targetPath,"123.zip");
     }
 
 }

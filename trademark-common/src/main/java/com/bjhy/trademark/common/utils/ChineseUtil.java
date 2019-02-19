@@ -40,11 +40,18 @@ public class ChineseUtil {
      * @return
      */
     public static boolean isChinese(String str) {
-        if (StringUtils.isBlank(str)) {
+        if (StringUtils.isEmpty(str)) {
             return false;
         }
         Matcher matcher = CONTENT_CHINESE_PATTERN.matcher(str.trim());
         return matcher.matches();
+    }
+
+    //数字和中文,下划线和逗号
+    public static boolean isMathAndChinese(String str) {
+        if(StringUtils.isEmpty(str))return false;
+        Matcher mat=MATCH_CONTENT_MATH_CHINESE__PATTERN.matcher(str);
+        return mat.matches();
     }
 
     public static String removeChinese(String str){

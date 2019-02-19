@@ -21,7 +21,7 @@
 					   value="查看" /></li>-->
 <!--			<li><input type="button" class="btn_blue" id="commonShowAddBtn"
 					   value="新增" /></li>-->
-			<li><input type="text" class="btn_blue" id="inputAnnm" pattern="[0-9]{4}" placeholder="请输入期号"
+			<li><input type="text" id="inputAnnm" pattern="[0-9]{4}" placeholder="输入期号,all代表所有"
 					    /></li>
 			<li><input type="button" class="btn_blue" id="sameNameSearchBtn"
 					   value="查询相同名称" /></li>
@@ -34,7 +34,14 @@
             <li><input type="button" class="btn_blue" id="commonBatchGao"
                        value="高精度匹配" /></li>
 			<li><input type="button" class="btn_blue" id="exportBtn"
-					   value="导出商标名称" /></li>
+					   value="导出选中商标名称" /></li>
+			<li><input type="button" class="btn_blue" id="exportZipBtn"
+					   value="导出选中zip包" /></li>
+			<li><input type="button" class="btn_blue" id="exportAllNameBtn"
+					   value="导出结果全部商标名称" /></li>
+
+
+
 
 		</ul>
 		<ul class="toolkit_ul_right">
@@ -44,6 +51,10 @@
 					   value="查询" /></li>
 			<li><input type="button" class="btn_blue" id="commonRetrieveBtn"
 					   value="检索" /></li>
+			<li><input type="text" id="inputLiuShui" placeholder="请输入流水号开始位置"
+			/></li>
+			<li><input type="button" class="btn_blue" id="exportAllZipBtn"
+					   value="导出结果全部zip包" /></li>
 		</ul>
 	</div>
 	<div class="data_grid clear">

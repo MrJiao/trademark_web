@@ -93,12 +93,14 @@ public class GetTrademarkTask implements Runnable {
                     TrademarkBean trademarkBean = downloadAndAnalysTrademarkBean(url);
                     //匹配商标名称
                     TrademarkBean bean = matchPicData(hm, trademarkBean);
+                    if(bean ==null)continue;
                     trademarkBeanService.update(bean);
                 } catch (Exception e) {
                     L.e("图片处理错误", url);
                     L.exception(e);
                 }
             }
+            taskData.setCompleteTime(new Date());
             taskData.setExeState(TaskData.STATE_END);
             taskDataService.update(taskData);
         } catch (Exception e) {
@@ -106,32 +108,61 @@ public class GetTrademarkTask implements Runnable {
             L.exception(e);
         }
     }
-
-    private TrademarkBean downloadAndAnalysTrademarkBean(String url) throws IOException, InterruptedException, ParseException {
+    boolean extractSuccess = true;
+    private TrademarkBean downloadAndAnalysTrademarkBean(String url) {
         TrademarkBean trademarkBean = getTrademarkBean(url);
 
         if(!new File(trademarkBean.getPicPath()).exists()){
             //下载图片
-            downloadPic(url, trademarkBean);
+            try {
+                downloadPic(url, trademarkBean);
+            }catch (Exception e){
+                L.e("下载图片失败",url);
+            }
+
         }
         if(!new File(trademarkBean.getDataPicPath()).exists()){
             //提取图片信息
-            extract(trademarkBean);
+            extractSuccess = true;
+            try {
+                extract(trademarkBean);
+            } catch (Exception e) {
+                extractSuccess = false;
+                L.e("提取图片信息失败",trademarkBean.getDataPicPath());
+                L.exception(e);
+            }
         }
         if(!new File(trademarkBean.getPastePicPath()).exists()){
-            //清除水印
-            remoteWatermark(trademarkBean);
+            if(extractSuccess){
+                //清除水印
+                try {
+                    remoteWatermark(trademarkBean);
+                } catch (Exception e) {
+                    L.e("提取粘贴图片失败");
+                    L.exception(e);
+                }
+            }
+
         }
         //图片文字识别
-        OrcData normal = picOrc.normal(trademarkBean.getDataPicPath());
+        OrcData normal = null;
+        try {
+            normal = picOrc.normal(trademarkBean.getDataPicPath());
+        } catch (IOException e) {
+            L.e("图片普通识别失败",trademarkBean.getDataPicPath());
+        }
         trademarkBean.setAnalysType(TrademarkBean.ANALYS_NORMAL);
         //转义
         if(!ConvertUtil.convert(normal, trademarkBean)){
-
             if(StringUtils.isEmpty(trademarkBean.getNumber())){
                 return null;
             } else if(trademarkBean.getNumber().length()!=8){
-                OrcData gao = picOrc.gao(trademarkBean.getDataPicPath());
+                OrcData gao = null;
+                try {
+                    gao = picOrc.gao(trademarkBean.getDataPicPath());
+                } catch (IOException e) {
+                    L.e("图片高级识别失败",trademarkBean.getDataPicPath());
+                }
                 trademarkBean.setAnalysType(TrademarkBean.ANALYS_GAO);
                 if(!ConvertUtil.convert(gao, trademarkBean)){
                     return null;
@@ -197,21 +228,23 @@ public class GetTrademarkTask implements Runnable {
 
 
 
-    private ArrayList<TrademarkData.RowsBean> readTrademarkData() {
+    private ArrayList<TrademarkData.RowsBean> readTrademarkData() throws IOException {
         ArrayList<TrademarkData.RowsBean> dataArrayList = new ArrayList<>();
-        try {
             String content = FileUtils.readFileToString(dataFile, Charset.defaultCharset());
             String[] split = content.split(";");
             for (String s : split) {
-                TrademarkData trademarkData = objectMapper.readValue(s, TrademarkData.class);
-                dataArrayList.addAll(trademarkData.getRows());
+                try {
+                    TrademarkData trademarkData = objectMapper.readValue(s, TrademarkData.class);
+                    dataArrayList.addAll(trademarkData.getRows());
+                } catch (IOException e) {
+                    L.e("解析商标信息失败");
+                    L.exception(e);
+                }
+
             }
 
 
-        } catch (IOException e) {
-            L.e("解析商标信息失败");
-            L.exception(e);
-        }
+
         return dataArrayList;
     }
 
@@ -219,6 +252,7 @@ public class GetTrademarkTask implements Runnable {
         HashSet<String> hs = new HashSet<>();
         try {
             String urlsStr = FileUtils.readFileToString(urlFile, Charset.defaultCharset());
+            if(StringUtils.isEmpty(urlsStr))return hs;
             String[] split = urlsStr.split(";");
             for (String s : split) {
                 UrlData urlData = objectMapper.readValue(s, UrlData.class);
@@ -231,11 +265,11 @@ public class GetTrademarkTask implements Runnable {
         return hs;
     }
 
-    private void remoteWatermark(TrademarkBean trademarkBean) {
+    private void remoteWatermark(TrademarkBean trademarkBean) throws IOException {
         waterMarker.clipPic(new File(trademarkBean.getPicPath()), new File(trademarkBean.getPastePicPath()));
     }
 
-    private void extract(TrademarkBean trademarkBean) {
+    private void extract(TrademarkBean trademarkBean) throws IOException {
         waterMarker.getDataPic(new File(trademarkBean.getPicPath()), new File(trademarkBean.getDataPicPath()));
     }
 

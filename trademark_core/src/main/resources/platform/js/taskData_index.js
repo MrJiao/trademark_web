@@ -287,9 +287,7 @@ taskData_index.P = (function (){
         //批量删除事件
         $("#commonDelBtn").click(function(){
             var ids = M.getJQSelectIds();
-            if(!checkSelected())return;
             //批量删除ajax
-
             V.showConfirm('操作','请确认删除数据',function(isOk){
                 if (isOk){
                     M.batchDeleteItemDate(ids,function(){

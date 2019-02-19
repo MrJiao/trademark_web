@@ -7,9 +7,9 @@ import java.util.*;
 
 import com.bjhy.trademark.common.utils.ChineseUtil;
 import com.bjhy.trademark.core.TrademarkConfig;
+import com.bjhy.trademark.core.service.CacheService;
 import com.bjhy.trademark.core.service.DownloadService;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Sort;
@@ -42,6 +42,10 @@ public class TrademarkBeanController {
 	@Autowired
 	private TrademarkConfig trademarkConfig;
 
+
+	@Autowired
+	CacheService cacheService;
+
 	//首页
 	@RequestMapping(value = "index", method = RequestMethod.GET)
 	public String index(){
@@ -53,6 +57,7 @@ public class TrademarkBeanController {
 	public @ResponseBody PageBean list(QueryParams queryParams){
 		PageBean pageBean = JqGridUtil.getPageBean(queryParams);
 		trademarkBeanService.pageQuery(pageBean);
+		cacheService.cacheQuery("", "list",queryParams);
 		return pageBean;
 	}
 	
@@ -106,13 +111,14 @@ public class TrademarkBeanController {
 		condition.setOperation(Operation.CN);
 		condition.setPropertyName("id");
 		condition.setPropertyValue(id);
-		return trademarkBeanService.findByCondition(condition);
+		List<TrademarkBean> list = trademarkBeanService.findByCondition(condition);
+		return list;
 	}
 
 	//TODO 不能多人同时使用,文件会被覆盖
 	@Autowired
 	DownloadService downloadService;
-	@GetMapping("/trademark_name")
+	@RequestMapping(value = "/trademark_name",method = RequestMethod.GET)
 	public ResponseEntity<InputStreamResource> download(@RequestParam("ids[]") String[] ids) throws Exception {
 		String tempPath = trademarkConfig.getTempPath();
 		File trademarkNameFile = new File(tempPath, "trademarkName.txt");
@@ -120,10 +126,42 @@ public class TrademarkBeanController {
 		trademarkBeanList = trademarkBeanService.filterTrademarkName(trademarkBeanList);
 		HashSet<String> names = new HashSet<>();
 		for (TrademarkBean trademarkBean : trademarkBeanList) {
-			names.add(ChineseUtil.removeChinese(trademarkBean.getName()));
+			String name = trademarkBeanService.formatterName(trademarkBean.getName());
+			names.add(name);
 		}
 		FileUtils.writeLines(trademarkNameFile, Charset.defaultCharset().name(),names);
 		return downloadService.downloadFile(trademarkNameFile,trademarkNameFile.getName());
+	}
+
+
+	@RequestMapping(value = "/trademark_all_name",method = RequestMethod.GET)
+	public ResponseEntity<InputStreamResource> downloadNames() throws Exception {
+		String tempPath = trademarkConfig.getTempPath();
+		File trademarkNameFile = new File(tempPath, "trademarkName.txt");
+		List<TrademarkBean> trademarkBeanList = cacheService.getTrademarkBeanList();
+		trademarkBeanList = trademarkBeanService.filterTrademarkName(trademarkBeanList);
+		HashSet<String> names = new HashSet<>();
+		for (TrademarkBean trademarkBean : trademarkBeanList) {
+			String name = trademarkBeanService.formatterName(trademarkBean.getName());
+			names.add(name);
+		}
+		FileUtils.writeLines(trademarkNameFile, Charset.defaultCharset().name(),names);
+		return downloadService.downloadFile(trademarkNameFile,trademarkNameFile.getName());
+	}
+
+	//TODO 不能多人同时使用,文件会被覆盖
+	@GetMapping("/trademark_zip")
+	public ResponseEntity<InputStreamResource> downloadZip(@RequestParam("ids[]") String[] ids,String liushui) throws Exception {
+		List<TrademarkBean> list = trademarkBeanService.findByAllId(Arrays.asList(ids));
+		File zipFile = trademarkBeanService.zipTrademarkBean(list,liushui);
+		return downloadService.downloadFile(zipFile,zipFile.getName());
+	}
+
+	@GetMapping("/trademark_all_zip")
+	public ResponseEntity<InputStreamResource> downloadAllZip(@RequestParam("ids[]") String[] ids,String liushui) throws Exception {
+		List<TrademarkBean> list = cacheService.getTrademarkBeanList();
+		File zipFile = trademarkBeanService.zipTrademarkBean(list,liushui);
+		return downloadService.downloadFile(zipFile,zipFile.getName());
 	}
 
 
@@ -136,7 +174,7 @@ public class TrademarkBeanController {
 		trademarkBean.setPicPath(bean.getPicPath());
 		trademarkBean.setPastePicPath(bean.getPastePicPath());
 		trademarkBean.setDataPicPath(bean.getPastePicPath());
-		trademarkBean.setAnalysType(bean.getType());
+		trademarkBean.setAnalysType(bean.getAnalysType());
 		trademarkBeanService.update(trademarkBean);
 		return MessageUtil.message("common.update.success");
 	}
@@ -146,15 +184,16 @@ public class TrademarkBeanController {
 		PageBean pageBean = JqGridUtil.getPageBean(queryParams);
 		trademarkBeanService.findSameName(annm,pageBean);
 		List<Object> items = pageBean.getItems();
-		removeTuxing(items);
+		//removeTuxingAndChinese(items);
+		cacheService.cacheQuery(annm,"sameName",queryParams);
 		return pageBean;
 	}
 
-	private void removeTuxing(List<Object> items) {
+	private void removeTuxingAndChinese(List<Object> items) {
 		ListIterator<Object> iterator = items.listIterator();
 		while (iterator.hasNext()){
 			TrademarkBean bean = (TrademarkBean) iterator.next();
-			if(StringUtils.equals(bean.getName(),"图形")){
+			if(ChineseUtil.isChinese(bean.getName())){
 				iterator.remove();
 			}
 		}

@@ -11,6 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -23,7 +24,7 @@ import java.util.regex.Pattern;
  */
 @TableName("商标数据")
 @Entity
-public class TrademarkBean {
+public class TrademarkBean implements Serializable {
 
     @FieldParam(value = "id",hidden = true)
     @Id
@@ -58,7 +59,7 @@ public class TrademarkBean {
     Date ann_date;//
 
     @FieldParam(value="类型",hidden = true)
-    @Column(name = "mType",length = 400)
+    @Column(name = "mType",length = 500)
     String type;//
 
     //@FieldParam(value="图片url",hidden = true)
@@ -74,9 +75,8 @@ public class TrademarkBean {
     @JsonIgnore
     String pastePicPath;//
 
-
-
     @FieldParam(value="被选择的类型",hidden = true)
+    @Column(length = 500)
     String choosedType;//
     @FieldParam(value="精度类别",hidden = true)
     String analysType;
@@ -317,6 +317,7 @@ public class TrademarkBean {
 
     private List<TrademarkType> convertType(String str){
         ArrayList<TrademarkType> list = new ArrayList<>();
+        if(StringUtils.isEmpty(str))return list;
         Pattern pattern = Pattern.compile(rex);
 
         Matcher matcher = pattern.matcher(str);

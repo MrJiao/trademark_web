@@ -17,7 +17,7 @@ trademarkBean_index.V = (function (){
                 height:document.body.clientHeight-230,
                 mtype: "GET",
                 multiselect: true,
-                colNames: ["id","页码编号","商标号","期号","申请日期","商标名","申请人","地址","代理机构","异议期限-开始","异议期限-截止","公告日期","类型","被选择的类型","外国申请人","外国代理所","外国邮箱","级别","备注","创建时间"],
+                colNames: ["id","页码编号","商标号","期号","申请日期","商标名","申请人","地址","代理机构","异议期限-开始","异议期限-截止","公告日期","类型","被选择的类型","外国申请人","外国代理所","外国邮箱","备注","创建时间"],
                 colModel: [
                     { name: "id", index:"id",align:"center",hidden: true, sortable: true},
                     { name: "page_no", index:"page_no",align:"center", sortable: true},
@@ -36,13 +36,12 @@ trademarkBean_index.V = (function (){
                     { name: "client", index:"client",align:"center",hidden: false, sortable: true},
                     { name: "representatives", index:"representatives",align:"center",hidden: false, sortable: true},
                     { name: "email", index:"email",align:"center",hidden: false, sortable: true},
-                    { name: "level", index:"level",align:"center",hidden: false, sortable: true},
                     { name: "remark", index:"remark",align:"center",hidden: false, sortable: true},
                     { name: "gmt_create", index:"gmt_create",align:"center",hidden: true, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d H:i:s" }}
                 ],
                 pager: "#commonPager",
                 rowNum: 10,
-                rowList: [10, 20, 30,40,50,20000],
+                rowList: [10, 20,40,80],
                 sortname:"page_no",
                 sortorder:"asc",
                 viewrecords: true,
@@ -127,7 +126,7 @@ trademarkBean_index.M = (function (){
         }catch(e){
 
         }
-    }
+    };
     var ids;
     var currentPage=0;
     return{
@@ -217,7 +216,7 @@ trademarkBean_index.M = (function (){
                 afterOperation:callback
             });
         },
-        exportName:function(ids,callback){
+        exportName:function(ids){
             var url=contextPath + "/trademarkBean/trademark_name?";
             for( var index in ids){
                 url = url+'ids[]='+ids[index]+'&';
@@ -225,9 +224,36 @@ trademarkBean_index.M = (function (){
             url = url.substr(0,url.length-1);
             downloadFile(url);
         },
+        exportAllName:function(){
+            var url=contextPath + "/trademarkBean/trademark_all_name";
+            downloadFile(url);
+        },
+        exportZip:function(ids){
+            var url=contextPath + "/trademarkBean/trademark_zip?";
+            var liushui = $("#inputLiuShui").val();
+            if(liushui==null || liushui==''){
+                toastr.warning("请输入流水号");
+                return;
+            }
+
+            for( var index in ids){
+                url = url+'ids[]='+ids[index]+'&';
+            }
+            url = url+"liushui="+liushui;
+            downloadFile(url);
+        },
+        exportAllZip:function(){
+            var url=contextPath + "/trademarkBean/trademark_all_zip?";
+            var liushui = $("#inputLiuShui").val();
+            if(liushui==null || liushui==''){
+                toastr.warning("请输入流水号");
+                return;
+            }
+            url = url+"liushui="+liushui;
+            downloadFile(url);
+        },
         sameNameSearch: function (annm) {
             V.getJqGrid().setGridParam({url:contextPath +"/trademarkBean/sameName/"+annm}).trigger("reloadGrid");
-
         },
         getAnnm: function () {
             return $("#inputAnnm").val();
@@ -279,6 +305,7 @@ trademarkBean_index.P = (function (){
     function initListener() {
         //绑定检索事件
         $("#commonRetrieveBtn").click(function(){
+            V.getJqGrid().setGridParam({url:contextPath +"/trademarkBean"});
             $("#commonSearchInput").val("");
             V.getJqGrid().jqGrid("setGridParam", {
                 postData: {filters:{}}
@@ -298,6 +325,7 @@ trademarkBean_index.P = (function (){
 
         //绑定普通页面查询框体点击事件
         $("#commonSearchBtn").click(function(){
+            V.getJqGrid().setGridParam({url:contextPath +"/trademarkBean"});
             M.postSearch(M.getSearchId());
         });
 
@@ -380,6 +408,21 @@ trademarkBean_index.P = (function (){
             var ids = M.getJQSelectIds();
             M.exportName(ids);
         });
+
+        //导出商标名称
+        $("#exportAllNameBtn").click(function(){
+            M.exportAllName();
+        });
+
+        //导出商标名称
+        $("#exportZipBtn").click(function(){
+            var ids = M.getJQSelectIds();
+            M.exportZip(ids);
+        });
+        $("#exportAllZipBtn").click(function(){
+            M.exportAllZip();
+        });
+
 
         $("#sameNameSearchBtn").click(function () {
             var annm = M.getAnnm();

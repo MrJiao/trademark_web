@@ -19,7 +19,8 @@ public class ConvertUtil {
 
     static SimpleDateFormat formatter = new SimpleDateFormat("yy年MM月dd日");
 
-    public static boolean convert(OrcData orcData, TrademarkBean trademarkBean) throws ParseException {
+    public static boolean convert(OrcData orcData, TrademarkBean trademarkBean) {
+        if(orcData==null || trademarkBean==null)return false;
         try {
             List<OrcData.WordsResultBean> words_result = orcData.getWords_result();
             for (OrcData.WordsResultBean bean : words_result) {
@@ -54,12 +55,16 @@ public class ConvertUtil {
             String applicant = getMulMsg(words_result,"申请人","地址");
             trademarkBean.setApplicant(applicant);
 
-            String address = getMulMsg(words_result,"地址","代理机构");
-            trademarkBean.setAddress(address);
+            if(hasAgency(words_result)){
+                String address = getMulMsg(words_result,"地址","代理机构");
+                trademarkBean.setAddress(address);
 
-            String agency = getMulMsg(words_result,"代理机构","核定使用商品/服务项目");
-            trademarkBean.setAgency(agency);
-
+                String agency = getMulMsg(words_result,"代理机构","核定使用商品/服务项目");
+                trademarkBean.setAgency(agency);
+            }else {
+                String address = getMulMsg(words_result,"地址","核定使用商品/服务项目");
+                trademarkBean.setAddress(address);
+            }
             String type = getMulMsg(words_result,"核定使用商品/服务项目","&*(^123");
             trademarkBean.setType(type);
         }catch (Exception e){
@@ -67,6 +72,15 @@ public class ConvertUtil {
             return false;
         }
         return true;
+    }
+
+    private static boolean hasAgency(List<OrcData.WordsResultBean> words_result) {
+        for (OrcData.WordsResultBean wordsResultBean : words_result) {
+            if(StringUtils.contains(wordsResultBean.getWords(),"代理机构")){
+                return true;
+            }
+        }
+        return false;
     }
 
     private static Date getYiyiStart(String words) throws ParseException {

@@ -62,18 +62,36 @@ public class AnalysServiceImpl implements AnalysService {
         try {
             List<String> lines = FileUtils.readLines(file, Charset.defaultCharset());
             List<TrademarkBean> trademarkBeanList = trademarkBeanService.findByAnnm(annm);
-            HashMap<String, TrademarkBean> hs = new HashMap<>();
-            for (TrademarkBean trademarkBean : trademarkBeanList) {
-                hs.put(ChineseUtil.removeChinese(trademarkBean.getName()),trademarkBean);
-            }
+            ArrayList<TrademarkBean> updateArr = new ArrayList<>();
+            HashMap<String, List<TrademarkBean>> hs = formatterArr(trademarkBeanList);
             for (String line : lines) {
-                TrademarkBean trademarkBean = hs.get(line);
-                trademarkBean.setRemark("通过粗筛");
+                if(StringUtils.isEmpty(line))continue;
+                List<TrademarkBean> trademarkBeanArr = hs.get(line);
+                for (TrademarkBean trademarkBean : trademarkBeanArr) {
+                    if(trademarkBean!=null){
+                        trademarkBean.setRemark("通过粗筛");
+                        updateArr.add(trademarkBean);
+                    }
+                }
             }
-            trademarkBeanService.update(trademarkBeanList);
+            trademarkBeanService.update(updateArr);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private HashMap<String, List<TrademarkBean>> formatterArr(List<TrademarkBean> trademarkBeanList) {
+        HashMap<String, List<TrademarkBean>> hs = new HashMap<>();
+        for (TrademarkBean trademarkBean : trademarkBeanList) {
+            String name = trademarkBeanService.formatterName(trademarkBean.getName());
+            List<TrademarkBean> trademarkBeans = hs.get(name);
+            if(trademarkBeans==null){
+                trademarkBeans = new ArrayList<>();
+                hs.put(name,trademarkBeans);
+            }
+            trademarkBeans.add(trademarkBean);
+        }
+        return hs;
     }
 
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");

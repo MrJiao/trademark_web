@@ -10,6 +10,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -38,8 +39,12 @@ public class RequestTest {
     @Test
     public void getDataPic(){
         WaterMarker waterMarker = new WaterMarker();
-        waterMarker.getDataPic(new File("/Users/jiaoyubing/Downloads/yBQCH1xBTqCAd7MRAAM2VU13EPo202.jpg"),
-                new File("/Users/jiaoyubing/work_space/localworkspace/trademark_web/remove_watermarker/src/main/resources"));
+        try {
+            waterMarker.getDataPic(new File("/Users/jiaoyubing/Downloads/yBQCH1xBTqCAd7MRAAM2VU13EPo202.jpg"),
+                    new File("/Users/jiaoyubing/work_space/localworkspace/trademark_web/remove_watermarker/src/main/resources"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -51,9 +56,18 @@ public class RequestTest {
 
         File targetFile = new File(targetFolder,source.getName());
 
-        waterMarker.getDataPic(source,targetFolder);
+        try {
+            waterMarker.getDataPic(source,targetFolder);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        OrcData normal = picOrc.normal(targetFile.getAbsolutePath());
+        OrcData normal = null;
+        try {
+            normal = picOrc.normal(targetFile.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         System.out.println(normal);
     }
 
@@ -66,10 +80,18 @@ public class RequestTest {
 
         File targetFile = new File(targetFolder,source.getName());
 
-        waterMarker.getDataPic(source,targetFolder);
+        try {
+            waterMarker.getDataPic(source,targetFolder);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        OrcData normal = picOrc.gao(targetFile.getAbsolutePath());
-
+        OrcData normal = null;
+        try {
+            normal = picOrc.gao(targetFile.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         System.out.println(normal);

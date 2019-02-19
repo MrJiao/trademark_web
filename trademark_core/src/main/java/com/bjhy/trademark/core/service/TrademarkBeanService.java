@@ -4,8 +4,8 @@ import com.bjhy.trademark.core.domain.TrademarkBean;
 import org.apel.gaia.commons.pager.PageBean;
 import org.apel.gaia.infrastructure.BizCommonService;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.io.File;
+import java.io.Serializable;
 import java.util.List;
 
 public interface TrademarkBeanService extends BizCommonService<TrademarkBean,String>{
@@ -28,4 +28,8 @@ public interface TrademarkBeanService extends BizCommonService<TrademarkBean,Str
     void orcGao(List<TrademarkBean> trademarkBeanList);
 
     TrademarkBean orcGao(TrademarkBean trademarkBean);
+
+    File zipTrademarkBean(List<TrademarkBean> trademarkBeanList, String liushui);
+
+    String formatterName(String name);
 }

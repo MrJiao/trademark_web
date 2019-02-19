@@ -58,7 +58,7 @@ public class FileUploadController {
         GetTrademarkTask bean = SpringBeanUtil.getBean(GetTrademarkTask.class, url,data,annum, storePath);
         new Thread(bean).start();
         storeFile.delete();
-        return MessageUtil.message("common.update.success");
+        return MessageUtil.message("upload.create.success");
     }
 
     @RequestMapping(value="/upload_trademark_name", method = RequestMethod.POST)

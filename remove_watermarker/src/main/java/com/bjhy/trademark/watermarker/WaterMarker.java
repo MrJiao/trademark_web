@@ -46,25 +46,16 @@ public class WaterMarker {
         }
     }
 
-    public void clipPic(File file,File toFile){
-        try {
-            ImageComponent.MyImage image = imageComponent.clipPic(file);
-            storeImage(image,toFile);
-            L.d("处理完成:"+file.getName());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void clipPic(File file,File toFile) throws IOException {
+        ImageComponent.MyImage image = imageComponent.clipPic(file);
+        storeImage(image,toFile);
     }
 
 
-    public void getDataPic(File file,File toFile){
+    public void getDataPic(File file,File toFile) throws IOException {
         boolean mkdirs = toFile.getParentFile().mkdirs();
-        try {
-            ImageComponent.MyImage image = imageComponent.getDataPic(file);
-            storeImage(image,toFile);
-        } catch (IOException e) {
-            L.exception(e);
-        }
+        ImageComponent.MyImage image = imageComponent.getDataPic(file);
+        storeImage(image,toFile);
     }
 
 

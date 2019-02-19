@@ -32,6 +32,7 @@ upload_index.P = (function (){
         var files = $('#'+id).prop('files');
         var data = new FormData();
         data.append('file', files[0]);
+
         if(param!=null){
             for(var s in param){
                 data.append(s, param[s]);
@@ -42,11 +43,11 @@ upload_index.P = (function (){
             url: contextPath + url,
             data: data,
             cache: false,
+            async: false,
             processData: false,
             contentType: false,
-            success: function (ret) {
-                if(successCallback!=null)
-                    successCallback(ret);
+            success:function(returnData){
+                toastr.success(returnData.statusText);
             }
         });
     }

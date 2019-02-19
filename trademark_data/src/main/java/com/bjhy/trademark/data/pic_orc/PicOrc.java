@@ -40,20 +40,15 @@ public class PicOrc {
         client.setSocketTimeoutInMillis(60000);
     }
 
-    public OrcData gao(String filePath){
+    public OrcData gao(String filePath) throws IOException {
         // 传入可选参数调用接口
         HashMap<String, String> options = new HashMap<String, String>();
         options.put("probability", "true");
         JSONObject res = client.basicAccurateGeneral(filePath, options);
-        try {
-            return mapper.readValue(res.toString(), OrcData.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return mapper.readValue(res.toString(), OrcData.class);
     }
 
-    public OrcData normal(String filePath){
+    public OrcData normal(String filePath) throws IOException {
 
         // 传入可选参数调用接口
         HashMap<String, String> options = new HashMap<String, String>();
@@ -62,12 +57,7 @@ public class PicOrc {
         options.put("probability", "true");
         // 参数为本地路径
         JSONObject res = client.basicGeneral(filePath, options);
-        try {
-            return mapper.readValue(res.toString(), OrcData.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return mapper.readValue(res.toString(), OrcData.class);
     }
 
 
