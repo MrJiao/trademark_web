@@ -5,6 +5,7 @@ import com.bjhy.trademark.data.pic_orc.domain.OrcData;
 import com.bjhy.trademark.data.pic_orc.domain.Temp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +18,7 @@ import java.util.List;
  * Create by: Jackson
  */
 @Component
-public class PicOrc {
+public class PicOrc implements InitializingBean {
     //设置APPID/AK/SK
     /*public static final String app_id = "15502232";
     public static final String api_key = "DG2ACLY9GL3PUtCgTcINIRwG";
@@ -33,8 +34,7 @@ public class PicOrc {
 
     ObjectMapper mapper = new ObjectMapper();
     public PicOrc(){
-        // 初始化一个AipOcr
-        initClient();
+
     }
 
     private List<AipOcr> clients = new ArrayList<>();
@@ -84,5 +84,11 @@ public class PicOrc {
         // 参数为本地路径
         JSONObject res = getNormalClient().basicGeneral(filePath, options);
         return mapper.readValue(res.toString(), OrcData.class);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        // 初始化一个AipOcr
+        initClient();
     }
 }

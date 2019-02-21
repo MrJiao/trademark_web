@@ -4,11 +4,11 @@ cas_server_url: http://192.168.0.82:8085/cas
 
 appId: nothing
 
-appName: 测试平台
+appName: 商标处理中心
 
-index_title: 测试平台
+index_title: 商标处理中心
 
-index_name: 测试平台
+index_name: 商标处理中心
 
 index_scaffold: homeIndexScaffold
 

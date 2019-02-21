@@ -75,9 +75,9 @@ trademarkBean_index.V = (function (){
             this.validateForm();
             $('#commonDetail').show();
             $('#commonDetail').window({
-                title:"交付规则详细信息",
+                title:"商标详细信息",
                 width:1075,
-                height:650,
+                height:550,
                 modal:true
             });
             //填充复杂字段信息

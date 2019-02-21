@@ -197,7 +197,7 @@ public class TrademarkBeanController {
 		return downloadService.downloadFile(zipFile,zipFile.getName());
 	}
 
-	SimpleDateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	SimpleDateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 
 	@GetMapping("/trademark_all_number")
 	public ResponseEntity<InputStreamResource> downloadAllNumber() throws Exception {

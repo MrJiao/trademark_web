@@ -41,7 +41,7 @@ public class FileUploadController {
         return "upload_index";
     }
 
-    SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
     //处理文件上传
     @RequestMapping(value="/upload_trademark_data", method = RequestMethod.POST)
     public @ResponseBody Message uploadData(@RequestParam("file") MultipartFile file) throws IOException {

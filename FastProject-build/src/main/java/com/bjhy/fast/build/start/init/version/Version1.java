@@ -141,14 +141,13 @@ public class Version1 implements VersionInf {
             systemMenuRepository.save(paramSetting3);
             userMenu.add(paramSetting3);
 
-            SystemMenu paramSetting4 = new SystemMenu();
-            paramSetting4.setMenuName("翻译管理");
-            paramSetting4.setPxNum(4);
-            paramSetting4.setMenuType(SystemMenu.MENU_TYPE_URL);
-            paramSetting4.setMenuValue("trademarkBean/index");
-            systemMenuRepository.save(paramSetting4);
-            userMenu.add(paramSetting4);
-
+//            SystemMenu paramSetting4 = new SystemMenu();
+//            paramSetting4.setMenuName("翻译管理");
+//            paramSetting4.setPxNum(4);
+//            paramSetting4.setMenuType(SystemMenu.MENU_TYPE_URL);
+//            paramSetting4.setMenuValue("trademarkBean/index");
+//            systemMenuRepository.save(paramSetting4);
+//            userMenu.add(paramSetting4);
         }
 
 

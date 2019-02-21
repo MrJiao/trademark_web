@@ -18,18 +18,18 @@ import java.util.Map;
  */
 public class WordUtils {
 
-    private static void replaceXWPFParagraph(XWPFParagraph paragraph, Map<String, String> map){
+    private static void replaceXWPFParagraph(XWPFParagraph paragraph, Map<String, String> map) {
         List<XWPFRun> runs = paragraph.getRuns();
         try {
             for (int i = 0; i < runs.size(); i++) {
                 String oneparaString = runs.get(i).getText(runs.get(i).getTextPosition());
-                if(oneparaString==null)continue;
+                if (oneparaString == null) continue;
                 for (Map.Entry<String, String> entry : map.entrySet()) {
                     oneparaString = oneparaString.replace(entry.getKey(), entry.getValue());
                 }
                 runs.get(i).setText(oneparaString, 0);
             }
-        }catch (XmlValueDisconnectedException e){
+        } catch (XmlValueDisconnectedException e) {
 
         }
     }
@@ -39,20 +39,23 @@ public class WordUtils {
                                                  String destPath, Map<String, String> map) {
         String[] sp = srcPath.split("\\.");
         String[] dp = destPath.split("\\.");
+        FileOutputStream outStream = null;
         if ((sp.length > 0) && (dp.length > 0)) {// 判断文件有无扩展名
             // 比较文件扩展名
             if (sp[sp.length - 1].equalsIgnoreCase("docx")) {
+                XWPFDocument document = null;
                 try {
-                    XWPFDocument document = new XWPFDocument(
+                    document = new XWPFDocument(
                             POIXMLDocument.openPackage(srcPath));
                     List<IBodyElement> bodyElements = document.getBodyElements();
+
                     for (int i = 0; i < bodyElements.size(); i++) {
                         IBodyElement iBodyElement = bodyElements.get(i);
                         BodyElementType elementType = iBodyElement.getElementType();
-                        if(elementType == BodyElementType.PARAGRAPH){
+                        if (elementType == BodyElementType.PARAGRAPH) {
                             XWPFParagraph paragraph = (XWPFParagraph) iBodyElement;
-                            replaceXWPFParagraph(paragraph,map);
-                        }else if (elementType == BodyElementType.TABLE){
+                            replaceXWPFParagraph(paragraph, map);
+                        } else if (elementType == BodyElementType.TABLE) {
                             XWPFTable table = (XWPFTable) iBodyElement;
                             int rcount = table.getNumberOfRows();
                             for (int j = 0; j < rcount; j++) {
@@ -68,7 +71,7 @@ public class WordUtils {
                                     }
                                     List<XWPFParagraph> paragraphs = cell.getParagraphs();
                                     for (XWPFParagraph paragraph : paragraphs) {
-                                        replaceXWPFParagraph(paragraph,map);
+                                        replaceXWPFParagraph(paragraph, map);
                                     }
 
                                     // cell.removeParagraph(0);
@@ -78,48 +81,59 @@ public class WordUtils {
                             }
                         }
                     }
-                    FileOutputStream outStream = null;
                     outStream = new FileOutputStream(destPath);
                     document.write(outStream);
-                    outStream.close();
                     return true;
                 } catch (Exception e) {
                     e.printStackTrace();
                     return false;
-                }
-
-            } else
-                // doc只能生成doc，如果生成docx会出错
-                if ((sp[sp.length - 1].equalsIgnoreCase("doc"))
-                        && (dp[dp.length - 1].equalsIgnoreCase("doc"))) {
-                    HWPFDocument document = null;
+                } finally {
                     try {
-                        document = new HWPFDocument(new FileInputStream(srcPath));
-                        Range range = document.getRange();
-                        for (Map.Entry<String, String> entry : map.entrySet()) {
-                            range.replaceText(entry.getKey(), entry.getValue());
-                        }
-                        FileOutputStream outStream = null;
-                        outStream = new FileOutputStream(destPath);
-                        document.write(outStream);
-                        outStream.close();
-                        return true;
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                        return false;
+                        if (document != null)
+                            document.close();
+                        if (outStream != null)
+                            outStream.close();
                     } catch (IOException e) {
                         e.printStackTrace();
-                        return false;
                     }
-                } else {
-                    return false;
                 }
+
+            } else if ((sp[sp.length - 1].equalsIgnoreCase("doc"))
+                    && (dp[dp.length - 1].equalsIgnoreCase("doc"))) {
+                // doc只能生成doc，如果生成docx会出错
+                HWPFDocument document = null;
+                try {
+                    document = new HWPFDocument(new FileInputStream(srcPath));
+                    Range range = document.getRange();
+                    for (Map.Entry<String, String> entry : map.entrySet()) {
+                        range.replaceText(entry.getKey(), entry.getValue());
+                    }
+                    outStream = new FileOutputStream(destPath);
+                    document.write(outStream);
+                    return true;
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    return false;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
+                } finally {
+                    try {
+                        if (document != null)
+                            document.close();
+                        if (outStream != null)
+                            outStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
     }
-
-
 
 
 }

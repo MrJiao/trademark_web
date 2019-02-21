@@ -160,8 +160,8 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
             liuShuiNum++;
             //复制文件
             try {
-                copyPic(ziFolder,"paste"+trademarkBean.getPastePicPath());
-                copyPic(ziFolder,trademarkBean.getPicPath());
+                copyPic(ziFolder,trademarkBean.getPastePicPath(),trademarkBean.getNumber()+"paste.jpg");
+                copyPic(ziFolder,trademarkBean.getPicPath(),trademarkBean.getNumber()+"original.jpg");
                 //生成文件
                 generateDataFile(new File(ziFolder,"商标数据"+trademarkBean.getNumber()+".txt"),trademarkBean);
                 //处理word
@@ -192,11 +192,11 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
         return new File(tempPath,folder.getName()+".zip");
     }
 
-    private void copyPic(File folder,String picPath) throws IOException {
+    private void copyPic(File folder,String picPath,String fileName) throws IOException {
         if(!StringUtils.isEmpty(picPath)){
             File pastePicFile = new File(picPath);
             if(pastePicFile.exists()){
-                FileUtils.copyFile(pastePicFile,new File(folder,pastePicFile.getName()));
+                FileUtils.copyFile(pastePicFile,new File(folder,fileName));
             }
         }
     }

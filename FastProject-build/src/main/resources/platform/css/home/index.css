@@ -292,7 +292,7 @@ a.list:hover,a.list:visited,a.list{
 	-webkit-transition: border .2s linear;
 	transition: border .2s linear
 }
-<!---.jquery-accordion-menu ul ul.submenu li:hover>a {border-left-color: #414956  }-->
+
 .jquery-accordion-menu ul ul.submenu>li>a {
 	padding-left: 20px
 }
