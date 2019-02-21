@@ -18,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Create by: Jackson
@@ -39,30 +41,30 @@ public class FileUploadController {
         return "upload_index";
     }
 
+    SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     //处理文件上传
     @RequestMapping(value="/upload_trademark_data", method = RequestMethod.POST)
     public @ResponseBody Message uploadData(@RequestParam("file") MultipartFile file) throws IOException {
         String contentType = file.getContentType();   //文件类型
         String fileName = file.getOriginalFilename();  //名字
-        String annum = fileName.replaceAll(".zip","");
+        fileName = fileName.replaceAll(".zip","");
         //文件存放路径
         String tempPath = trademarkConfig.getTempPath();
         //调用文件处理类FileUtil，处理文件，将文件写入指定位置
-        File storeFile = new File(tempPath, annum + ".zip");
-        storeFile(file.getBytes(), tempPath,storeFile.getName());
-        ZipUtil.unZip(storeFile,tempPath,1024);
-        File data = new File(tempPath+File.separator+annum, "data.txt");
-        File url = new File(tempPath+File.separator+annum, "url.txt");
+        File storeFolder = new File(tempPath, sf.format(new Date()));
 
-        String storePath = trademarkConfig.getStorePath()+File.separator+annum;
-        GetTrademarkTask bean = SpringBeanUtil.getBean(GetTrademarkTask.class, url,data,annum, storePath);
+        File zipFile = new File(storeFolder, fileName+".zip");
+        storeFile(file.getBytes(), zipFile.getParent(),zipFile.getName());
+        ZipUtil.unZip(zipFile,storeFolder.getAbsolutePath(),1024);
+        File data = new File(storeFolder, fileName+File.separator+"data.txt");
+        File url = new File(storeFolder, fileName+File.separator+"url.txt");
+        GetTrademarkTask bean = SpringBeanUtil.getBean(GetTrademarkTask.class, url,data);
         new Thread(bean).start();
-        storeFile.delete();
         return MessageUtil.message("upload.create.success");
     }
 
     @RequestMapping(value="/upload_trademark_name", method = RequestMethod.POST)
-    public @ResponseBody Message uploadNum(@RequestParam("file") MultipartFile file,@RequestParam("annm")String annm) throws IOException {
+    public @ResponseBody Message uploadNum(@RequestParam("file") MultipartFile file,@RequestParam("annm")String annm,@RequestParam("remark")String remark) throws IOException {
         String contentType = file.getContentType();   //图片文件类型
         String fileName = file.getOriginalFilename();  //文件
         //文件存放路径
@@ -70,11 +72,10 @@ public class FileUploadController {
         //调用文件处理类FileUtil，处理文件，将文件写入指定位置
         File storeFile = new File(tempPath, System.currentTimeMillis() + ".txt");
         storeFile(file.getBytes(), tempPath,storeFile.getName());
-        analysService.trademarkName(annm,storeFile);
+        analysService.trademarkName(annm,remark,storeFile);
         storeFile.delete();
         return MessageUtil.message("common.update.success");
     }
-
 
     private static void storeFile(byte[] file, String filePath, String fileName) throws IOException {
         File targetFile = new File(filePath);

@@ -21,6 +21,14 @@ upload_index.M = (function (){
         //获取选中的ids
         getJQSelectIds: function () {
             return V.getJqGrid().jqGrid('getGridParam', 'selarrrow');
+        },
+        batchDeleteAllItemDate:function (anNum,callback) {
+            PlatformUI.ajax({
+                url: contextPath + "/trademarkBean/all",
+                type: "post",
+                data: {_method:"delete",anNum:anNum},
+                afterOperation:callback
+            });
         }
     };
 })();
@@ -63,8 +71,27 @@ upload_index.P = (function (){
 
         $("#upload_name").click(function () {
             var annm = $("#annm").val();
-            upload('name_file',"/upload/upload_trademark_name",{'annm':annm});
+            if(annm =='' || annm == null){
+                toastr.warning("输入期号");
+            }
+            var remark = $("#remark").val();
+            if(remark =='' || remark == null){
+                toastr.warning("备注");
+            }
+            upload('name_file',"/upload/upload_trademark_name",{'annm':annm,'remark':remark});
         });
+
+        $("#deleteAllBtn").click(function () {
+            var anNum = $("#inputAnnm").val();
+            if(anNum==null || anNum==''){
+                toastr.warning("输入期号");
+                return;
+            }
+            M.batchDeleteAllItemDate(anNum,function (data) {
+                toastr.success("删除成功");
+            });
+        });
+
     }
 
     return {

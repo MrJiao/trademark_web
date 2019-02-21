@@ -1,6 +1,7 @@
 package com.bjhy.trademark.core.service.impl;
 
 import com.bjhy.tlevel.datax.common.utils.L;
+import com.bjhy.trademark.common.MyEncoding;
 import com.bjhy.trademark.common.utils.ChineseUtil;
 import com.bjhy.trademark.core.domain.TrademarkBean;
 import com.bjhy.trademark.core.pojo.TrademarkData;
@@ -39,7 +40,7 @@ public class AnalysServiceImpl implements AnalysService {
     @Override
     public void trademarkData(File file) {
         try {
-            String content = FileUtils.readFileToString(file, Charset.defaultCharset());
+            String content = FileUtils.readFileToString(file, MyEncoding.getEncode());
             String[] jsonObjStr = content.split(";");
 
             for (String str : jsonObjStr) {
@@ -58,23 +59,34 @@ public class AnalysServiceImpl implements AnalysService {
     }
 
     @Override
-    public void trademarkName(String annm, File file) {
+    public void trademarkName(String annm,String remark, File file) {
         try {
-            List<String> lines = FileUtils.readLines(file, Charset.defaultCharset());
+            List<String> lines = FileUtils.readLines(file, MyEncoding.getEncode());
             List<TrademarkBean> trademarkBeanList = trademarkBeanService.findByAnnm(annm);
             ArrayList<TrademarkBean> updateArr = new ArrayList<>();
             HashMap<String, List<TrademarkBean>> hs = formatterArr(trademarkBeanList);
             for (String line : lines) {
                 if(StringUtils.isEmpty(line))continue;
                 List<TrademarkBean> trademarkBeanArr = hs.get(line);
+                if(trademarkBeanArr==null)continue;
                 for (TrademarkBean trademarkBean : trademarkBeanArr) {
                     if(trademarkBean!=null){
-                        trademarkBean.setRemark("通过粗筛");
+                        trademarkBean.setRemark(remark);
                         updateArr.add(trademarkBean);
                     }
                 }
             }
             trademarkBeanService.update(updateArr);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void analysUrl(File storeFile) {
+        try {
+            List<String> urls = FileUtils.readLines(storeFile, MyEncoding.getEncode());
+            
         } catch (IOException e) {
             e.printStackTrace();
         }

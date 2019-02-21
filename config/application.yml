@@ -54,3 +54,13 @@ spring:
   devtools:
     restart:
       exclude: static/**,platform/**
+
+accountConfig:
+  account[0]:
+    app_id: 15567265
+    api_key: LYjYRF3PBIjUZ14arDjQWuLk
+    secret_key: bUsyuffSfe3P7hc48AqXoTOajb067eFw
+  account[1]:
+    app_id: 15502232
+    api_key: DG2ACLY9GL3PUtCgTcINIRwG
+    secret_key: RIppKjEVGU6FvTuUnb6MrS9WQSx1i229

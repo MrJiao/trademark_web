@@ -1,15 +1,19 @@
 package com.bjhy.trademark.core.controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
+import com.bjhy.trademark.common.MyEncoding;
 import com.bjhy.trademark.common.utils.ChineseUtil;
 import com.bjhy.trademark.core.TrademarkConfig;
 import com.bjhy.trademark.core.service.CacheService;
 import com.bjhy.trademark.core.service.DownloadService;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Sort;
@@ -81,6 +85,31 @@ public class TrademarkBeanController {
 		trademarkBeanService.deleteById(id);
 		return MessageUtil.message("common.delete.success");
 	}
+
+	//删除
+	@RequestMapping(value = "all", method = RequestMethod.DELETE)
+	public @ResponseBody Message deleteAll(@RequestParam("anNum") String anNum){
+		File annumFolder = new File(trademarkConfig.getStorePath(),anNum);
+		try {
+			if(annumFolder.exists()){
+				FileUtils.deleteDirectory(annumFolder);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		trademarkBeanService.deleteByAnnum(anNum);
+
+		File tempFolder = new File(trademarkConfig.getTempPath());
+		if(tempFolder.exists()){
+			try {
+				FileUtils.deleteDirectory(tempFolder);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		tempFolder.mkdirs();
+		return MessageUtil.message("common.delete.success");
+	}
 	
 	//批量删除
 	@RequestMapping(method = RequestMethod.DELETE)
@@ -129,7 +158,7 @@ public class TrademarkBeanController {
 			String name = trademarkBeanService.formatterName(trademarkBean.getName());
 			names.add(name);
 		}
-		FileUtils.writeLines(trademarkNameFile, Charset.defaultCharset().name(),names);
+		FileUtils.writeLines(trademarkNameFile, MyEncoding.getEncode(),names);
 		return downloadService.downloadFile(trademarkNameFile,trademarkNameFile.getName());
 	}
 
@@ -137,15 +166,17 @@ public class TrademarkBeanController {
 	@RequestMapping(value = "/trademark_all_name",method = RequestMethod.GET)
 	public ResponseEntity<InputStreamResource> downloadNames() throws Exception {
 		String tempPath = trademarkConfig.getTempPath();
-		File trademarkNameFile = new File(tempPath, "trademarkName.txt");
+
 		List<TrademarkBean> trademarkBeanList = cacheService.getTrademarkBeanList();
 		trademarkBeanList = trademarkBeanService.filterTrademarkName(trademarkBeanList);
-		HashSet<String> names = new HashSet<>();
+		List<String> names = new ArrayList<>();
 		for (TrademarkBean trademarkBean : trademarkBeanList) {
 			String name = trademarkBeanService.formatterName(trademarkBean.getName());
 			names.add(name);
 		}
-		FileUtils.writeLines(trademarkNameFile, Charset.defaultCharset().name(),names);
+		names = trademarkBeanService.sortStringCount(names);
+		File trademarkNameFile = new File(tempPath, "商标名称"+dateFormat.format(new Date())+".txt");
+		FileUtils.writeLines(trademarkNameFile, MyEncoding.getEncode(),names);
 		return downloadService.downloadFile(trademarkNameFile,trademarkNameFile.getName());
 	}
 
@@ -153,15 +184,43 @@ public class TrademarkBeanController {
 	@GetMapping("/trademark_zip")
 	public ResponseEntity<InputStreamResource> downloadZip(@RequestParam("ids[]") String[] ids,String liushui) throws Exception {
 		List<TrademarkBean> list = trademarkBeanService.findByAllId(Arrays.asList(ids));
+		sortName(list);
 		File zipFile = trademarkBeanService.zipTrademarkBean(list,liushui);
 		return downloadService.downloadFile(zipFile,zipFile.getName());
 	}
 
 	@GetMapping("/trademark_all_zip")
-	public ResponseEntity<InputStreamResource> downloadAllZip(@RequestParam("ids[]") String[] ids,String liushui) throws Exception {
+	public ResponseEntity<InputStreamResource> downloadAllZip(String liushui) throws Exception {
 		List<TrademarkBean> list = cacheService.getTrademarkBeanList();
+		sortName(list);
 		File zipFile = trademarkBeanService.zipTrademarkBean(list,liushui);
 		return downloadService.downloadFile(zipFile,zipFile.getName());
+	}
+
+	SimpleDateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	@GetMapping("/trademark_all_number")
+	public ResponseEntity<InputStreamResource> downloadAllNumber() throws Exception {
+		List<TrademarkBean> list = cacheService.getTrademarkBeanList();
+		ArrayList<String> arr = new ArrayList<>();
+		for (TrademarkBean trademarkBean : list) {
+			arr.add(trademarkBean.getNumber());
+		}
+		String tempPath = trademarkConfig.getTempPath();
+		File file = new File(tempPath, "商标号"+dateFormat.format(new Date())+".txt");
+		FileUtils.writeLines(file,MyEncoding.getEncode(),arr);
+		return downloadService.downloadFile(file,file.getName());
+	}
+
+
+	private void sortName(List<TrademarkBean> list) {
+		Collections.sort(list, new Comparator<TrademarkBean>() {
+			@Override
+			public int compare(TrademarkBean o1, TrademarkBean o2) {
+				if(StringUtils.isEmpty(o1.getName())||StringUtils.isEmpty(o2.getName()))return -1;
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
 	}
 
 
@@ -219,6 +278,12 @@ public class TrademarkBeanController {
 		TrademarkBean trademarkBean = trademarkBeanService.findById(id);
 		TrademarkBean bean = trademarkBeanService.orcGao(trademarkBean);
 		return bean;
+	}
+
+	@RequestMapping(value = "/test",method = RequestMethod.GET)
+	public @ResponseBody String test() {
+		boolean b = trademarkBeanService.isContains("322");
+		return b+"";
 	}
 
 

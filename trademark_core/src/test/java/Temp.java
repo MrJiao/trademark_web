@@ -84,4 +84,9 @@ public class Temp {
         ZipUtil.directory2Zip(zipfolder,targetPath,"123.zip");
     }
 
+    @Test
+    public void inttest(){
+
+    }
+
 }

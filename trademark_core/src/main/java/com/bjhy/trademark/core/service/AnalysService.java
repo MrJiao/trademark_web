@@ -8,5 +8,7 @@ import java.io.File;
 public interface AnalysService {
     void trademarkData(File storeFile);
 
-    void trademarkName(String annm, File storeFile);
+    void trademarkName(String annm,String remark, File storeFile);
+
+    void analysUrl(File storeFile);
 }

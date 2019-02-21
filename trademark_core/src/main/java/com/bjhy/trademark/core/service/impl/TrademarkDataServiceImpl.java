@@ -28,12 +28,11 @@ import java.util.Set;
 @Transactional
 public class TrademarkDataServiceImpl implements TrademarkDataService {
 
-    @Autowired
-    TrademarkConfig trademarkConfig;
+
     @Override
     public void getTrademark(TaskData taskData) {
-        String storePath = trademarkConfig.getStorePath()+File.separator+taskData.getAnnm();
-        GetTrademarkTask bean = SpringBeanUtil.getBean(GetTrademarkTask.class, taskData, storePath);
+
+        GetTrademarkTask bean = SpringBeanUtil.getBean(GetTrademarkTask.class, taskData);
         new Thread(bean).start();
     }
 

@@ -32,4 +32,14 @@ public interface TrademarkBeanService extends BizCommonService<TrademarkBean,Str
     File zipTrademarkBean(List<TrademarkBean> trademarkBeanList, String liushui);
 
     String formatterName(String name);
+
+    void deleteByAnnum(String annum);
+
+    TrademarkBean findTopByAnNum(String annum);
+
+    List<TrademarkBean> findByPicEncode(String encode);
+
+    boolean isContains(String id);
+
+    List<String> sortStringCount(List<String> names);
 }

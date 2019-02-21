@@ -1,4 +1,5 @@
 import com.bjhy.trademark.common.net.WaitStrategy;
+import com.bjhy.trademark.data.auto_word.WordComponent;
 import com.bjhy.trademark.data.downloadPic.GetImageUrlTask;
 import com.bjhy.trademark.data.downloadPic.GetImageSearchId;
 import com.bjhy.trademark.data.pic_orc.PicOrc;
@@ -11,6 +12,8 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Set;
 
@@ -97,22 +100,24 @@ public class RequestTest {
         System.out.println(normal);
     }
 
+    @Test
+    public void picOrc3() {
+        WaterMarker waterMarker = new WaterMarker();
+        try {
+            waterMarker.getDataPic(new File("/Users/jiaoyubing/downloadTemp3/1633/c7c34c39b282843a9eb9eff2c3693c22.jpg"),new File("/Users/jiaoyubing/work_space/localworkspace/trademark_web/logs"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Test
-    public void regx(){
-        PicOrc picOrc = new PicOrc();
+    public void date() throws ParseException {
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
 
-        Temp text = picOrc.text("/Users/jiaoyubing/Downloads/WechatIMG13279.jpeg");
-
-        List<Temp.WordsResultBean> words_result = text.getWords_result();
-
-        for (Temp.WordsResultBean wordsResultBean : words_result) {
-            System.out.println(wordsResultBean.getWords());
-        }
-
-
-
-
+        WordComponent wordComponent = new WordComponent();
+        String s = wordComponent.formatterDate(sf.parse("2018-12-01"));
+        System.out.println(s);
     }
 
 

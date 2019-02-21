@@ -26,4 +26,14 @@ public interface TrademarkBeanRepository extends CommonRepository<TrademarkBean,
             countQuery = "SELECT SUM(COUNT(NAME)) as \"count(*)\" FROM TRADEMARKBEAN GROUP BY Name  HAVING count(*)>1",
             nativeQuery = true)
     Page<TrademarkBean> findBySameName(Pageable pageable);
+
+    void deleteByAnNum(String annum);
+
+    TrademarkBean findTopByAnNum(String annum);
+
+
+    List<TrademarkBean> findByPicEncode(String picEncode);
+
+    @Query(value = "select t.id from TRADEMARKBEAN t where t.id=:id",nativeQuery = true)
+    List<String> findIds(@Param("id") String id);
 }

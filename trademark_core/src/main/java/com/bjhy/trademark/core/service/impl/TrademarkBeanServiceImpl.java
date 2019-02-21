@@ -1,17 +1,22 @@
 package com.bjhy.trademark.core.service.impl;
 
 import com.bjhy.jackson.fast.generator.annotation.FieldParam;
-import com.bjhy.jackson.fast.generator.core.Pojo;
 import com.bjhy.tlevel.datax.common.utils.L;
+import com.bjhy.trademark.common.MyEncoding;
 import com.bjhy.trademark.common.utils.ChineseUtil;
 import com.bjhy.trademark.common.utils.ZipUtil;
 import com.bjhy.trademark.core.TrademarkConfig;
 import com.bjhy.trademark.core.convert.ConvertUtil;
 import com.bjhy.trademark.core.dao.TrademarkBeanRepository;
+import com.bjhy.trademark.core.pojo.Count;
+import com.bjhy.trademark.data.auto_word.WordComponent;
+import com.bjhy.trademark.data.auto_word.WordTrademarkBean;
 import com.bjhy.trademark.data.pic_orc.PicOrc;
 import com.bjhy.trademark.data.pic_orc.domain.OrcData;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.apel.gaia.commons.pager.PageBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,13 +31,10 @@ import org.apel.gaia.infrastructure.impl.AbstractBizCommonService;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 @Transactional
@@ -44,6 +46,8 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
 
     @Autowired
     PicOrc picOrc;
+    @Autowired
+    WordComponent wordComponent;
 
     @Override
     public void update(List<TrademarkBean> trademarkBeanList) {
@@ -79,6 +83,8 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
 
     @Override
     public List<TrademarkBean> findByAnnm(String annm) {
+
+
         return getRepository().findByAnNum(annm);
     }
 
@@ -93,9 +99,13 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
         }
 
         pageBean.setTotalRows( (int)page.getTotalElements() );
-        pageBean.setItems(page.getContent());
+
+        List<TrademarkBean> arr = page.getContent();
+        pageBean.setItems(arr);
         return pageBean;
     }
+
+
 
     @Override
     public void save(Iterable<TrademarkBean> trademarkList) {
@@ -123,6 +133,7 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
         } catch (IOException e) {
             L.e("图片高级识别失败",trademarkBean.getDataPicPath());
             L.exception(e);
+            return trademarkBean;
         }
         ConvertUtil.convert(gao,trademarkBean);
         trademarkBean.setAnalysType(TrademarkBean.ANALYS_GAO);
@@ -149,20 +160,19 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
             liuShuiNum++;
             //复制文件
             try {
-                String pastePicPath = trademarkBean.getPastePicPath();
-                if(!StringUtils.isEmpty(pastePicPath)){
-                    File file = new File(pastePicPath);
-                    if(file.exists()){
-                        FileUtils.copyFile(file,new File(ziFolder,getPastePicName(trademarkBean)));
-                    }
-                }
+                copyPic(ziFolder,"paste"+trademarkBean.getPastePicPath());
+                copyPic(ziFolder,trademarkBean.getPicPath());
                 //生成文件
                 generateDataFile(new File(ziFolder,"商标数据"+trademarkBean.getNumber()+".txt"),trademarkBean);
                 //处理word
-
+                WordTrademarkBean wordTrademarkBean = new WordTrademarkBean();
+                BeanUtils.copyProperties(wordTrademarkBean,trademarkBean);
+                wordComponent.autoWord(wordTrademarkBean,getTargetWordFile(ziFolder,trademarkBean,liuShuiNum),liuShuiNum);
             } catch (IOException e) {
                 L.exception(e);
             } catch (IllegalAccessException e) {
+                L.exception(e);
+            } catch (InvocationTargetException e) {
                 L.exception(e);
             }
         }
@@ -182,11 +192,75 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
         return new File(tempPath,folder.getName()+".zip");
     }
 
+    private void copyPic(File folder,String picPath) throws IOException {
+        if(!StringUtils.isEmpty(picPath)){
+            File pastePicFile = new File(picPath);
+            if(pastePicFile.exists()){
+                FileUtils.copyFile(pastePicFile,new File(folder,pastePicFile.getName()));
+            }
+        }
+    }
+
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+    private File getTargetWordFile(File ziFolder, TrademarkBean trademarkBean, int liuShuiNum) {
+        return new File(ziFolder,"AK19"+liuShuiNum+"-"+formatter.format(new Date())+"-TC-Report.docx");
+    }
+
     @Override
     public String formatterName(String name) {
         name = ChineseUtil.removeChinese(name);
         name = name.replaceAll("·"," ");
         return name.trim();
+    }
+
+    @Override
+    public void deleteByAnnum(String annum) {
+        getRepository().deleteByAnNum(annum);
+    }
+
+    @Override
+    public TrademarkBean findTopByAnNum(String annum) {
+        return getRepository().findTopByAnNum(annum);
+    }
+
+    @Override
+    public List<TrademarkBean> findByPicEncode(String encode) {
+        return getRepository().findByPicEncode(encode);
+    }
+
+    @Override
+    public boolean isContains(String id) {
+        List<String> ids = getRepository().findIds(id);
+        return ids.size()>0;
+    }
+
+    @Override
+    public List<String> sortStringCount(List<String> names) {
+        HashMap<String, Count> hs = new HashMap<>();
+        for (String name : names) {
+            Count count = hs.get(name);
+            if(count ==null){
+                count = new Count(name);
+                hs.put(name,count);
+            }
+            count.add();
+        }
+        ArrayList<Count> counts = new ArrayList<>();
+        counts.addAll(hs.values());
+
+        Collections.sort(counts,new Comparator<Count>(){
+            @Override
+            public int compare(Count o1, Count o2) {
+                return o2.getCount()-o1.getCount();
+            }
+        });
+
+        ArrayList<String> arr = new ArrayList<>();
+        for (Count count : counts) {
+            arr.add(count.getValue());
+        }
+
+        return arr;
     }
 
     Field[] declaredFields = TrademarkBean.class.getDeclaredFields();
@@ -211,7 +285,7 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
             lines.add(fieldAnnotationield.value()+":"+value);
         }
         try {
-            FileUtils.writeLines(file, Charset.defaultCharset().name(),lines);
+            FileUtils.writeLines(file, MyEncoding.getEncode(),lines);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -229,7 +303,7 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
         for (TrademarkBean.TrademarkType trademarkType : trademarkTypeList) {
             leibie = leibie+" "+trademarkType.getTypeNum();
         }
-        return "AK19+"+liuShuiNum+"-LCB "+trademarkBean.getName()+leibie+" 潜在异议-xuli";
+        return "AK19"+liuShuiNum+"-LCB "+trademarkBean.getName()+leibie+" 潜在异议-xuli";
     }
 
     //创建要粘贴的图片的图片名称
@@ -257,10 +331,5 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
         String s = ChineseUtil.removeChinese(name);
         return s.length()>i;
     }
-
-
-
-
-
 
 }

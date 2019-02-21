@@ -17,7 +17,6 @@ import java.util.List;
 @Component
 public class WaterMarker {
 
-    @Autowired
     //ImageComponent imageComponent;
     ImageComponent imageComponent = new ImageComponent();
     public void removeWaterMarker(List<File> fileList,File folder){

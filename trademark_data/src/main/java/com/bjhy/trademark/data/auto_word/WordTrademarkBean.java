@@ -1,103 +1,48 @@
-package com.bjhy.trademark.core.domain;
+package com.bjhy.trademark.data.auto_word;
 
-import com.bjhy.jackson.fast.generator.annotation.FieldParam;
-import com.bjhy.jackson.fast.generator.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
-import org.apel.gaia.commons.autocomplete.annotation.AutoCompleteField;
-import org.apel.gaia.commons.autocomplete.enums.AutoCompleteFieldType;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Transient;
-import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Create by: Jackson
  */
-@TableName("商标数据")
-@Entity
-public class TrademarkBean implements Serializable {
+public class WordTrademarkBean {
 
-    @FieldParam(value = "id",hidden = true)
-    @Id
-    @Column(name = "ID",length=32)
+
     String id;//
-    @FieldParam(value="页码编号")
     Integer page_no;
-    @FieldParam("商标号")
-    @Column(name = "mNumber",length=32)
     String number;//
-    @FieldParam("期号")
     String anNum;//
-    @FieldParam("申请日期")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date applicationDate;//
-    @FieldParam("商标名")
     String name;//
-    @FieldParam("申请人")
     String applicant;//
-    @FieldParam("地址")
     String address;//
-    @FieldParam("代理机构")
     String agency;//
-    @FieldParam("异议期限-开始")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date yiyiStartDate;//
-    @FieldParam("异议期限-截止")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date yiyiEndDate;//
-    @FieldParam("公告日期")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date ann_date;//
 
-    @FieldParam(value="类型",hidden = true)
-    @Column(name = "mType",length = 550)
     String type;//
 
-    //@FieldParam(value="图片url",hidden = true)
-    @Column(name = "mUrl")
     String url;//
-    //@FieldParam(value="图片地址",hidden = true)
-    @JsonIgnore
     String picPath;//
-    //@FieldParam(value="数据图片地址",hidden = true)
-    @JsonIgnore
     String dataPicPath;//
-    //@FieldParam(value="粘贴图片地址",hidden = true)
-    @JsonIgnore
     String pastePicPath;//
 
-    @FieldParam(value="被选择的类型",hidden = true)
-    @Column(length = 500)
     String choosedType;//
-    @FieldParam(value="精度类别",hidden = true)
     String analysType;
-    @FieldParam(value="外国申请人")
     String client;//外国申请人 可能有多个人 逗号分隔
-    @FieldParam(value="外国代理所")
     String representatives;//外国代理所
-    @FieldParam(value="外国邮箱")
     String email;//外国邮箱 可能有多个 逗号分隔
 
-    @FieldParam(value="备注")
-    @Column(name = "mRemark")
     String remark;
-
-    String picEncode;
-
-    public String getPicEncode() {
-        return picEncode;
-    }
-
-    public void setPicEncode(String picEncode) {
-        this.picEncode = picEncode;
-    }
 
     public Date getAnn_date() {
         return ann_date;
@@ -159,10 +104,6 @@ public class TrademarkBean implements Serializable {
     public static String ANALYS_GAO = "gao";
 
 
-    @FieldParam(value = "创建时间",hidden = true)
-    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
-    @Column(nullable=false)
-    @AutoCompleteField(type= AutoCompleteFieldType.DATE)
     private Date gmt_create;
 
     public String getAnalysType() {
@@ -380,17 +321,6 @@ public class TrademarkBean implements Serializable {
 
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TrademarkBean that = (TrademarkBean) o;
-        return id.equals(that.id) &&
-                name.equals(that.name);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name);
-    }
+
 }

@@ -216,6 +216,7 @@ trademarkBean_index.M = (function (){
                 afterOperation:callback
             });
         },
+
         exportName:function(ids){
             var url=contextPath + "/trademarkBean/trademark_name?";
             for( var index in ids){
@@ -226,6 +227,10 @@ trademarkBean_index.M = (function (){
         },
         exportAllName:function(){
             var url=contextPath + "/trademarkBean/trademark_all_name";
+            downloadFile(url);
+        },
+        exportAllNumber:function(){
+            var url=contextPath + "/trademarkBean/trademark_all_number";
             downloadFile(url);
         },
         exportZip:function(ids){
@@ -412,6 +417,11 @@ trademarkBean_index.P = (function (){
         //导出商标名称
         $("#exportAllNameBtn").click(function(){
             M.exportAllName();
+        });
+
+        //导出注册号/商标号
+        $("#exportNumberBtn").click(function(){
+            M.exportAllNumber();
         });
 
         //导出商标名称
