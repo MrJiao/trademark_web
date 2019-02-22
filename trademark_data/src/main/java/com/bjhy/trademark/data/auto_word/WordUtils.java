@@ -36,7 +36,7 @@ public class WordUtils {
     public static void replaceAndGenerateWord(String srcPath,
                                               String destPath, Map<String, String> map) throws IOException {
         File src = new File(srcPath);
-        File src2 = new File(src.getParent(), System.currentTimeMillis() + "");
+        File src2 = new File(src.getParent(), System.currentTimeMillis() + ".docx");
         FileUtils.copyFile(src, src2);
         srcPath = src2.getAbsolutePath();
         String[] sp = srcPath.split("\\.");
@@ -44,7 +44,7 @@ public class WordUtils {
         if ((sp.length > 0) && (dp.length > 0)) {// 判断文件有无扩展名
             // 比较文件扩展名
             if (sp[sp.length - 1].equalsIgnoreCase("docx")) {
-                generateDocx(srcPath, map);
+                generateDocx(srcPath,destPath, map);
 
             } else if
             ((sp[sp.length - 1].equalsIgnoreCase("doc"))
@@ -52,7 +52,8 @@ public class WordUtils {
                 generateDoc(srcPath, map);
             }
         }
-        src2.renameTo(new File(destPath));
+        if(src2.exists())
+            src2.delete();
     }
 
     private static void generateDoc(String srcPath, Map<String, String> map) throws IOException {
@@ -74,8 +75,9 @@ public class WordUtils {
         }
     }
 
-    private static void generateDocx(String srcPath, Map<String, String> map) throws IOException {
+    private static void generateDocx(String srcPath, String destPath, Map<String, String> map) throws IOException {
         XWPFDocument document = null;
+        FileOutputStream fileOutputStream=null;
         try {
             document = new XWPFDocument(
                     POIXMLDocument.openPackage(srcPath));
@@ -109,7 +111,8 @@ public class WordUtils {
                     }
                 }
             }
-
+            fileOutputStream = new FileOutputStream(destPath);
+            document.write(fileOutputStream);
         } finally {
             try {
                 if (document != null)
@@ -117,6 +120,11 @@ public class WordUtils {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            try {
+                if(fileOutputStream!=null){
+                    fileOutputStream.close();
+                }
+            }catch (Exception e){}
         }
 
     }

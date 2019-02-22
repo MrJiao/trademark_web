@@ -159,16 +159,24 @@ public class GetTrademarkTask implements Runnable {
         } else if (imageUrls.size() == 2) {
             String ann1 = getAnNum(folder, imageUrls.get(0));
             String ann2 = getAnNum(folder, imageUrls.get(1));
-            if (StringUtils.equals(ann1, ann2))
-                return ann1;
-            return "";
+            return getEqOrNotEmpty(ann1,ann2);
         } else {
             String ann1 = getAnNum(folder, imageUrls.get(0));
             String ann2 = getAnNum(folder, imageUrls.get(imageUrls.size() - 1));
+            return getEqOrNotEmpty(ann1,ann2);
+        }
+    }
+
+    private String getEqOrNotEmpty(String ann1, String ann2) {
+        if(!StringUtils.isEmpty(ann1)&&!StringUtils.isEmpty(ann2)){
             if (StringUtils.equals(ann1, ann2))
                 return ann1;
-            return "";
+        }else if(StringUtils.isEmpty(ann1)){
+            return ann2;
+        }else if(StringUtils.isEmpty(ann2)){
+            return ann1;
         }
+        return "";
     }
 
     private String getAnNum(File folder, String url) {
@@ -186,7 +194,8 @@ public class GetTrademarkTask implements Runnable {
         }
 
         trademarkBean = orcPic(trademarkBean);
-        return trademarkBean.getAnNum();
+
+        return trademarkBean!=null?trademarkBean.getAnNum():"";
     }
 
 
@@ -247,9 +256,9 @@ public class GetTrademarkTask implements Runnable {
         picTrademarkBean.setAnalysType(TrademarkBean.ANALYS_NORMAL);
         //转义
         if (!ConvertUtil.convert(normal, picTrademarkBean)) {
-            if (StringUtils.isEmpty(picTrademarkBean.getNumber())) {
+            if (isNotData(picTrademarkBean)) {
                 return null;
-            } else if (picTrademarkBean.getNumber().length() != 8) {
+            } else if (picTrademarkBean.getNumber()==null || picTrademarkBean.getNumber().length() != 8) {
                 OrcData gao = null;
                 try {
                     gao = picOrc.gao(picTrademarkBean.getDataPicPath());
@@ -270,9 +279,9 @@ public class GetTrademarkTask implements Runnable {
                 return picTrademarkBean;
             }
         } else {
-            if (StringUtils.isEmpty(picTrademarkBean.getNumber())) {
+            if (isNotData(picTrademarkBean)) {
                 return null;
-            } else if (picTrademarkBean.getNumber().length() != 8) {
+            } else if (picTrademarkBean.getNumber()==null || picTrademarkBean.getNumber().length() != 8) {
                 OrcData gao = null;
                 try {
                     gao = picOrc.gao(picTrademarkBean.getDataPicPath());
@@ -293,6 +302,21 @@ public class GetTrademarkTask implements Runnable {
                 return picTrademarkBean;
             }
         }
+    }
+
+
+    private boolean isNotData(TrademarkBean trademarkBean){
+        int size =0 ;
+        if(trademarkBean.getApplicationDate()!=null){
+            size++;
+        }
+        if(trademarkBean.getYiyiStartDate()!=null){
+            size++;
+        }
+        if(trademarkBean.getYiyiEndDate()!=null){
+            size++;
+        }
+        return size<2;
     }
 
 
