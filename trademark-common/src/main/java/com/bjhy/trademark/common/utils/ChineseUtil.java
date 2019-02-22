@@ -25,7 +25,7 @@ public class ChineseUtil {
 
     private static final String MATCH_CONTENT_MATH_REGEX = "\\d";
 
-    private static final String MATCH_CONTENT_MATH_CHINESE_REGEX = "[\\u4e00-\\u9fa5_0-9,]+";
+    private static final String MATCH_CONTENT_MATH_CHINESE_REGEX = "[\\u4e00-\\u9fa5_0-9,\\s]+";
 
     private static final Pattern CONTENT_CHINESE_PATTERN = Pattern.compile(CONTENT_CHINESE_REGEX);
     private static final Pattern MATCH_CONTENT_CHINESE__PATTERN = Pattern.compile(MATCH_CONTENT_CHINESE_REGEX);

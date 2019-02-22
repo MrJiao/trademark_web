@@ -66,8 +66,8 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
         for (TrademarkBean bean : trademarkBeanList) {
             //全中文和数字的不要
             if(!ChineseUtil.isMathAndChinese(bean.getName())){
-                //字母大于2个
-                if(isLengthMore(bean.getName(),3)){
+                //去除中文数字和_和空格和, 剩下字符长度大于3的
+                if(isEnglishLengthMore(bean.getName(),3)){
                     //地区不是国外
                     if(!isFremdness(bean.getAddress())){
                         if(!isChaofan(bean.getAgency())){
@@ -209,7 +209,7 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
     @Override
     public String formatterName(String name) {
         name = ChineseUtil.removeChinese(name);
-        name = name.replaceAll("·"," ");
+        name = name.replaceAll("·"," ").replaceAll(",","");
         return name.trim();
     }
 
@@ -326,9 +326,9 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
         return address.length()>5;
     }
 
-    private boolean isLengthMore(String name, int i) {
+    private boolean isEnglishLengthMore(String name, int i) {
         if(StringUtils.isEmpty(name))return false;
-        String s = ChineseUtil.removeChinese(name);
+        String s = ChineseUtil.removeMathAndChinese(name);
         return s.length()>i;
     }
 

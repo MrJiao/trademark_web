@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 /**
  * Create by: Jackson
  */
-@TableName("商标数据")
+@TableName("标志数据")
 @Entity
 public class TrademarkBean implements Serializable {
 

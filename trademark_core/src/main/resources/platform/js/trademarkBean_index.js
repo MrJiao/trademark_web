@@ -17,7 +17,7 @@ trademarkBean_index.V = (function (){
                 height:document.body.clientHeight-230,
                 mtype: "GET",
                 multiselect: true,
-                colNames: ["id","页码编号","商标号","期号","申请日期","商标名","申请人","地址","代理机构","异议期限-开始","异议期限-截止","公告日期","类型","被选择的类型","外国申请人","外国代理所","外国邮箱","备注","创建时间"],
+                colNames: ["id","页码编号","商标号","期号","申请日期","商标名","申请人","地址","代理机构","异议期限-开始","异议期限-截止","公告日期","类型","被选择的类型","备注","创建时间"],
                 colModel: [
                     { name: "id", index:"id",align:"center",hidden: true, sortable: true},
                     { name: "page_no", index:"page_no",align:"center", sortable: true},
@@ -33,9 +33,6 @@ trademarkBean_index.V = (function (){
                     { name: "ann_date", index:"ann_date",align:"center",hidden: false, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d H:i:s" }},
                     { name: "type", index:"type",align:"center",hidden: true, sortable: true},
                     { name: "choosedType", index:"choosedType",align:"center",hidden: true, sortable: true},
-                    { name: "client", index:"client",align:"center",hidden: false, sortable: true},
-                    { name: "representatives", index:"representatives",align:"center",hidden: false, sortable: true},
-                    { name: "email", index:"email",align:"center",hidden: false, sortable: true},
                     { name: "remark", index:"remark",align:"center",hidden: false, sortable: true},
                     { name: "gmt_create", index:"gmt_create",align:"center",hidden: true, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d H:i:s" }}
                 ],
