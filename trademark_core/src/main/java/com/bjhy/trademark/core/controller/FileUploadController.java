@@ -6,15 +6,13 @@ import com.bjhy.trademark.core.TrademarkConfig;
 import com.bjhy.trademark.core.pojo.Remark;
 import com.bjhy.trademark.core.service.AnalysService;
 import com.bjhy.trademark.core.service.impl.GetTrademarkTask;
+import com.bjhy.trademark.data.auto_word.WordComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.apel.gaia.commons.i18n.Message;
 import org.apel.gaia.commons.i18n.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -108,4 +106,14 @@ public class FileUploadController {
         out.flush();
         out.close();
     }
+
+
+    @Autowired
+    WordComponent wordComponent;
+    @GetMapping("temp")
+    public @ResponseBody String temp(String address){
+        return wordComponent.formatterAddress(address);
+    }
+
+
 }

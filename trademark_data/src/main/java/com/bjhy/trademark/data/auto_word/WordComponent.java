@@ -1,5 +1,8 @@
 package com.bjhy.trademark.data.auto_word;
 
+import com.bjhy.trademark.data.translate.PinYinCompoent;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -60,9 +63,59 @@ public class WordComponent {
             values.put("$(no"+index+")", wordTrademarkBean.getNumber());//商标号
 
             values.put("$(applicant"+index+")", wordTrademarkBean.getApplicant());//申请人
-            values.put("$(application_address"+index+")", wordTrademarkBean.getAddress());//申请地址
+            values.put("$(application_address"+index+")", formatterAddress(wordTrademarkBean.getAddress()));//申请地址
         }
         return values;
+    }
+
+    @Autowired
+    PinYinCompoent pinYinCompoent;
+    public String formatterAddress(String address) {
+        if(StringUtils.isEmpty(address))return "";
+        String ori = address;
+        try {
+            if(StringUtils.contains(address,"香港")){
+                address = "Hong Kong";
+            }else if(StringUtils.contains(address,"台湾")){
+                address = "Taiwan";
+            }else if(StringUtils.contains(address,"澳门")){
+                address = "Macao";
+            }else if(StringUtils.contains(address,"北京")||
+                    StringUtils.contains(address,"上海")||
+                    StringUtils.contains(address,"天津")||
+                    StringUtils.contains(address,"重庆")){
+                String distrcist = AddressUtil.getDistrcist(address);
+                String quCounty = AddressUtil.getQuCounty(address);
+                String city = AddressUtil.getCity(address);
+                String pinYinDistrcist = pinYinCompoent.getPinYin(distrcist);
+                String pinYinQuCounty = pinYinCompoent.getPinYin(quCounty);
+                String pinYinCity = pinYinCompoent.getPinYin(city);
+                if(StringUtils.isEmpty(pinYinCity)||(StringUtils.isEmpty(pinYinDistrcist)&&StringUtils.isEmpty(pinYinQuCounty)))
+                    return ori;
+                if(StringUtils.isEmpty(distrcist)){
+                    address = quCounty+" County, "+pinYinCity;
+                }else {
+                    address = pinYinDistrcist+" Distrcist, "+pinYinCity;
+                }
+            }else {
+                String shiCounty = AddressUtil.getShiCounty(address);
+                String city = AddressUtil.getCity(address);
+                String province = AddressUtil.getProvince(address);
+                String pinYinProvince = pinYinCompoent.getPinYin(province);
+                String pinYinCity = pinYinCompoent.getPinYin(city);
+                String pinYinShiCounty = pinYinCompoent.getPinYin(shiCounty);
+                if(StringUtils.isEmpty(pinYinCity)||(StringUtils.isEmpty(pinYinShiCounty)&&StringUtils.isEmpty(pinYinCity)))
+                    return ori;
+                if(StringUtils.isEmpty(city)){
+                    address = pinYinShiCounty+" County, "+pinYinProvince+" Province";
+                }else {
+                    address = pinYinCity+" City, "+pinYinProvince+" Province";
+                }
+            }
+        }catch (Exception e){
+            return ori;
+        }
+        return address+", China";
     }
 
     private String getGoods(WordTrademarkBean bean) {

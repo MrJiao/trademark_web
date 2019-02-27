@@ -23,7 +23,7 @@ public class ChineseUtil {
     private static final String CONTENT_CHINESE_REGEX = "^[\u4e00-\u9fa5]+$";
     private static final String MATCH_CONTENT_CHINESE_REGEX = "[\u4e00-\u9fa5]";
     private static final String MATCH_ENGLISH_REGEX = "[a-zA-Z]+";
-    private static final String MATCH_MARK_REGEX = "[&+\\\\/•!！，,()（)【】{}]+";
+    private static final String MATCH_MARK_REGEX = "[&+\\\\/•!！，·,.。·（）（)【】{}]+";
 
     private static final String MATCH_CONTENT_MATH_REGEX = "\\d";
 

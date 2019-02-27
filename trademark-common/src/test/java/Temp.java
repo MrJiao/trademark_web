@@ -14,7 +14,8 @@ public class Temp {
 
     @Test
     public void removeMark(){
-        String s = ChineseUtil.removeMark("&+\\/•!！，,()d发（Fd)【】{}A");
+        String s = ChineseUtil.removeMark("䖝2 CHONGER");
+         s = ChineseUtil.removeChinese(s);
         System.out.println(s);
     }
 
