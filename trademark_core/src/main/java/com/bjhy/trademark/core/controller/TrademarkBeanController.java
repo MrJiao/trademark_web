@@ -46,7 +46,6 @@ public class TrademarkBeanController {
 	@Autowired
 	private TrademarkConfig trademarkConfig;
 
-
 	@Autowired
 	CacheService cacheService;
 
@@ -150,18 +149,19 @@ public class TrademarkBeanController {
 	@RequestMapping(value = "/trademark_name",method = RequestMethod.GET)
 	public ResponseEntity<InputStreamResource> download(@RequestParam("ids[]") String[] ids) throws Exception {
 		String tempPath = trademarkConfig.getTempPath();
-		File trademarkNameFile = new File(tempPath, "trademarkName.txt");
+		File trademarkNameFile = new File(tempPath, "商标名称"+dateFormat.format(new Date())+".txt");
 		List<TrademarkBean> trademarkBeanList = findAllByIds(ids);
 		trademarkBeanList = trademarkBeanService.filterTrademarkName(trademarkBeanList);
 		HashSet<String> names = new HashSet<>();
 		for (TrademarkBean trademarkBean : trademarkBeanList) {
-			String name = trademarkBeanService.formatterName(trademarkBean.getName());
-			names.add(name);
+			names.add(trademarkBean.getAnalysisName());
 		}
-		FileUtils.writeLines(trademarkNameFile, MyEncoding.getEncode(),names);
+		ArrayList<String> arr = new ArrayList<>();
+		arr.addAll(names);
+		sortStrName(arr);
+		FileUtils.writeLines(trademarkNameFile, MyEncoding.getEncode(),arr);
 		return downloadService.downloadFile(trademarkNameFile,trademarkNameFile.getName());
 	}
-
 
 	@RequestMapping(value = "/trademark_all_name",method = RequestMethod.GET)
 	public ResponseEntity<InputStreamResource> downloadNames() throws Exception {
@@ -169,14 +169,15 @@ public class TrademarkBeanController {
 
 		List<TrademarkBean> trademarkBeanList = cacheService.getTrademarkBeanList();
 		trademarkBeanList = trademarkBeanService.filterTrademarkName(trademarkBeanList);
-		List<String> names = new ArrayList<>();
+		HashSet<String> names = new HashSet<>();
 		for (TrademarkBean trademarkBean : trademarkBeanList) {
-			String name = trademarkBeanService.formatterName(trademarkBean.getName());
-			names.add(name);
+			names.add(trademarkBean.getAnalysisName());
 		}
-		names = trademarkBeanService.sortStringCount(names);
+		ArrayList<String> arr = new ArrayList<>();
+		arr.addAll(names);
+		sortStrName(arr);
 		File trademarkNameFile = new File(tempPath, "商标名称"+dateFormat.format(new Date())+".txt");
-		FileUtils.writeLines(trademarkNameFile, MyEncoding.getEncode(),names);
+		FileUtils.writeLines(trademarkNameFile, MyEncoding.getEncode(),arr);
 		return downloadService.downloadFile(trademarkNameFile,trademarkNameFile.getName());
 	}
 
@@ -223,6 +224,18 @@ public class TrademarkBeanController {
 		});
 	}
 
+	private void sortStrName(List<String> list) {
+		Collections.sort(list, new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				if(StringUtils.isEmpty(o1)||StringUtils.isEmpty(o2))return -1;
+				return o1.compareTo(o2);
+			}
+		});
+	}
+
+
+
 
 	//更新
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
@@ -248,20 +261,10 @@ public class TrademarkBeanController {
 		return pageBean;
 	}
 
-	private void removeTuxingAndChinese(List<Object> items) {
-		ListIterator<Object> iterator = items.listIterator();
-		while (iterator.hasNext()){
-			TrademarkBean bean = (TrademarkBean) iterator.next();
-			if(ChineseUtil.isChinese(bean.getName())){
-				iterator.remove();
-			}
-		}
-	}
-
-
 	@GetMapping("/image/{id}")
 	public ResponseEntity<InputStreamResource> getImage(@PathVariable String id) throws Exception {
 		TrademarkBean trademarkBean = trademarkBeanService.findById(id);
+		if(trademarkBean==null)return null;
 		return downloadService.downloadFile(new File(trademarkBean.getPastePicPath()),trademarkBean.getName());
 	}
 
@@ -284,6 +287,172 @@ public class TrademarkBeanController {
 	public @ResponseBody String test() {
 		boolean b = trademarkBeanService.isContains("322");
 		return b+"";
+	}
+
+
+
+
+
+
+	Thread b;
+	@RequestMapping(value = "/temp", method = RequestMethod.GET)
+	public @ResponseBody String temp(QueryParams queryParams){
+		b = new Thread(){
+			@Override
+			public void run() {
+				PageBean pageBean = JqGridUtil.getPageBean(queryParams);
+				pageBean.setRowsPerPage(1000);
+				trademarkBeanService.pageQuery(pageBean);
+				int totalPages = pageBean.getTotalPages();
+				List<Object> items = pageBean.getItems();
+				ArrayList<TrademarkBean> arr = new ArrayList<>();
+				for (Object item : items) {
+					TrademarkBean trademarkBean = (TrademarkBean) item;
+					if(!StringUtils.isEmpty(trademarkBean.getAnalysisName()))continue;
+					String name = trademarkBean.getName();
+					name = trademarkBeanService.filterName(name);
+					if(StringUtils.isEmpty(name))
+						continue;
+					name =  trademarkBeanService.formatterName(name);
+					trademarkBean.setAnalysisName(name);
+					arr.add(trademarkBean);
+				}
+				trademarkBeanService.update(arr);
+				for (int currentPage = 2; currentPage < totalPages; currentPage++) {
+					ArrayList<TrademarkBean> arr2 = new ArrayList<>();
+					pageBean.setCurrentPage(currentPage);
+					trademarkBeanService.pageQuery(pageBean);
+					List<Object> items2 = pageBean.getItems();
+					for (Object item : items2) {
+						TrademarkBean trademarkBean = (TrademarkBean) item;
+						if(!StringUtils.isEmpty(trademarkBean.getAnalysisName()))continue;
+						String name = trademarkBean.getName();
+						name = trademarkBeanService.filterName(name);
+						if(StringUtils.isEmpty(name))
+							continue;
+						name =  trademarkBeanService.formatterName(name);
+						trademarkBean.setAnalysisName(name);
+						arr2.add(trademarkBean);
+					}
+					trademarkBeanService.update(arr2);
+				}
+			}
+		};
+		b.start();
+		return "ok";
+	}
+	Thread c;
+	@RequestMapping(value = "/temp2", method = RequestMethod.GET)
+	public @ResponseBody String show(QueryParams queryParams){
+		c = new Thread(){
+			@Override
+			public void run() {
+				PageBean pageBean = JqGridUtil.getPageBean(queryParams);
+				pageBean.setRowsPerPage(50000);
+				Condition condi = new Condition("number", Operation.EQ);
+				condi.setPropertyValue("1636");
+				pageBean.setConditions(Arrays.asList(condi));
+				trademarkBeanService.pageQuery(pageBean);
+				int totalPages = pageBean.getTotalPages();
+				List<Object> items = pageBean.getItems();
+				HashMap<String, List<TrademarkBean>> hm = new HashMap<>();
+				for (Object item : items) {
+					TrademarkBean trademarkBean = (TrademarkBean) item;
+					if(StringUtils.isEmpty(trademarkBean.getAnalysisName()))continue;
+					List<TrademarkBean> trademarkBeanList = hm.get(trademarkBean.getAnalysisName());
+					if(trademarkBeanList==null){
+						trademarkBeanList = new ArrayList<>();
+						hm.put(trademarkBean.getAnalysisName(),trademarkBeanList);
+					}
+					trademarkBeanList.add(trademarkBean);
+				}
+				List<TrademarkBean> arr = new ArrayList<>();
+				for (Map.Entry<String, List<TrademarkBean>> entry : hm.entrySet()) {
+					List<TrademarkBean> value = entry.getValue();
+
+					for (TrademarkBean trademarkBean : value) {
+						trademarkBean.setAnalysisCount(value.size());
+						if(value.size()<=5){
+							arr.add(trademarkBean);
+						}
+					}
+					if (value.size() > 5) {
+						trademarkBeanService.update(value);
+					}
+
+				}
+				trademarkBeanService.update(arr);
+			}
+		};
+		c.start();
+		return "ok";
+	}
+
+	Thread a;
+	@RequestMapping(value = "/temp3", method = RequestMethod.GET)
+	public @ResponseBody String temp3(QueryParams queryParams){
+		a=new Thread(){
+			@Override
+			public void run() {
+				PageBean pageBean = JqGridUtil.getPageBean(queryParams);
+				pageBean.setRowsPerPage(1000);
+				Condition condi = new Condition("number", Operation.EQ);
+				condi.setPropertyValue("1636");
+				pageBean.setConditions(Arrays.asList(condi));
+				trademarkBeanService.pageQuery(pageBean);
+				int totalPages = pageBean.getTotalPages();
+				List<Object> items = pageBean.getItems();
+				ArrayList<TrademarkBean> arr = new ArrayList<>();
+				for (Object item : items) {
+					TrademarkBean trademarkBean = (TrademarkBean) item;
+					if(!StringUtils.isEmpty(trademarkBean.getForeign()))continue;
+					String address = trademarkBean.getAddress();
+					if(trademarkBeanService.isFremdness(address)){
+						trademarkBean.setForeign("是");
+						arr.add(trademarkBean);
+					}else {
+						trademarkBean.setForeign("否");
+						arr.add(trademarkBean);
+					}
+				}
+				trademarkBeanService.update(arr);
+				for (int currentPage = 2; currentPage < totalPages; currentPage++) {
+					pageBean.setCurrentPage(currentPage);
+					trademarkBeanService.pageQuery(pageBean);
+					List<Object> items2 = pageBean.getItems();
+					ArrayList<TrademarkBean> arr2 = new ArrayList<>();
+					for (Object item : items2) {
+						TrademarkBean trademarkBean = (TrademarkBean) item;
+						if(!StringUtils.isEmpty(trademarkBean.getForeign()))continue;
+						String address = trademarkBean.getAddress();
+						if(trademarkBeanService.isFremdness(address)){
+							trademarkBean.setForeign("是");
+							arr2.add(trademarkBean);
+						}else {
+							trademarkBean.setForeign("否");
+							arr2.add(trademarkBean);
+						}
+					}
+					trademarkBeanService.update(arr2);
+				}
+			}
+		};
+		a.start();
+		return "ok";
+	}
+
+
+
+
+
+	private void removeTuxingAndChinese(List<Object> items) {
+		ListIterator<Object> iterator = items.listIterator();
+		while (iterator.hasNext()){
+			TrademarkBean bean = (TrademarkBean) iterator.next();
+			if(ChineseUtil.isChinese(bean.getName())){
+				iterator.remove();
+			}
+		}
 	}
 
 

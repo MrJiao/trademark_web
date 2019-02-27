@@ -36,4 +36,6 @@ public interface TrademarkBeanRepository extends CommonRepository<TrademarkBean,
 
     @Query(value = "select t.id from TRADEMARKBEAN t where t.id=:id",nativeQuery = true)
     List<String> findIds(@Param("id") String id);
+
+    List<TrademarkBean> findByAnalysisName(String analysisName);
 }

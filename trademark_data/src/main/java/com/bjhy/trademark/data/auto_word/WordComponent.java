@@ -12,60 +12,85 @@ import java.util.*;
 @Component
 public class WordComponent {
 
-    File wordTemplateFile;
-
+    File rootDir;
     public WordComponent() {
         //获取模板路径
-        File rootDir = new File(System.getProperty("user.dir"));
-        wordTemplateFile = new File(rootDir, "config" + File.separator + "source" + File.separator + "template.docx");
+        rootDir = new File(System.getProperty("user.dir"));
+
+    }
+
+    private File getTimplateFile(int index){
+        return  new File(rootDir, "config" + File.separator + "source" + File.separator + "template"+index+".docx");
     }
 
     // File rootDir = new File(System.getProperty(USER_DIR));
     //File platformFile = new File(rootDir,CONFIG + File.separator + PLATFORM_PROPERTIES);
 
-    public boolean autoWord(WordTrademarkBean wordTrademarkBean, File target, int liushui) {
+    public boolean autoWord(ArrayList<WordTrademarkBean> wordTrademarkBeanList, File target) {
         try {
             //选择模板
-            HashMap<String, String> hs = formatterValues(wordTrademarkBean, liushui);
+            HashMap<String, String> hs = formatterValues(wordTrademarkBeanList);
             //导出
-            WordUtils.replaceAndGenerateWord(wordTemplateFile.getAbsolutePath(), target.getAbsolutePath(), hs);
+            WordUtils.replaceAndGenerateWord(getTimplateFile(wordTrademarkBeanList.size()).getAbsolutePath(), target.getAbsolutePath(), hs);
         } catch (Exception e) {
             return false;
         }
         return true;
     }
 
-    private HashMap<String, String> formatterValues(WordTrademarkBean wordTrademarkBean, int liushui) {
+    private HashMap<String, String> formatterValues(ArrayList<WordTrademarkBean> wordTrademarkBeanList) {
         //设置值
         HashMap<String, String> values = new HashMap<>();
-        values.put("$(publish_date)", formatterDate(wordTrademarkBean.getAnn_date()));//初审日期
-        values.put("$(deadline)", formatterDate(wordTrademarkBean.getYiyiEndDate()));// 截止期限
-        values.put("$(application_date)", formatterDate(wordTrademarkBean.getApplicationDate()));// 申请时间
+        WordTrademarkBean tt = wordTrademarkBeanList.get(0);
+        values.put("$(mark)", tt.getName());//商标名称
+        values.put("$(ref)", getRef(wordTrademarkBeanList));//商标名称
+        getRef(wordTrademarkBeanList);
+        for (int i = 0; i < wordTrademarkBeanList.size(); i++) {
+            int index = i+1;
+            WordTrademarkBean wordTrademarkBean = wordTrademarkBeanList.get(i);
+            values.put("$(publish_date"+index+")", formatterDate(wordTrademarkBean.getAnn_date()));//初审日期
+            values.put("$(deadline"+index+")", formatterDate(wordTrademarkBean.getYiyiEndDate()));// 截止期限
+            values.put("$(application_date"+index+")", formatterDate(wordTrademarkBean.getApplicationDate()));// 申请时间
 
-        values.put("$(mark)", wordTrademarkBean.getName());//商标名称
-
-
-        List<WordTrademarkBean.TrademarkType> trademarkTypeList = wordTrademarkBean.getTrademarkType();
-
-        if (trademarkTypeList.size() != 0) {
-            if (trademarkTypeList.size() == 1) {
-                WordTrademarkBean.TrademarkType trademarkType = trademarkTypeList.get(0);
-                values.put("$(clazz)", trademarkType.getTypeNum() + "");// 类别
-                List<String> type = trademarkType.getType();
-                String s = "";
-                for (String t : type) {
-                    s += t + ";";
-                }
-                values.put("$(goods)", s);//商品
-            } else {
-                values.put("$(goods)", wordTrademarkBean.getType());//商品
+            List<WordTrademarkBean.TrademarkType> trademarkTypeList = wordTrademarkBean.getTrademarkType();
+            if (trademarkTypeList.size() != 0) {
+                values.put("$(clazz"+index+")", getClazz(wordTrademarkBean));// 类别
+                values.put("$(goods"+index+")", getGoods(wordTrademarkBean));//商品
             }
+            values.put("$(no"+index+")", wordTrademarkBean.getNumber());//商标号
+
+            values.put("$(applicant"+index+")", wordTrademarkBean.getApplicant());//申请人
+            values.put("$(application_address"+index+")", wordTrademarkBean.getAddress());//申请地址
         }
-        values.put("$(no)", wordTrademarkBean.getNumber());//商标号
-        values.put("$(ref)", "AK19" + liushui);//卷号
-        values.put("$(applicant)", wordTrademarkBean.getApplicant());//申请人
-        values.put("$(application_address)", wordTrademarkBean.getAddress());//申请地址
         return values;
+    }
+
+    private String getGoods(WordTrademarkBean bean) {
+        return bean.getType();
+    }
+
+    private String getClazz(WordTrademarkBean bean) {
+        List<WordTrademarkBean.TrademarkType> trademarkTypeList = bean.getTrademarkType();
+        if(trademarkTypeList.size()==0){
+            return "没有找到类别";
+        }else {
+            String s = "";
+            for (WordTrademarkBean.TrademarkType trademarkType : trademarkTypeList) {
+                s += trademarkType.getTypeNum()+",";
+            }
+            s = s.substring(0,s.length()-1);
+            return s;
+        }
+    }
+
+    private String getRef(ArrayList<WordTrademarkBean> wordTrademarkBeanList) {
+        WordTrademarkBean start = wordTrademarkBeanList.get(0);
+        if(wordTrademarkBeanList.size()==1){
+            return "AK19" + start.getLiushui();//卷号
+        }else {
+            WordTrademarkBean end = wordTrademarkBeanList.get(wordTrademarkBeanList.size()-1);
+            return "AK19"+ start.getLiushui()+"-"+end.getLiushui();
+        }
     }
 
     Calendar cal = Calendar.getInstance();

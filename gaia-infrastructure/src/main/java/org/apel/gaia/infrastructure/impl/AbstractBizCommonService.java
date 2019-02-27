@@ -1,9 +1,11 @@
 package org.apel.gaia.infrastructure.impl;
 
+
 import org.apel.gaia.commons.autocomplete.executor.BeanAutoCompleteExecutor;
 import org.apel.gaia.commons.autocomplete.generator.id.IdGenerator;
 import org.apel.gaia.commons.pager.Condition;
 import org.apel.gaia.commons.pager.Order;
+import org.apel.gaia.commons.pager.OrderType;
 import org.apel.gaia.commons.pager.PageBean;
 import org.apel.gaia.infrastructure.BizCommonService;
 import org.apel.gaia.persist.dao.CommonRepository;
@@ -171,7 +173,41 @@ public abstract class AbstractBizCommonService<T,PK extends Serializable> implem
 
 	@Override
 	public void pageQuery(PageBean pageBean) {
+		List<Order> orders = pageBean.getOrders();
+		List<Order> adds = new ArrayList<>();
+		for (Order order : orders) {
+			OrderType orderType = order.getOrderType();
+			String propertyName = order.getPropertyName();
+
+			String[] split = propertyName.split(",");
+			for (String s : split) {
+				s = s.trim();
+				if(StringUtils.isEmpty(s))continue;
+				Order der = null;
+				String[] s1 = s.split(" ");
+				if(s1.length<2){
+					if(!StringUtils.isEmpty(s1[0])){
+						der = new Order(s1[0], orderType);
+						adds.add(0,der);
+					}
+					continue;
+				}
+				der = new Order(s1[0], getOrderType(s1[1]));
+				adds.add(der);
+			}
+		}
+		pageBean.setOrders(adds);
 		getRepository().doPager(pageBean, getPageQl());
+	}
+
+
+	private OrderType getOrderType(String orderType){
+		if(org.apache.commons.lang3.StringUtils.equals(orderType,"asc")){
+			return OrderType.ASC;
+		}else if(org.apache.commons.lang3.StringUtils.equals(orderType,"desc")){
+			return OrderType.DESC;
+		}
+		return null;
 	}
 
 	@Override

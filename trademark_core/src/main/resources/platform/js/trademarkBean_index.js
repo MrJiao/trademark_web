@@ -8,6 +8,16 @@ $(function () {
 trademarkBean_index.V = (function (){
     var trademarkBeanList;
 
+    function booleanFormatter(cellvalue, options, rowObject) {
+        if(cellvalue==null|| cellvalue == undefined )return"";
+        if(cellvalue=='1')
+            return "是";
+        else
+            return "否";
+    }
+
+
+
     return{
         init: function (){
             trademarkBeanList = $("#commonList").jqGrid({
@@ -17,31 +27,37 @@ trademarkBean_index.V = (function (){
                 height:document.body.clientHeight-230,
                 mtype: "GET",
                 multiselect: true,
-                colNames: ["id","页码编号","商标号","期号","申请日期","商标名","申请人","地址","代理机构","异议期限-开始","异议期限-截止","公告日期","类型","被选择的类型","备注","创建时间"],
+                colNames: ["id","页码","商标号","期号","申请日期","商标名","解析名称","个数","国外","申请人","地址","代理机构","异议开始","异议截止","公告日期","类型","被选择的类型","备注1","备注2","备注3","创建时间"],
                 colModel: [
                     { name: "id", index:"id",align:"center",hidden: true, sortable: true},
-                    { name: "page_no", index:"page_no",align:"center", sortable: true},
+                    { name: "page_no", index:"page_no",align:"center",hidden: false, sortable: true},
                     { name: "number", index:"number",align:"center",hidden: false, sortable: true},
                     { name: "anNum", index:"anNum",align:"center",hidden: false, sortable: true},
-                    { name: "applicationDate", index:"applicationDate",align:"center",hidden: false, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d H:i:s" }},
+                    { name: "applicationDate", index:"applicationDate",align:"center",hidden: false, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d" }},
                     { name: "name", index:"name",align:"center",hidden: false, sortable: true},
+                    { name: "analysisName", index:"analysisName",align:"center", sortable: true},
+                    { name: "analysisCount", index:"analysisCount",align:"center", sortable: true},
+                    { name: "foreign", index:"foreign",align:"center", sortable: true},
                     { name: "applicant", index:"applicant",align:"center",hidden: false, sortable: true},
                     { name: "address", index:"address",align:"center",hidden: false, sortable: true},
                     { name: "agency", index:"agency",align:"center",hidden: false, sortable: true},
-                    { name: "yiyiStartDate", index:"yiyiStartDate",align:"center",hidden: false, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d H:i:s" }},
-                    { name: "yiyiEndDate", index:"yiyiEndDate",align:"center",hidden: false, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d H:i:s" }},
-                    { name: "ann_date", index:"ann_date",align:"center",hidden: false, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d H:i:s" }},
+                    { name: "yiyiStartDate", index:"yiyiStartDate",align:"center",hidden: true, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d" }},
+                    { name: "yiyiEndDate", index:"yiyiEndDate",align:"center",hidden: true, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d" }},
+                    { name: "ann_date", index:"ann_date",align:"center",hidden: true, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d" }},
                     { name: "type", index:"type",align:"center",hidden: true, sortable: true},
                     { name: "choosedType", index:"choosedType",align:"center",hidden: true, sortable: true},
                     { name: "remark", index:"remark",align:"center",hidden: false, sortable: true},
-                    { name: "gmt_create", index:"gmt_create",align:"center",hidden: true, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d H:i:s" }}
+                    { name: "remark2", index:"remark2",align:"center",hidden: false, sortable: true},
+                    { name: "remark3", index:"remark3",align:"center",hidden: false, sortable: true},
+                    { name: "gmt_create", index:"gmt_create",align:"center",hidden: true, sortable: true,searchoptions:{dataInit:PlatformUI.defaultJqueryUIDatePick},formatter:"date",formatoptions: { srcformat: "U", newformat: "Y-m-d" }}
                 ],
                 pager: "#commonPager",
                 rowNum: 10,
                 rowList: [10, 20,40,80],
-                sortname:"page_no",
-                sortorder:"asc",
+                sortname:"analysisCount desc,analysisName desc,name desc",
+                sortorder:"desc",
                 viewrecords: true,
+                multiSort: true,
                 gridview: true,
                 autoencode: true,
                 caption: "商标数据"
@@ -65,9 +81,7 @@ trademarkBean_index.V = (function (){
         },
         //弹出表单框体
         showCommonDetailWindow:function (){
-            //表单重置
-            $("#commonDetailForm")[0].reset();
-            $("#commonDetailForm #id").val("");
+            this.resetCommonDetailWindow();
             //验证表单
             this.validateForm();
             $('#commonDetail').show();
@@ -78,6 +92,11 @@ trademarkBean_index.V = (function (){
                 modal:true
             });
             //填充复杂字段信息
+        },
+        resetCommonDetailWindow:function(){
+            //表单重置
+            $("#commonDetailForm")[0].reset();
+            $("#commonDetailForm #id").val("");
         },
         closeCommonDetailWindow:function(){
             $('#commonDetail').window('close');
@@ -442,7 +461,7 @@ trademarkBean_index.P = (function (){
             operation = "edit";
             var id = M.getCurrentPageId();
             M.getItemData(id,function(data, textStatus,jqXHR){
-                V.showCommonDetailWindow();
+                V.resetCommonDetailWindow();
                 V.populateForm(data);
                 V.setTrademarkUrl(id);
                 //填充复杂数据
@@ -456,7 +475,7 @@ trademarkBean_index.P = (function (){
             operation = "edit";
             var id = M.getCurrentPageId();
             M.getItemData(id,function(data, textStatus,jqXHR){
-                V.showCommonDetailWindow();
+                V.resetCommonDetailWindow();
                 V.populateForm(data);
                 V.setTrademarkUrl(id);
             })

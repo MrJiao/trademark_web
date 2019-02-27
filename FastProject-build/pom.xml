@@ -74,6 +74,10 @@
                     <artifactId>poi-ooxml</artifactId>
                     <groupId>org.apache.poi</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>pinyin4j</artifactId>
+                    <groupId>com.belerweb</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -93,6 +97,10 @@
                 <exclusion>
                     <artifactId>poi-ooxml</artifactId>
                     <groupId>org.apache.poi</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>pinyin4j</artifactId>
+                    <groupId>com.belerweb</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

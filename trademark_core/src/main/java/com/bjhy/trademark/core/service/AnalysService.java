@@ -1,5 +1,7 @@
 package com.bjhy.trademark.core.service;
 
+import com.bjhy.trademark.core.pojo.Remark;
+
 import java.io.File;
 
 /**
@@ -8,7 +10,6 @@ import java.io.File;
 public interface AnalysService {
     void trademarkData(File storeFile);
 
-    void trademarkName(String annm,String remark, File storeFile);
+    void trademarkName(Remark remarkObj, File storeFile);
 
-    void analysUrl(File storeFile);
 }

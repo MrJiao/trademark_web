@@ -44,6 +44,16 @@ public class WordTrademarkBean {
 
     String remark;
 
+    int liushui;
+
+    public int getLiushui() {
+        return liushui;
+    }
+
+    public void setLiushui(int liushui) {
+        this.liushui = liushui;
+    }
+
     public Date getAnn_date() {
         return ann_date;
     }

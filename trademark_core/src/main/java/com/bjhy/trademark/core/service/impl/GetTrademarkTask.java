@@ -8,6 +8,7 @@ import com.bjhy.trademark.core.TrademarkConfig;
 import com.bjhy.trademark.core.convert.ConvertUtil;
 import com.bjhy.trademark.core.domain.TaskData;
 import com.bjhy.trademark.core.domain.TrademarkBean;
+import com.bjhy.trademark.core.pojo.Remark;
 import com.bjhy.trademark.core.pojo.TrademarkData;
 import com.bjhy.trademark.core.pojo.UrlData;
 import com.bjhy.trademark.core.service.TaskDataService;
@@ -23,6 +24,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -41,10 +44,12 @@ public class GetTrademarkTask implements Runnable {
 
     File urlFile;
     File dataFile;
+    Remark remarkObj;
 
-    public GetTrademarkTask(File urlFile, File dataFile) {
+    public GetTrademarkTask(File urlFile, File dataFile, Remark remarkObj) {
         this.urlFile = urlFile;
         this.dataFile = dataFile;
+        this.remarkObj = remarkObj;
     }
 
     private File getPasteFolder(String anNum) {
@@ -129,6 +134,9 @@ public class GetTrademarkTask implements Runnable {
                             trademarkBean = trademarkBeanService.findById(picTrademarkBean.getNumber());
                         if (trademarkBean == null) continue;
                         trademarkBean = matchPicData(trademarkBean, picTrademarkBean);
+                        boolean fremdness = trademarkBeanService.isFremdness(trademarkBean.getAddress());
+                        trademarkBean.setForeign(fremdness ? "是" : "否");
+                        setRemark(trademarkBean,remarkObj);
                         trademarkBeanService.update(trademarkBean);
                     }
                 } catch (Exception e) {
@@ -159,21 +167,21 @@ public class GetTrademarkTask implements Runnable {
         } else if (imageUrls.size() == 2) {
             String ann1 = getAnNum(folder, imageUrls.get(0));
             String ann2 = getAnNum(folder, imageUrls.get(1));
-            return getEqOrNotEmpty(ann1,ann2);
+            return getEqOrNotEmpty(ann1, ann2);
         } else {
             String ann1 = getAnNum(folder, imageUrls.get(0));
             String ann2 = getAnNum(folder, imageUrls.get(imageUrls.size() - 1));
-            return getEqOrNotEmpty(ann1,ann2);
+            return getEqOrNotEmpty(ann1, ann2);
         }
     }
 
     private String getEqOrNotEmpty(String ann1, String ann2) {
-        if(!StringUtils.isEmpty(ann1)&&!StringUtils.isEmpty(ann2)){
+        if (!StringUtils.isEmpty(ann1) && !StringUtils.isEmpty(ann2)) {
             if (StringUtils.equals(ann1, ann2))
                 return ann1;
-        }else if(StringUtils.isEmpty(ann1)){
+        } else if (StringUtils.isEmpty(ann1)) {
             return ann2;
-        }else if(StringUtils.isEmpty(ann2)){
+        } else if (StringUtils.isEmpty(ann2)) {
             return ann1;
         }
         return "";
@@ -195,7 +203,7 @@ public class GetTrademarkTask implements Runnable {
 
         trademarkBean = orcPic(trademarkBean);
 
-        return trademarkBean!=null?trademarkBean.getAnNum():"";
+        return trademarkBean != null ? trademarkBean.getAnNum() : "";
     }
 
 
@@ -258,7 +266,7 @@ public class GetTrademarkTask implements Runnable {
         if (!ConvertUtil.convert(normal, picTrademarkBean)) {
             if (isNotData(picTrademarkBean)) {
                 return null;
-            } else if (picTrademarkBean.getNumber()==null || picTrademarkBean.getNumber().length() != 8) {
+            } else if (picTrademarkBean.getNumber() == null || picTrademarkBean.getNumber().length() != 8) {
                 OrcData gao = null;
                 try {
                     gao = picOrc.gao(picTrademarkBean.getDataPicPath());
@@ -275,13 +283,13 @@ public class GetTrademarkTask implements Runnable {
                         return picTrademarkBean;
                     }
                 }
-            }else {
+            } else {
                 return picTrademarkBean;
             }
         } else {
             if (isNotData(picTrademarkBean)) {
                 return null;
-            } else if (picTrademarkBean.getNumber()==null || picTrademarkBean.getNumber().length() != 8) {
+            } else if (picTrademarkBean.getNumber() == null || picTrademarkBean.getNumber().length() != 8) {
                 OrcData gao = null;
                 try {
                     gao = picOrc.gao(picTrademarkBean.getDataPicPath());
@@ -298,25 +306,25 @@ public class GetTrademarkTask implements Runnable {
                         return picTrademarkBean;
                     }
                 }
-            }else {
+            } else {
                 return picTrademarkBean;
             }
         }
     }
 
 
-    private boolean isNotData(TrademarkBean trademarkBean){
-        int size =0 ;
-        if(trademarkBean.getApplicationDate()!=null){
+    private boolean isNotData(TrademarkBean trademarkBean) {
+        int size = 0;
+        if (trademarkBean.getApplicationDate() != null) {
             size++;
         }
-        if(trademarkBean.getYiyiStartDate()!=null){
+        if (trademarkBean.getYiyiStartDate() != null) {
             size++;
         }
-        if(trademarkBean.getYiyiEndDate()!=null){
+        if (trademarkBean.getYiyiEndDate() != null) {
             size++;
         }
-        return size<2;
+        return size < 2;
     }
 
 
@@ -341,11 +349,32 @@ public class GetTrademarkTask implements Runnable {
         return trademarkBean;
     }
 
+    private void setRemark(TrademarkBean trademarkBean, Remark remarkObj) {
+        String remark1 = remarkObj.getRemark1();
+        String remark2 = remarkObj.getRemark2();
+        String remark3 = remarkObj.getRemark3();
+        if (!StringUtils.isEmpty(remark1))
+            trademarkBean.setRemark(remark1);
+        if (!StringUtils.isEmpty(remark2))
+            trademarkBean.setRemark2(remark2);
+        if (!StringUtils.isEmpty(remark3))
+            trademarkBean.setRemark3(remark3);
+    }
+
 
     private void storeData(ArrayList<TrademarkData.RowsBean> rowsBeans) {
         ArrayList<TrademarkBean> trademarkBeanArr = new ArrayList<>();
+        HashSet<String> idsSet = new HashSet<>();
+
         for (TrademarkData.RowsBean row : rowsBeans) {
-            if(trademarkBeanService.isContains(row.getReg_num()))continue;
+            if (idsSet.contains(row.getReg_num())) continue;
+            TrademarkBean t = trademarkBeanService.findById(row.getReg_num());
+            if (t != null) {
+                setRemark(t, remarkObj);
+                trademarkBeanService.update(t);
+                continue;
+            }
+            //if(trademarkBeanService.isContains(row.getReg_num()))continue;
             TrademarkBean trademarkBean = new TrademarkBean();
             try {
                 trademarkBean.setAnn_date(formatter.parse(row.getAnn_date()));//公告日期
@@ -359,11 +388,51 @@ public class GetTrademarkTask implements Runnable {
             trademarkBean.setApplicant(row.getRegname());//申请人
             trademarkBean.setAnNum(row.getAnn_num());//期号
             trademarkBean.setName(row.getTmname());//商标名称
+            trademarkBean.setAnalysisName(analysisName(row.getTmname()));
+            trademarkBean.setAnalysisCount(getAnalysisCount(trademarkBeanArr, trademarkBean.getAnalysisName()));
             trademarkBean.setGmt_create(new Date());
+            setRemark(trademarkBean, remarkObj);
             trademarkBeanArr.add(trademarkBean);
+            idsSet.add(row.getReg_num());
+            if (trademarkBeanArr.size() > 300) {
+                trademarkBeanService.save(trademarkBeanArr);
+                trademarkBeanArr = new ArrayList<>();
+            }
         }
         if (trademarkBeanArr.size() > 0)
             trademarkBeanService.save(trademarkBeanArr);
+    }
+
+    private Integer getAnalysisCount(ArrayList<TrademarkBean> trademarkBeanArr, String analysisName) {
+        if (StringUtils.isEmpty(analysisName)) return 0;
+        List<TrademarkBean> list = trademarkBeanService.findByAnalysisName(analysisName);
+        List<TrademarkBean> list2 = findAnalysisName(trademarkBeanArr, analysisName);
+        if (list.size() + list2.size() == 0) return 1;
+        Integer analysisCount = list.size() + list2.size() + 1;
+        for (TrademarkBean trademarkBean : list) {
+            trademarkBean.setAnalysisCount(analysisCount);
+        }
+        for (TrademarkBean trademarkBean : list2) {
+            trademarkBean.setAnalysisCount(analysisCount);
+        }
+        trademarkBeanService.update(list);
+        return analysisCount;
+    }
+
+    private List<TrademarkBean> findAnalysisName(ArrayList<TrademarkBean> trademarkBeanArr, String analysisName) {
+        ArrayList<TrademarkBean> list = new ArrayList<>();
+        for (TrademarkBean trademarkBean : trademarkBeanArr) {
+            if (StringUtils.equals(trademarkBean.getAnalysisName(), analysisName)) {
+                list.add(trademarkBean);
+            }
+        }
+        return list;
+    }
+
+    private String analysisName(String name) {
+        name = trademarkBeanService.filterName(name);
+        if (StringUtils.isEmpty(name)) return null;
+        return trademarkBeanService.formatterName(name);
     }
 
     private ArrayList<TrademarkData.RowsBean> readTrademarkData() throws IOException {
@@ -394,7 +463,7 @@ public class GetTrademarkTask implements Runnable {
             for (String s : split) {
                 UrlData urlData = objectMapper.readValue(s, UrlData.class);
                 for (String ss : urlData.getImaglist()) {
-                    if(!StringUtils.isEmpty(ss))
+                    if (!StringUtils.isEmpty(ss))
                         hs.add(ss);
                 }
             }

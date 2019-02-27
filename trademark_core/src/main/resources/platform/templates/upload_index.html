@@ -13,25 +13,27 @@ ${jsContext}${jquery}${easyUI}${jqGrid}${toast}${easyUI}${appJs}${jackson_genera
 <body>
 <form enctype="multipart/form-data">
     <p>上传商标数据<input type="file" id="data_file" name="file"/>
+        <input type="text" id="data_remark" name="remark" placeholder="请输入备注1"/>
+        <input type="text" id="data_remark2" name="remark2" placeholder="请输入备注2"/>
+        <input type="text" id="data_remark3" name="remark3" placeholder="请输入备注3"/>
         <input id="upload_data" class="btn_blue" type="button" value="上传"/></p>
 
 </form>
 <form enctype="multipart/form-data">
-    <p>上传粗筛后商标名称<input type="file" id="name_file" name="file"/> <input type="text" id="annm" name="annm" placeholder="请输入期号"/>
-        <input type="text" id="remark" name="remark" placeholder="请输入备注"/>
+    <p>上传粗筛后商标名称<input type="file" id="name_file" name="file"/>
+        <input type="text" id="name_remark" name="remark" placeholder="请输入备注1"/>
+        <input type="text" id="name_remark2" name="remark2" placeholder="请输入备注2"/>
+        <input type="text" id="name_remark3" name="remark3" placeholder="请输入备注3"/>
         <input id="upload_name" class="btn_blue" type="button" value="上传"/></p>
 </form>
 
 <div  >
     <ul class="toolkit_ul_left">
 
-
         <li><input type="text" id="inputAnnm" placeholder="输入期号"
         /></li>
         <li><input type="button" class="btn_blue" id="deleteAllBtn"
                    value="删除商标信息" /></li>
-
-
 
 
     </ul>

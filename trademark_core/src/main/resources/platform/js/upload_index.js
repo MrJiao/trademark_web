@@ -66,19 +66,28 @@ upload_index.P = (function (){
     function initListener() {
         //上传
         $("#upload_data").click(function () {
-            upload('data_file',"/upload/upload_trademark_data");
+            var remark = $("#data_remark").val();
+            var remark2 = $("#data_remark2").val();
+            var remark3 = $("#data_remark3").val();
+
+            upload('data_file', "/upload/upload_trademark_data",
+                {
+                    'remark': remark,
+                    'remark2': remark2,
+                    'remark3': remark3
+                });
         });
 
         $("#upload_name").click(function () {
-            var annm = $("#annm").val();
-            if(annm =='' || annm == null){
-                toastr.warning("输入期号");
-            }
-            var remark = $("#remark").val();
-            if(remark =='' || remark == null){
-                toastr.warning("备注");
-            }
-            upload('name_file',"/upload/upload_trademark_name",{'annm':annm,'remark':remark});
+            var remark = $("#name_remark").val();
+            var remark2 = $("#name_remark2").val();
+            var remark3 = $("#name_remark3").val();
+
+            upload('name_file',"/upload/upload_trademark_name",
+                {'remark':remark,
+                    'remark2':remark2,
+                    'remark3':remark3
+            });
         });
 
         $("#deleteAllBtn").click(function () {

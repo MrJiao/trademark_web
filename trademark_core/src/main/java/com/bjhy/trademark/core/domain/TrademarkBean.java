@@ -11,7 +11,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -20,7 +19,7 @@ import java.util.regex.Pattern;
 /**
  * Create by: Jackson
  */
-@TableName("标志数据")
+@TableName("商标数据")
 @Entity
 public class TrademarkBean implements Serializable {
 
@@ -40,6 +39,10 @@ public class TrademarkBean implements Serializable {
     Date applicationDate;//
     @FieldParam("商标名")
     String name;//
+
+    @FieldParam("解析后商标名")
+    String analysisName;//
+
     @FieldParam("申请人")
     String applicant;//
     @FieldParam("地址")
@@ -85,11 +88,66 @@ public class TrademarkBean implements Serializable {
     @FieldParam(value="外国邮箱")
     String email;//外国邮箱 可能有多个 逗号分隔
 
+    @FieldParam(value="相同商标个数")
+    @Column(name = "mCount")
+    Integer analysisCount=0;
+
     @FieldParam(value="备注")
     @Column(name = "mRemark")
     String remark;
 
+    @FieldParam(value="备注2")
+    @Column(name = "mRemark2")
+    String remark2;
+
+    @FieldParam(value="备注3")
+    @Column(name = "mRemark3")
+    String remark3;
+
     String picEncode;
+
+    @FieldParam(value="国外")
+    String foreign;
+
+    public String getRemark2() {
+        return remark2;
+    }
+
+    public void setRemark2(String remark2) {
+        this.remark2 = remark2;
+    }
+
+    public String getRemark3() {
+        return remark3;
+    }
+
+    public void setRemark3(String remark3) {
+        this.remark3 = remark3;
+    }
+
+    public String getForeign() {
+        return foreign;
+    }
+
+    public void setForeign(String foreign) {
+        this.foreign = foreign;
+    }
+
+    public String getAnalysisName() {
+        return analysisName;
+    }
+
+    public void setAnalysisName(String analysisName) {
+        this.analysisName = analysisName;
+    }
+
+    public Integer getAnalysisCount() {
+        return analysisCount;
+    }
+
+    public void setAnalysisCount(Integer analysisCount) {
+        this.analysisCount = analysisCount;
+    }
 
     public String getPicEncode() {
         return picEncode;
@@ -325,27 +383,29 @@ public class TrademarkBean implements Serializable {
 
     private List<TrademarkType> convertType(String str){
         ArrayList<TrademarkType> list = new ArrayList<>();
-        if(StringUtils.isEmpty(str))return list;
-        Pattern pattern = Pattern.compile(rex);
+        try {
+            if(StringUtils.isEmpty(str))return list;
+            Pattern pattern = Pattern.compile(rex);
 
-        Matcher matcher = pattern.matcher(str);
-        ArrayList<String> typeNum = new ArrayList<>();
-        while (matcher.find()) {
-            typeNum.add(matcher.group());
-        }
-        String[] split = str.split(rex);
-        List<String> strings = removeBank(split);
-        for (int i = 0; i < strings.size(); i++) {
-            String s = strings.get(i);
-            if(StringUtils.isEmpty(s))continue;
-            List<String> types = convert(s);
-            String num = typeNum.get(i).substring(1, typeNum.get(i).length() - 1);
+            Matcher matcher = pattern.matcher(str);
+            ArrayList<String> typeNum = new ArrayList<>();
+            while (matcher.find()) {
+                typeNum.add(matcher.group());
+            }
+            String[] split = str.split(rex);
+            List<String> strings = removeBank(split);
+            for (int i = 0; i < strings.size(); i++) {
+                String s = strings.get(i);
+                if(StringUtils.isEmpty(s))continue;
+                List<String> types = convert(s);
+                String num = typeNum.get(i).substring(1, typeNum.get(i).length() - 1);
 
-            TrademarkType trademarkType = new TrademarkType();
-            trademarkType.typeNum = Integer.parseInt(num);
-            trademarkType.type = types;
-            list.add(trademarkType);
-        }
+                TrademarkType trademarkType = new TrademarkType();
+                trademarkType.typeNum = Integer.parseInt(num);
+                trademarkType.type = types;
+                list.add(trademarkType);
+            }
+        }catch (Exception e){}
         return list;
     }
 

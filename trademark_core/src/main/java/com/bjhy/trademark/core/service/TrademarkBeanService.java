@@ -31,6 +31,8 @@ public interface TrademarkBeanService extends BizCommonService<TrademarkBean,Str
 
     File zipTrademarkBean(List<TrademarkBean> trademarkBeanList, String liushui);
 
+    String filterName(String name);
+
     String formatterName(String name);
 
     void deleteByAnnum(String annum);
@@ -42,4 +44,8 @@ public interface TrademarkBeanService extends BizCommonService<TrademarkBean,Str
     boolean isContains(String id);
 
     List<String> sortStringCount(List<String> names);
+
+    List<TrademarkBean> findByAnalysisName(String analysisName);
+
+    boolean isFremdness(String address);
 }

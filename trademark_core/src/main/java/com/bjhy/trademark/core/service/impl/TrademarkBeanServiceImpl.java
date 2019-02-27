@@ -64,27 +64,42 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
 
         ArrayList<TrademarkBean> arr = new ArrayList<>();
         for (TrademarkBean bean : trademarkBeanList) {
-            //全中文和数字的不要
-            if(!ChineseUtil.isMathAndChinese(bean.getName())){
-                //去除中文数字和_和空格和, 剩下字符长度大于3的
-                if(isEnglishLengthMore(bean.getName(),3)){
-                    //地区不是国外
-                    if(!isFremdness(bean.getAddress())){
-                        if(!isChaofan(bean.getAgency())){
-                            arr.add(bean);
-                        }
+
+            //去除中文数字和_和空格和, 剩下字符长度大于3的
+            if(isEnglishLengthMore(bean.getName(),3)){
+                //地区不是国外
+                if(!isFremdness(bean.getAddress())){
+                    if(!isChaofan(bean.getAgency())){
+                        arr.add(bean);
                     }
                 }
-
             }
+            //全中文和数字的不要
+            //if(!ChineseUtil.isMathAndChinese(bean.getName())){}
         }
         return arr;
     }
 
     @Override
+    public String filterName(String name){
+        //去除中文数字和_和空格和, 剩下字符长度大于3的
+        if(isEnglishLengthMore(name,3)){
+           return name;
+        }
+        return "";
+    }
+
+
+    @Override
+    public String formatterName(String name) {
+        name = ChineseUtil.removeChinese(name);
+        name = ChineseUtil.removeMark(name);
+        return name.trim();
+    }
+
+
+    @Override
     public List<TrademarkBean> findByAnnm(String annm) {
-
-
         return getRepository().findByAnNum(annm);
     }
 
@@ -152,29 +167,10 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
         File folder = new File(tempPath, System.currentTimeMillis() + "");
         folder.mkdirs();
 
-        for (TrademarkBean trademarkBean : trademarkBeanList) {
-            //创建子文件夹
-
-            File ziFolder = new File(folder,getZipName(trademarkBean,liuShuiNum));
-            ziFolder.mkdirs();
-            liuShuiNum++;
-            //复制文件
-            try {
-                copyPic(ziFolder,trademarkBean.getPastePicPath(),trademarkBean.getNumber()+"paste.jpg");
-                copyPic(ziFolder,trademarkBean.getPicPath(),trademarkBean.getNumber()+"original.jpg");
-                //生成文件
-                generateDataFile(new File(ziFolder,"商标数据"+trademarkBean.getNumber()+".txt"),trademarkBean);
-                //处理word
-                WordTrademarkBean wordTrademarkBean = new WordTrademarkBean();
-                BeanUtils.copyProperties(wordTrademarkBean,trademarkBean);
-                wordComponent.autoWord(wordTrademarkBean,getTargetWordFile(ziFolder,trademarkBean,liuShuiNum),liuShuiNum);
-            } catch (IOException e) {
-                L.exception(e);
-            } catch (IllegalAccessException e) {
-                L.exception(e);
-            } catch (InvocationTargetException e) {
-                L.exception(e);
-            }
+        HashMap<String, List<TrademarkBean>> hm = classify(trademarkBeanList);
+        for (List<TrademarkBean> value : hm.values()) {
+            value.sort(new LeiBie());
+            liuShuiNum = generator(folder,value,liuShuiNum);
         }
         //打包
         try {
@@ -192,6 +188,64 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
         return new File(tempPath,folder.getName()+".zip");
     }
 
+    private HashMap<String, List<TrademarkBean>> classify(List<TrademarkBean> trademarkBeanList) {
+        HashMap<String, List<TrademarkBean>> hm = new HashMap<>();
+        for (TrademarkBean trademarkBean : trademarkBeanList) {
+            if(!StringUtils.isEmpty(trademarkBean.getAnalysisName())){
+                List<TrademarkBean> trademarkBeans = hm.get(trademarkBean.getAnalysisName());
+                if(trademarkBeans==null){
+                    trademarkBeans = new ArrayList<>();
+                    hm.put(trademarkBean.getAnalysisName(),trademarkBeans);
+                }
+                trademarkBeans.add(trademarkBean);
+            }else {
+                List<TrademarkBean> trademarkBeans = hm.get(trademarkBean.getName());
+                if(trademarkBeans==null){
+                    trademarkBeans = new ArrayList<>();
+                    hm.put(trademarkBean.getName(),trademarkBeans);
+                }
+                trademarkBeans.add(trademarkBean);
+            }
+
+        }
+        return hm;
+    }
+
+
+    private int generator(File folder,List<TrademarkBean> trademarkBeanList, int liuShuiNum){
+        if (trademarkBeanList.size()==0)return liuShuiNum;
+        int preLiushuiNum = liuShuiNum;
+        ArrayList<WordTrademarkBean> wordTrademarkBeanList = new ArrayList<>();
+        TrademarkBean trademarkBean = trademarkBeanList.get(0);
+        File ziFolder = new File(folder,getZipName(trademarkBean,liuShuiNum));
+        ziFolder.mkdirs();
+        for (int i = 0; i < trademarkBeanList.size(); i++) {
+            int index = i+1;
+            TrademarkBean bean = trademarkBeanList.get(i);
+            new File(folder,getZipName(bean,liuShuiNum)).mkdirs();
+            //复制文件
+            try {
+                copyPic(ziFolder,bean.getPastePicPath(),"paste"+index+".jpg");
+                copyPic(ziFolder,bean.getPicPath(),"original"+index+".jpg");
+                //处理word
+                WordTrademarkBean wordTrademarkBean = new WordTrademarkBean();
+                BeanUtils.copyProperties(wordTrademarkBean,bean);
+                wordTrademarkBean.setLiushui(liuShuiNum);
+                wordTrademarkBeanList.add(wordTrademarkBean);
+
+            } catch (IOException e) {
+                L.exception(e);
+            } catch (IllegalAccessException e) {
+                L.exception(e);
+            } catch (InvocationTargetException e) {
+                L.exception(e);
+            }
+            liuShuiNum++;
+        }
+        wordComponent.autoWord(wordTrademarkBeanList,getTargetWordFile(ziFolder,preLiushuiNum));
+        return liuShuiNum;
+    }
+
     private void copyPic(File folder,String picPath,String fileName) throws IOException {
         if(!StringUtils.isEmpty(picPath)){
             File pastePicFile = new File(picPath);
@@ -202,16 +256,10 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
     }
 
     SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-    private File getTargetWordFile(File ziFolder, TrademarkBean trademarkBean, int liuShuiNum) {
+    private File getTargetWordFile(File ziFolder, int liuShuiNum) {
         return new File(ziFolder,"AK19"+liuShuiNum+"-"+formatter.format(new Date())+"-TC-Report.docx");
     }
 
-    @Override
-    public String formatterName(String name) {
-        name = ChineseUtil.removeChinese(name);
-        name = name.replaceAll("·"," ").replaceAll(",","");
-        return name.trim();
-    }
 
     @Override
     public void deleteByAnnum(String annum) {
@@ -261,6 +309,12 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
         }
 
         return arr;
+    }
+
+    @Override
+    public List<TrademarkBean> findByAnalysisName(String analysisName) {
+        if(StringUtils.isEmpty(analysisName))return new ArrayList<>(1);
+        return getRepository().findByAnalysisName(analysisName);
     }
 
     Field[] declaredFields = TrademarkBean.class.getDeclaredFields();
@@ -315,21 +369,37 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
         return StringUtils.equals(agency,"超凡知识产权服务股份有限公司");
     }
 
-
-    private boolean isFremdness(String address) {
+    @Override
+    public boolean isFremdness(String address) {
+        if(StringUtils.isEmpty(address))return false;
         if(StringUtils.contains(address,"香港")||
                 StringUtils.contains(address,"澳门")||
                 StringUtils.contains(address,"台湾")){
             return false;
         }
-        address = ChineseUtil.removeMathAndChinese(address);
+        address = ChineseUtil.matchEnglish(address);
         return address.length()>5;
     }
 
     private boolean isEnglishLengthMore(String name, int i) {
         if(StringUtils.isEmpty(name))return false;
-        String s = ChineseUtil.removeMathAndChinese(name);
+        String s = ChineseUtil.matchEnglish(name);
         return s.length()>i;
+    }
+
+
+    private static class LeiBie implements Comparator<TrademarkBean>{
+
+        @Override
+        public int compare(TrademarkBean o1, TrademarkBean o2) {
+            List<TrademarkBean.TrademarkType> trademarkTypeList1 = o1.getTrademarkType();
+            if(trademarkTypeList1.size()>1)return -1;
+            List<TrademarkBean.TrademarkType> trademarkTypeList2 = o2.getTrademarkType();
+            if(trademarkTypeList2.size()>1)return -1;
+            TrademarkBean.TrademarkType type1 = trademarkTypeList1.get(0);
+            TrademarkBean.TrademarkType type2 = trademarkTypeList1.get(0);
+            return type1.getTypeNum()-type2.getTypeNum();
+        }
     }
 
 }

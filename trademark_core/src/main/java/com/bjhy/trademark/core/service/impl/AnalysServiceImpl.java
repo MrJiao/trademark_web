@@ -4,6 +4,7 @@ import com.bjhy.tlevel.datax.common.utils.L;
 import com.bjhy.trademark.common.MyEncoding;
 import com.bjhy.trademark.common.utils.ChineseUtil;
 import com.bjhy.trademark.core.domain.TrademarkBean;
+import com.bjhy.trademark.core.pojo.Remark;
 import com.bjhy.trademark.core.pojo.TrademarkData;
 import com.bjhy.trademark.core.service.AnalysService;
 import com.bjhy.trademark.core.service.TrademarkBeanService;
@@ -58,7 +59,7 @@ public class AnalysServiceImpl implements AnalysService {
         }
     }
 
-    @Override
+/*    @Override
     public void trademarkName(String annm,String remark, File file) {
         try {
             List<String> lines = FileUtils.readLines(file, MyEncoding.getEncode());
@@ -80,16 +81,35 @@ public class AnalysServiceImpl implements AnalysService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     @Override
-    public void analysUrl(File storeFile) {
+    public void trademarkName(Remark remarkObj, File file) {
         try {
-            List<String> urls = FileUtils.readLines(storeFile, MyEncoding.getEncode());
-            
+            List<String> names = FileUtils.readLines(file, MyEncoding.getEncode());
+            for (String name : names) {
+                List<TrademarkBean> list = trademarkBeanService.findByAnalysisName(name);
+                for (TrademarkBean trademarkBean : list) {
+
+                    setRemark(trademarkBean,remarkObj);
+                }
+                trademarkBeanService.update(list);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void setRemark(TrademarkBean trademarkBean, Remark remarkObj) {
+        String remark1 = remarkObj.getRemark1();
+        String remark2 = remarkObj.getRemark2();
+        String remark3 = remarkObj.getRemark3();
+        if(!StringUtils.isEmpty(remark1))
+             trademarkBean.setRemark(remark1);
+        if(!StringUtils.isEmpty(remark2))
+            trademarkBean.setRemark2(remark2);
+        if(!StringUtils.isEmpty(remark3))
+            trademarkBean.setRemark3(remark3);
     }
 
     private HashMap<String, List<TrademarkBean>> formatterArr(List<TrademarkBean> trademarkBeanList) {

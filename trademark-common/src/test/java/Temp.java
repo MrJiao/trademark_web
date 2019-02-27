@@ -13,6 +13,18 @@ public class Temp {
     }
 
     @Test
+    public void removeMark(){
+        String s = ChineseUtil.removeMark("&+\\/•!！，,()d发（Fd)【】{}A");
+        System.out.println(s);
+    }
+
+    @Test
+    public void matchEnglish(){
+        String s = ChineseUtil.matchEnglish("a啊,大幅度12,,3d fd");
+        System.out.println(s);
+    }
+
+    @Test
     public void isChinese(){
         boolean chinese = ChineseUtil.isChinese("阿萨德sdf");
         System.out.println(chinese);

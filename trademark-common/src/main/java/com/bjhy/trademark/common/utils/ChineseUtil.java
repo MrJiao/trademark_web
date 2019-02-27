@@ -22,15 +22,19 @@ public class ChineseUtil {
      */
     private static final String CONTENT_CHINESE_REGEX = "^[\u4e00-\u9fa5]+$";
     private static final String MATCH_CONTENT_CHINESE_REGEX = "[\u4e00-\u9fa5]";
+    private static final String MATCH_ENGLISH_REGEX = "[a-zA-Z]+";
+    private static final String MATCH_MARK_REGEX = "[&+\\\\/•!！，,()（)【】{}]+";
 
     private static final String MATCH_CONTENT_MATH_REGEX = "\\d";
 
     private static final String MATCH_CONTENT_MATH_CHINESE_REGEX = "[\\u4e00-\\u9fa5_0-9,\\s]+";
 
     private static final Pattern CONTENT_CHINESE_PATTERN = Pattern.compile(CONTENT_CHINESE_REGEX);
+    private static final Pattern CONTENT_ENGLISH_PATTERN = Pattern.compile(MATCH_ENGLISH_REGEX);
     private static final Pattern MATCH_CONTENT_CHINESE__PATTERN = Pattern.compile(MATCH_CONTENT_CHINESE_REGEX);
     private static final Pattern MATCH_CONTENT_MATH__PATTERN = Pattern.compile(MATCH_CONTENT_MATH_REGEX);
     private static final Pattern MATCH_CONTENT_MATH_CHINESE__PATTERN = Pattern.compile(MATCH_CONTENT_MATH_CHINESE_REGEX);
+    private static final Pattern MATCH_CONTENT_MARK__PATTERN = Pattern.compile(MATCH_MARK_REGEX);
 
 
     /**
@@ -73,6 +77,25 @@ public class ChineseUtil {
         Matcher mat=MATCH_CONTENT_MATH_CHINESE__PATTERN.matcher(str);
         return mat.replaceAll("").trim();
     }
+
+    //删除数字和中文,下划线和逗号
+    public static String removeMark(String str){
+        if(StringUtils.isEmpty(str))return "";
+        Matcher mat=MATCH_CONTENT_MARK__PATTERN.matcher(str);
+        return mat.replaceAll(" ").trim();
+    }
+
+    public static String matchEnglish(String str){
+        if(StringUtils.isEmpty(str))return "";
+        Matcher mat=CONTENT_ENGLISH_PATTERN.matcher(str);
+        String s = "";
+        while (mat.find()){
+            s+=mat.group();
+        }
+        return s;
+    }
+
+
 
 
 }
