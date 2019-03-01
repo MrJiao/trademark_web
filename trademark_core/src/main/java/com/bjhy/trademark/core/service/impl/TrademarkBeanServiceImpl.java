@@ -9,6 +9,7 @@ import com.bjhy.trademark.core.TrademarkConfig;
 import com.bjhy.trademark.core.convert.ConvertUtil;
 import com.bjhy.trademark.core.dao.TrademarkBeanRepository;
 import com.bjhy.trademark.core.pojo.Count;
+import com.bjhy.trademark.core.utils.BeanUtil;
 import com.bjhy.trademark.data.auto_word.WordComponent;
 import com.bjhy.trademark.data.auto_word.WordTrademarkBean;
 import com.bjhy.trademark.data.pic_orc.PicOrc;
@@ -142,6 +143,8 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
     @Override
     public TrademarkBean orcGao(TrademarkBean trademarkBean) {
         if(StringUtils.equals(trademarkBean.getAnalysType(),TrademarkBean.ANALYS_GAO))return trademarkBean;
+
+        TrademarkBean picDate = new TrademarkBean();
         OrcData gao = null;
         try {
             gao = picOrc.gao(trademarkBean.getDataPicPath());
@@ -150,7 +153,8 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
             L.exception(e);
             return trademarkBean;
         }
-        ConvertUtil.convert(gao,trademarkBean);
+        ConvertUtil.convert(gao,picDate);
+        BeanUtil.matchPicData(trademarkBean,picDate);
         trademarkBean.setAnalysType(TrademarkBean.ANALYS_GAO);
         return trademarkBean;
     }

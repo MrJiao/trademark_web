@@ -1,17 +1,10 @@
 package com.bjhy.trademark.data.auto_word;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Create by: Jackson
  */
 public class AddressUtil {
-
-    private static final String CONTENT_CITY = "[省]*.+[市]";
-    private static final Pattern CITY_PATTERN = Pattern.compile(CONTENT_CITY);
 
     public static String getCity(String address)throws NotFoundPinYin {
         int shengIndex = address.indexOf("省");

@@ -13,10 +13,10 @@ import com.bjhy.trademark.core.pojo.TrademarkData;
 import com.bjhy.trademark.core.pojo.UrlData;
 import com.bjhy.trademark.core.service.TaskDataService;
 import com.bjhy.trademark.core.service.TrademarkBeanService;
+import com.bjhy.trademark.core.utils.BeanUtil;
 import com.bjhy.trademark.data.pic_orc.PicOrc;
 import com.bjhy.trademark.data.pic_orc.domain.OrcData;
 import com.bjhy.trademark.watermarker.WaterMarker;
-import com.bjhy.trademark.watermarker.core.Task;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,13 +24,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -133,7 +130,7 @@ public class GetTrademarkTask implements Runnable {
                         if (trademarkBean == null)
                             trademarkBean = trademarkBeanService.findById(picTrademarkBean.getNumber());
                         if (trademarkBean == null) continue;
-                        trademarkBean = matchPicData(trademarkBean, picTrademarkBean);
+                        trademarkBean = BeanUtil.matchPicData(trademarkBean, picTrademarkBean);
                         boolean fremdness = trademarkBeanService.isFremdness(trademarkBean.getAddress());
                         trademarkBean.setForeign(fremdness ? "是" : "否");
                         setRemark(trademarkBean,remarkObj);
@@ -330,24 +327,6 @@ public class GetTrademarkTask implements Runnable {
 
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-    private TrademarkBean matchPicData(TrademarkBean trademarkBean, TrademarkBean picData) {
-        trademarkBean.setPastePicPath(picData.getPastePicPath());
-        trademarkBean.setClient(picData.getClient());
-        trademarkBean.setRepresentatives(picData.getRepresentatives());
-        trademarkBean.setEmail(picData.getEmail());
-        trademarkBean.setAnalysType(picData.getAnalysType());
-        trademarkBean.setChoosedType(picData.getChoosedType());
-        trademarkBean.setUrl(picData.getUrl());
-        trademarkBean.setPicPath(picData.getPicPath());
-        trademarkBean.setDataPicPath(picData.getDataPicPath());
-        trademarkBean.setYiyiStartDate(picData.getYiyiStartDate());
-        trademarkBean.setYiyiEndDate(picData.getYiyiEndDate());
-        trademarkBean.setApplicationDate(picData.getApplicationDate());
-        trademarkBean.setAddress(picData.getAddress());
-        trademarkBean.setAgency(picData.getAgency());
-        trademarkBean.setType(picData.getType());
-        return trademarkBean;
-    }
 
     private void setRemark(TrademarkBean trademarkBean, Remark remarkObj) {
         String remark1 = remarkObj.getRemark1();
