@@ -32,14 +32,15 @@ public class ConvertUtil {
                     continue;
                 }
 
-                if(words.matches("第\\d+号")){
+                if(words.matches("第\\s*(?<value>\\d+)\\s*号")){
                     String num = getNum(words);
                     trademarkBean.setNumber(num);
                     trademarkBean.setId(num);
                     continue;
                 }
 
-                if(words.matches("申请日期\\d+年\\d+月\\d+日")){
+                if(words.matches("申请日期\\s*\\d+年\\s*\\d+月\\s*\\d+日")){
+                    words = words.replaceAll(" ","");
                     words = words.substring(4);
                     trademarkBean.setApplicationDate(formatter.parse(words));
                 }
@@ -129,11 +130,10 @@ public class ConvertUtil {
 
 
     private static String getNum(String words) {
-        Pattern pattern = Pattern.compile("第\\d+号");
+        Pattern pattern = Pattern.compile("第\\s*(?<value>\\d+)\\s*号");
         Matcher matcher = pattern.matcher(words);
         if(matcher.find()){
-            String group = matcher.group();
-            String num = group.substring(1,group.length()-1);
+            String num = matcher.group("value");
             return num;
         }
         return "";

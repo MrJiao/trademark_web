@@ -3,6 +3,8 @@ import org.junit.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Create by: Jackson
@@ -28,7 +30,21 @@ public class Temp {
 
     @Test
     public void intd(){
+        String a = getNum("第123 号");
+        System.out.println(a);
+    }
 
+
+    private static String getNum(String words) {
+        Pattern pattern = Pattern.compile("第\\s*(?<value>\\d+)\\s*号");
+        Matcher matcher = pattern.matcher(words);
+        matcher.matches();
+        Matcher matcher2 = pattern.matcher(words);
+        if(matcher2.find()){
+            String num = matcher.group("value");
+            return num;
+        }
+        return "";
     }
 
 }

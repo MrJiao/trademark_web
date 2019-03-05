@@ -19,51 +19,44 @@ import java.util.List;
  */
 @Component
 public class PicOrc implements InitializingBean {
-    //设置APPID/AK/SK
-    /*public static final String app_id = "15502232";
-    public static final String api_key = "DG2ACLY9GL3PUtCgTcINIRwG";
-    public static final String secret_key = "RIppKjEVGU6FvTuUnb6MrS9WQSx1i229";*/
-
-
-//    public static final String APP_ID = "15567265";
-//    public static final String API_KEY = "LYjYRF3PBIjUZ14arDjQWuLk";
-//    public static final String SECRET_KEY = "bUsyuffSfe3P7hc48AqXoTOajb067eFw";
 
     @Autowired
     AccountConfig accountConfig;
 
     ObjectMapper mapper = new ObjectMapper();
-    public PicOrc(){
+
+    public PicOrc() {
 
     }
 
-    private List<AipOcr> clients = new ArrayList<>();
-    private void initClient(){
-        List<Account> account = accountConfig.getAccount();
-        for (Account a : account) {
-            AipOcr client = new AipOcr(a.getApp_id(), a.getApi_key(), a.getSecret_key());
-            // 可选：设置网络连接参数
-            client.setConnectionTimeoutInMillis(5000);
-            client.setSocketTimeoutInMillis(60000);
-            clients.add(client);
-        }
+    AipOcr client;
+    List<Account> accounts;
+
+    private void initClient() {
+        accounts = accountConfig.getAccount();
+        Account account = accounts.get(clientIndex);
+        client = new AipOcr(account.getApp_id(), account.getApi_key(), account.getSecret_key());
+        // 可选：设置网络连接参数
+        client.setConnectionTimeoutInMillis(5000);
+        client.setSocketTimeoutInMillis(60000);
     }
 
-    int normalCurrentClient=0;
-    private AipOcr getNormalClient(){
-        AipOcr client = clients.get(normalCurrentClient);
-        normalCurrentClient++;
-        if(normalCurrentClient==clients.size())
-            normalCurrentClient =0;
+    private AipOcr getNormalClient() {
         return client;
     }
 
-    int gaoCurrentClient=0;
-    private AipOcr getGaoClient(){
-        AipOcr client = clients.get(gaoCurrentClient);
-        gaoCurrentClient++;
-        if(gaoCurrentClient==clients.size())
-            gaoCurrentClient =0;
+    int clientIndex = 0;
+    int gaoTime = 480;
+
+    private AipOcr getGaoClient() {
+        gaoTime--;
+        if (gaoTime < 0) {
+            gaoTime = 480;
+            clientIndex++;
+            if (clientIndex == accounts.size())
+                clientIndex = 0;
+            initClient();
+        }
         return client;
     }
 
