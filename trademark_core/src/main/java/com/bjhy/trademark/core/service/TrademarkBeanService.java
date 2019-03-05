@@ -48,4 +48,6 @@ public interface TrademarkBeanService extends BizCommonService<TrademarkBean,Str
     List<TrademarkBean> findByAnalysisName(String analysisName);
 
     boolean isFremdness(String address);
+
+    TrademarkBean orcNormal(TrademarkBean trademarkBean);
 }

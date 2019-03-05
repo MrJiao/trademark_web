@@ -109,6 +109,18 @@ public class TrademarkBean implements Serializable {
     @FieldParam(value="国外")
     String foreign;
 
+    @FieldParam(value="排序")
+    @Column(name = "mOrder")
+    Integer mOrder;
+
+    public Integer getmOrder() {
+        return mOrder;
+    }
+
+    public void setmOrder(Integer mOrder) {
+        this.mOrder = mOrder;
+    }
+
     public String getRemark2() {
         return remark2;
     }

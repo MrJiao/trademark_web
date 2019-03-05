@@ -154,7 +154,7 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
             return trademarkBean;
         }
         ConvertUtil.convert(gao,picDate);
-        BeanUtil.matchPicData(trademarkBean,picDate);
+        BeanUtil.matchPicData2(trademarkBean,picDate);
         trademarkBean.setAnalysType(TrademarkBean.ANALYS_GAO);
         return trademarkBean;
     }
@@ -173,7 +173,7 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
 
         HashMap<String, List<TrademarkBean>> hm = classify(trademarkBeanList);
         for (List<TrademarkBean> value : hm.values()) {
-            value.sort(new LeiBie());
+            value.sort(new LeiBieAndmOrder());
             liuShuiNum = generator(folder,value,liuShuiNum);
         }
         //打包
@@ -385,6 +385,25 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
         return address.length()>5;
     }
 
+    @Override
+    public TrademarkBean orcNormal(TrademarkBean trademarkBean) {
+        if(StringUtils.equals(trademarkBean.getAnalysType(),TrademarkBean.ANALYS_NORMAL))return trademarkBean;
+
+        TrademarkBean picDate = new TrademarkBean();
+        OrcData normal = null;
+        try {
+            normal = picOrc.normal(trademarkBean.getDataPicPath());
+        } catch (IOException e) {
+            L.e("图片普通识别失败",trademarkBean.getDataPicPath());
+            L.exception(e);
+            return trademarkBean;
+        }
+        ConvertUtil.convert(normal,picDate);
+        BeanUtil.matchPicData2(trademarkBean,picDate);
+        trademarkBean.setAnalysType(TrademarkBean.ANALYS_NORMAL);
+        return trademarkBean;
+    }
+
     private boolean isEnglishLengthMore(String name, int i) {
         if(StringUtils.isEmpty(name))return false;
         String s = ChineseUtil.matchEnglish(name);
@@ -392,17 +411,26 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
     }
 
 
-    private static class LeiBie implements Comparator<TrademarkBean>{
+    private static class LeiBieAndmOrder implements Comparator<TrademarkBean>{
 
         @Override
         public int compare(TrademarkBean o1, TrademarkBean o2) {
-            List<TrademarkBean.TrademarkType> trademarkTypeList1 = o1.getTrademarkType();
-            if(trademarkTypeList1.size()>1)return -1;
-            List<TrademarkBean.TrademarkType> trademarkTypeList2 = o2.getTrademarkType();
-            if(trademarkTypeList2.size()>1)return -1;
-            TrademarkBean.TrademarkType type1 = trademarkTypeList1.get(0);
-            TrademarkBean.TrademarkType type2 = trademarkTypeList1.get(0);
-            return type1.getTypeNum()-type2.getTypeNum();
+            if(o1.getmOrder()!=null && o2.getmOrder()!=null){
+                return o1.getmOrder()-o2.getmOrder();
+            }else if(o1.getmOrder()!=null){
+                return -1;
+            }else if (o2.getmOrder()!=null){
+                return 1;
+            }else {
+                List<TrademarkBean.TrademarkType> trademarkTypeList1 = o1.getTrademarkType();
+                if(trademarkTypeList1.size()>1)return -1;
+                List<TrademarkBean.TrademarkType> trademarkTypeList2 = o2.getTrademarkType();
+                if(trademarkTypeList2.size()>1)return -1;
+                TrademarkBean.TrademarkType type1 = trademarkTypeList1.get(0);
+                TrademarkBean.TrademarkType type2 = trademarkTypeList1.get(0);
+                return type1.getTypeNum()-type2.getTypeNum();
+            }
+
         }
     }
 

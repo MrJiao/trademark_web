@@ -234,9 +234,6 @@ public class TrademarkBeanController {
 		});
 	}
 
-
-
-
 	//更新
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	public @ResponseBody
@@ -247,6 +244,7 @@ public class TrademarkBeanController {
 		trademarkBean.setPastePicPath(bean.getPastePicPath());
 		trademarkBean.setDataPicPath(bean.getPastePicPath());
 		trademarkBean.setAnalysType(bean.getAnalysType());
+		trademarkBean.setAnalysisCount(bean.getAnalysisCount());
 		trademarkBeanService.update(trademarkBean);
 		return MessageUtil.message("common.update.success");
 	}
@@ -283,15 +281,20 @@ public class TrademarkBeanController {
 		return bean;
 	}
 
+
+	@RequestMapping(value = "/normal/{id}",method = RequestMethod.PUT)
+	public @ResponseBody TrademarkBean normal(@PathVariable String id) {
+		TrademarkBean trademarkBean = trademarkBeanService.findById(id);
+		TrademarkBean bean = trademarkBeanService.orcNormal(trademarkBean);
+		return bean;
+	}
+
+
 	@RequestMapping(value = "/test",method = RequestMethod.GET)
 	public @ResponseBody String test() {
 		boolean b = trademarkBeanService.isContains("322");
 		return b+"";
 	}
-
-
-
-
 
 
 	Thread b;
@@ -440,9 +443,6 @@ public class TrademarkBeanController {
 		a.start();
 		return "ok";
 	}
-
-
-
 
 
 	private void removeTuxingAndChinese(List<Object> items) {

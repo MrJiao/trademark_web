@@ -308,6 +308,15 @@ trademarkBean_index.M = (function (){
                 afterOperation:callback
             });
         },
+        //普通精度识别
+        normalItemDate:function (id,callback) {
+            PlatformUI.ajax({
+                url: contextPath + "/trademarkBean/normal/"+id,
+                type: "post",
+                data: {_method:"put"},
+                afterOperation:callback
+            });
+        }
     };
 })();
 
@@ -484,6 +493,15 @@ trademarkBean_index.P = (function (){
         $("#commonGao").click(function () {
             var id = M.getCurrentPageId();
             M.gaoItemDate(id,function (data) {
+                V.showCommonDetailWindow();
+                V.populateForm(data);
+                V.setTrademarkUrl(id);
+            });
+        });
+
+        $("#commonNormal").click(function () {
+            var id = M.getCurrentPageId();
+            M.normalItemDate(id,function (data) {
                 V.showCommonDetailWindow();
                 V.populateForm(data);
                 V.setTrademarkUrl(id);

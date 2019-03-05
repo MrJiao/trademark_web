@@ -13,7 +13,7 @@ thymeleaf:
 
 server:
   context-path: /trademark
-  port: 80
+  port: 8080
 
 trademark:
   storePath: /Users/jiaoyubing/downloadTemp3
