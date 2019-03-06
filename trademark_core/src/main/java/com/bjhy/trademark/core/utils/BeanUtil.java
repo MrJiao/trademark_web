@@ -27,6 +27,7 @@ public class BeanUtil {
         trademarkBean.setAddress(picData.getAddress());
         trademarkBean.setAgency(picData.getAgency());
         trademarkBean.setType(picData.getType());
+        trademarkBean.setPicEncode(picData.getPicEncode());
 
         trademarkBean.setPastePicPath(picData.getPastePicPath());
         trademarkBean.setUrl(picData.getUrl());
@@ -51,6 +52,7 @@ public class BeanUtil {
         trademarkBean.setAddress(picData.getAddress());
         trademarkBean.setAgency(picData.getAgency());
         trademarkBean.setType(picData.getType());
+        trademarkBean.setPicEncode(picData.getPicEncode());
         return trademarkBean;
     }
 

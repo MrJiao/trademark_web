@@ -1,5 +1,6 @@
 package com.bjhy.trademark.core.service.impl;
 
+import com.bjhy.tlevel.datax.common.Encode;
 import com.bjhy.tlevel.datax.common.utils.L;
 import com.bjhy.trademark.common.MyEncoding;
 import com.bjhy.trademark.common.utils.DownloadUtil;
@@ -49,26 +50,7 @@ public class GetTrademarkTask implements Runnable {
         this.remarkObj = remarkObj;
     }
 
-    private File getPasteFolder(String anNum) {
-        String storePath = trademarkConfig.getStorePath();
-        File file = new File(storePath, anNum + File.separator + "paste");
-        file.mkdirs();
-        return file;
-    }
 
-    private File getExtractFolder(String anNum) {
-        String storePath = trademarkConfig.getStorePath();
-        File file = new File(storePath, anNum + File.separator + "extract");
-        file.mkdirs();
-        return file;
-    }
-
-    private File getStorePathFolder(String anNum) {
-        String storePath = trademarkConfig.getStorePath();
-        File file = new File(storePath, anNum);
-        file.mkdirs();
-        return file;
-    }
 
     @Autowired
     MD5 md5;
@@ -106,10 +88,7 @@ public class GetTrademarkTask implements Runnable {
             taskData.setExeState(TaskData.STATE_STARTING_PIC);
             taskDataService.update(taskData);
 
-            //获取期号
-
-
-            String anNum = getAnNum(imageUrls);
+            //String anNum = getAnNum(imageUrls);
             for (String url : imageUrls) {
                 try {
                     List<TrademarkBean> trademarkBeanArr = trademarkBeanService.findByPicEncode(md5.encode(url));
@@ -117,7 +96,7 @@ public class GetTrademarkTask implements Runnable {
                     if (trademarkBeanArr != null && trademarkBeanArr.size() == 1) {
                         trademarkBean = trademarkBeanArr.get(0);
                     }
-                    TrademarkBean picTrademarkBean = downloadPicAndRemoveWatermarker(trademarkBean, anNum, url);
+                    TrademarkBean picTrademarkBean = downloadPicAndRemoveWatermarker(trademarkBean, url);
                     if (picTrademarkBean == null) continue;//信息图片失败,没必要继续解析
 
                     if (trademarkBean == null ||
@@ -125,6 +104,8 @@ public class GetTrademarkTask implements Runnable {
                                     StringUtils.equals(trademarkBean.getAnalysType(), TrademarkBean.ANALYS_GAO))) {
                         //图片文字识别
                         picTrademarkBean = orcPic(picTrademarkBean);
+                        initPicPath(picTrademarkBean);
+
                         if (picTrademarkBean == null) continue;//识别的数据失败,不做存储
                         //匹配商标名称
                         if (trademarkBean == null)
@@ -155,7 +136,38 @@ public class GetTrademarkTask implements Runnable {
         }
     }
 
-    private String getAnNum(List<String> imageUrls) {
+    private void initPicPath(TrademarkBean picTrademarkBean) {
+        String anNum = picTrademarkBean.getAnNum();
+        String storePath = trademarkConfig.getStorePath();
+        String encode = picTrademarkBean.getPicEncode();
+        //转移图片,设置路径
+        File picPathFile = new File(getStorePathFolder(storePath,anNum), encode + ".jpg");
+        picPathFile.getParentFile().mkdirs();
+        File dataFile = new File(getExtractFolder(storePath,anNum), encode + ".jpg");
+        dataFile.getParentFile().mkdirs();
+        File pasteFile = new File(getPasteFolder(storePath,anNum), encode + ".jpg");
+        pasteFile.getParentFile().mkdirs();
+
+        File preDataPicFile = new File(picTrademarkBean.getDataPicPath());
+        if(preDataPicFile.exists()){
+            preDataPicFile.renameTo(dataFile);
+            picTrademarkBean.setDataPicPath(preDataPicFile.getAbsolutePath());
+        }
+
+        File prePicFile = new File(picTrademarkBean.getPicPath());
+        if(prePicFile.exists()){
+            prePicFile.renameTo(picPathFile);
+            picTrademarkBean.setPicPath(picPathFile.getAbsolutePath());
+        }
+
+        File prePasteFile = new File(picTrademarkBean.getPastePicPath());
+        if(prePasteFile.exists()){
+            prePasteFile.renameTo(pasteFile);
+            picTrademarkBean.setPastePicPath(pasteFile.getAbsolutePath());
+        }
+    }
+
+/*    private String getAnNum(List<String> imageUrls) {
         if (imageUrls.size() == 0) return "";
         File folder = new File(trademarkConfig.getTempPath(), System.currentTimeMillis() + "");
         folder.mkdirs();
@@ -170,9 +182,9 @@ public class GetTrademarkTask implements Runnable {
             String ann2 = getAnNum(folder, imageUrls.get(imageUrls.size() - 1));
             return getEqOrNotEmpty(ann1, ann2);
         }
-    }
+    }*/
 
-    private String getEqOrNotEmpty(String ann1, String ann2) {
+/*    private String getEqOrNotEmpty(String ann1, String ann2) {
         if (!StringUtils.isEmpty(ann1) && !StringUtils.isEmpty(ann2)) {
             if (StringUtils.equals(ann1, ann2))
                 return ann1;
@@ -189,7 +201,7 @@ public class GetTrademarkTask implements Runnable {
         File pic = new File(folder, encode + ".jpg");
         File dataPic = new File(folder, "data" + encode + ".jpg");
         File pastePic = new File(folder, "paste" + encode + ".jpg");
-        TrademarkBean trademarkBean = getTrademarkBean(url, "");
+        TrademarkBean trademarkBean = getTrademarkBean(url);
         trademarkBean.setPicPath(pic.getAbsolutePath());
         trademarkBean.setDataPicPath(dataPic.getAbsolutePath());
         trademarkBean.setPastePicPath(pastePic.getAbsolutePath());
@@ -201,7 +213,7 @@ public class GetTrademarkTask implements Runnable {
         trademarkBean = orcPic(trademarkBean);
 
         return trademarkBean != null ? trademarkBean.getAnNum() : "";
-    }
+    }*/
 
 
     private boolean downloadPic(String url, String picPath, String dataPicPath, String pastePicPath) {
@@ -236,11 +248,11 @@ public class GetTrademarkTask implements Runnable {
         return true;
     }
 
-    private TrademarkBean downloadPicAndRemoveWatermarker(TrademarkBean trademarkBean, String anNum, String url) {
+    private TrademarkBean downloadPicAndRemoveWatermarker(TrademarkBean trademarkBean, String url) {
         TrademarkBean temp = trademarkBean;
-        TrademarkBean pic = getTrademarkBean(url, anNum);
+        TrademarkBean pic = getTrademarkBean(url);
         if (trademarkBean == null) {
-            if (StringUtils.isEmpty(anNum)) return null;//数据库无信息,且没有期号的,不处理
+            //if (StringUtils.isEmpty(anNum)) return null;//数据库无信息,且没有期号的,不处理
             temp = pic;
         }
         if (!downloadPic(url, temp.getPicPath(), temp.getDataPicPath(), temp.getPastePicPath()))
@@ -462,20 +474,42 @@ public class GetTrademarkTask implements Runnable {
         waterMarker.getDataPic(new File(picPath), new File(dataPicPath));
     }
 
-    private TrademarkBean getTrademarkBean(String url, String anNum) {
+
+    private static String TEMP_PIC_FOLDER = "TEMP_PIC_FOLDER";
+    private TrademarkBean getTrademarkBean(String url) {
         TrademarkBean trademarkBean = new TrademarkBean();
+        String tempPath = trademarkConfig.getTempPath();
         trademarkBean.setGmt_create(new Date());
         trademarkBean.setUrl(url);
         String encode = md5.encode(url);
-        File file = new File(getStorePathFolder(anNum), encode + ".jpg");
-        File extractFile = new File(getExtractFolder(anNum), encode + ".jpg");
-        File pasteFile = new File(getPasteFolder(anNum), encode + ".jpg");
+        File file = new File(getStorePathFolder(tempPath,TEMP_PIC_FOLDER), encode + ".jpg");
+        File extractFile = new File(getExtractFolder(tempPath,TEMP_PIC_FOLDER), encode + ".jpg");
+        File pasteFile = new File(getPasteFolder(tempPath,TEMP_PIC_FOLDER), encode + ".jpg");
         trademarkBean.setPicEncode(encode);
         trademarkBean.setPicPath(file.getAbsolutePath());
         trademarkBean.setDataPicPath(extractFile.getAbsolutePath());
         trademarkBean.setPastePicPath(pasteFile.getAbsolutePath());
         return trademarkBean;
     }
+
+    private File getPasteFolder(String path,String folderName) {
+        File file = new File(path, folderName + File.separator + "paste");
+        file.mkdirs();
+        return file;
+    }
+
+    private File getExtractFolder(String path,String folderName) {
+        File file = new File(path, folderName + File.separator + "extract");
+        file.mkdirs();
+        return file;
+    }
+
+    private File getStorePathFolder(String path,String folderName) {
+        File file = new File(path, folderName);
+        file.mkdirs();
+        return file;
+    }
+
 
     private long lastTime = 0;
 

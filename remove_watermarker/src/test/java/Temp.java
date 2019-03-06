@@ -2,6 +2,7 @@ import com.bjhy.trademark.watermarker.WaterMarker;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,8 +24,10 @@ public class Temp {
     }
 
     @Test
-    public void getDataPic(){
+    public void getDataPic() throws IOException {
         WaterMarker waterMarker = new WaterMarker();
+        waterMarker.clipPic(new File("/Users/jiaoyubing/downloadTemp3/1633/9faa87796cc2888e9e5c87c708f81722.jpg"),
+                new File("/Users/jiaoyubing/work_space/localworkspace/trademark_web/remove_watermarker/src/test/a.jpg"));
     }
 
 
