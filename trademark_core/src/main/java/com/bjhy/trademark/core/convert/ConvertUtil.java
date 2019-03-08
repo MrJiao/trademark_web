@@ -5,8 +5,11 @@ import com.bjhy.trademark.core.domain.TrademarkBean;
 import com.bjhy.trademark.data.pic_orc.domain.OrcData;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.sql.rowset.serial.SerialBlob;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -128,7 +131,6 @@ public class ConvertUtil {
     }
 
 
-
     private static String getNum(String words) {
         Pattern pattern = Pattern.compile("第\\s*(?<value>\\d+)\\s*号");
         Matcher matcher = pattern.matcher(words);
@@ -138,7 +140,6 @@ public class ConvertUtil {
         }
         return "";
     }
-
 
     private static  String getAnNum(String words){
         Pattern pattern = Pattern.compile("第\\d+期");
@@ -151,5 +152,12 @@ public class ConvertUtil {
         return "";
     }
 
+    public static List<Serializable> convert(List<String> list){
+        ArrayList<Serializable> arr = new ArrayList<>();
+        for (Serializable s : list) {
+            arr.add(s);
+        }
+        return arr;
+    }
 
 }

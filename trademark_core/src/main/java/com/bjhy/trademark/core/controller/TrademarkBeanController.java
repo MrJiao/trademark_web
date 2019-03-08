@@ -113,10 +113,22 @@ public class TrademarkBeanController {
 	//批量删除
 	@RequestMapping(method = RequestMethod.DELETE)
 	public @ResponseBody Message batchDelete(@RequestParam("ids[]") String[] ids){
-		List<TrademarkBean> allByIds = findAllByIds(ids);
+		List<TrademarkBean> trademarkBeanList = findAllByIds(ids);
+		for (TrademarkBean trademarkBean : trademarkBeanList) {
+			deleteFile(trademarkBean.getDataPicPath());
+			deleteFile(trademarkBean.getPicPath());
+			deleteFile(trademarkBean.getPastePicPath());
+		}
 		trademarkBeanService.deleteById(ids);
-
 		return MessageUtil.message("common.delete.success");
+	}
+
+	private void deleteFile(String path){
+		if(StringUtils.isEmpty(path))return;
+		File file = new File(path);
+		if(file.exists()){
+			file.delete();
+		}
 	}
 
 

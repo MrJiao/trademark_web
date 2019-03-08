@@ -90,6 +90,18 @@ upload_index.P = (function (){
             });
         });
 
+        $("#upload_ids").click(function () {
+            var remark = $("#id_remark").val();
+            var remark2 = $("#id_remark2").val();
+            var remark3 = $("#id_remark3").val();
+
+            upload('name_file',"/upload/upload_trademark_ids",
+                {'remark':remark,
+                    'remark2':remark2,
+                    'remark3':remark3
+            });
+        });
+
         $("#deleteAllBtn").click(function () {
             var anNum = $("#inputAnnm").val();
             if(anNum==null || anNum==''){

@@ -3,6 +3,7 @@ package com.bjhy.trademark.core.service.impl;
 import com.bjhy.tlevel.datax.common.utils.L;
 import com.bjhy.trademark.common.MyEncoding;
 import com.bjhy.trademark.common.utils.ChineseUtil;
+import com.bjhy.trademark.core.convert.ConvertUtil;
 import com.bjhy.trademark.core.domain.TrademarkBean;
 import com.bjhy.trademark.core.pojo.Remark;
 import com.bjhy.trademark.core.pojo.TrademarkData;
@@ -95,6 +96,20 @@ public class AnalysServiceImpl implements AnalysService {
                 }
                 trademarkBeanService.update(list);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void trademarkIds(Remark remarkObj, File storeFile) {
+        try {
+            List<String> ids = FileUtils.readLines(storeFile, MyEncoding.getEncode());
+            List<TrademarkBean> trademarkList = trademarkBeanService.findByAllId(ConvertUtil.convert(ids));
+            for (TrademarkBean trademarkBean : trademarkList) {
+                setRemark(trademarkBean,remarkObj);
+            }
+            trademarkBeanService.update(trademarkList);
         } catch (IOException e) {
             e.printStackTrace();
         }

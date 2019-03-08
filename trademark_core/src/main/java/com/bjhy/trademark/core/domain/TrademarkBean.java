@@ -8,9 +8,7 @@ import org.apel.gaia.commons.autocomplete.annotation.AutoCompleteField;
 import org.apel.gaia.commons.autocomplete.enums.AutoCompleteFieldType;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -21,6 +19,8 @@ import java.util.regex.Pattern;
  */
 @TableName("商标数据")
 @Entity
+@Table(name = "TrademarkBean",
+        indexes = {@Index(name = "index_analysisName",  columnList="analysisName")})
 public class TrademarkBean implements Serializable {
 
     @FieldParam(value = "id",hidden = true)
@@ -112,6 +112,17 @@ public class TrademarkBean implements Serializable {
     @FieldParam(value="排序")
     @Column(name = "mOrder")
     Integer mOrder;
+
+    @FieldParam(value="类别")
+    String leibie;
+
+    public String getLeibie() {
+        return leibie;
+    }
+
+    public void setLeibie(String leibie) {
+        this.leibie = leibie;
+    }
 
     public Integer getmOrder() {
         return mOrder;
@@ -411,11 +422,12 @@ public class TrademarkBean implements Serializable {
                 if(StringUtils.isEmpty(s))continue;
                 List<String> types = convert(s);
                 String num = typeNum.get(i).substring(1, typeNum.get(i).length() - 1);
-
-                TrademarkType trademarkType = new TrademarkType();
-                trademarkType.typeNum = Integer.parseInt(num);
-                trademarkType.type = types;
-                list.add(trademarkType);
+                try {
+                    TrademarkType trademarkType = new TrademarkType();
+                    trademarkType.typeNum = Integer.parseInt(num);
+                    trademarkType.type = types;
+                    list.add(trademarkType);
+                }catch (Exception e){}
             }
         }catch (Exception e){}
         return list;

@@ -12,4 +12,5 @@ public interface AnalysService {
 
     void trademarkName(Remark remarkObj, File storeFile);
 
+    void trademarkIds(Remark remarkObj, File storeFile);
 }

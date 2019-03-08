@@ -92,7 +92,19 @@ public class FileUploadController {
         File storeFile = new File(tempPath, System.currentTimeMillis() + ".txt");
         storeFile(file.getBytes(), tempPath, storeFile.getName());
         analysService.trademarkName(remarkObj, storeFile);
-        storeFile.delete();
+        return MessageUtil.message("common.update.success");
+    }
+
+    @RequestMapping(value = "/upload_trademark_ids", method = RequestMethod.POST)
+    public @ResponseBody
+    Message uploadIds(@RequestParam("file") MultipartFile file, @RequestParam("remark") String remark, @RequestParam("remark2") String remark2, @RequestParam("remark3") String remark3) throws IOException {
+        Remark remarkObj = new Remark(remark, remark2, remark3);
+        //文件存放路径
+        String tempPath = trademarkConfig.getTempPath();
+        //调用文件处理类FileUtil，处理文件，将文件写入指定位置
+        File storeFile = new File(tempPath, System.currentTimeMillis() + ".txt");
+        storeFile(file.getBytes(), tempPath, storeFile.getName());
+        analysService.trademarkIds(remarkObj, storeFile);
         return MessageUtil.message("common.update.success");
     }
 
