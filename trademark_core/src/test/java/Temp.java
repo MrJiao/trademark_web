@@ -10,6 +10,7 @@ import com.bjhy.trademark.watermarker.WaterMarker;
 import freemarker.template.TemplateException;
 import org.junit.Test;
 
+import javax.persistence.Table;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -31,8 +32,10 @@ public class Temp {
     @Test
     public void picOrc2() throws ParseException {
         PicOrc picOrc = new PicOrc();
-        File source = new File("/Users/jiaoyubing/Downloads/yBQCH1xBTqCAd7MRAAM2VU13EPo202.jpg");
-        File targetFolder = new File("/Users/jiaoyubing/work_space/localworkspace/trademark_web/remove_watermarker/src/main/resources");
+        File source = new File(
+                "/Users/jiaoyubing/Downloads/yBQCIFx09ayAOtx-AAOzODBnBHI755.jpg");
+        File targetFolder = new File(
+                "/Users/jiaoyubing/work_space/localworkspace/trademark_web/trademark_core/src/test/genertor");
         WaterMarker waterMarker = new WaterMarker();
 
         File targetFile = new File(targetFolder,source.getName());
@@ -45,7 +48,7 @@ public class Temp {
 
         OrcData normal = null;
         try {
-            normal = picOrc.gao(targetFile.getAbsolutePath());
+            normal = picOrc.normal(targetFile.getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -58,6 +61,19 @@ public class Temp {
 
 
     }
+
+
+/*    @Test
+    public void normalTest() throws IOException {
+        File source = new File(
+                "/Users/jiaoyubing/work_space/localworkspace/trademark_web/trademark_core/src/test/genertor/a.jpg");
+        PicOrc picOrc = new PicOrc();
+        picOrc.initClient();
+        OrcData normal = picOrc.normal(source.getAbsolutePath());
+        TrademarkBean trademarkBean = new TrademarkBean();
+        boolean convert = ConvertUtil.convert(normal, trademarkBean);
+
+    }*/
 
     @Test
     public void show() throws IOException, TemplateException {

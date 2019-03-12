@@ -1,0 +1,42 @@
+appId: nothing
+
+appName: 商标处理中心
+
+index_title: 商标处理中心
+
+index_name: 商标处理中心
+
+index_scaffold: homeIndexScaffold
+
+thymeleaf:
+  cache: true
+
+server:
+  context-path: /trademark
+  port: 80
+
+trademark:
+  storePath: /Users/jiaoyubing/downloadTemp3
+  tempPath: /Users/jiaoyubing/downloadTemp3/temp
+
+logging:
+  level:
+    root: info
+
+
+hibernate:
+  show_sql: false
+
+spring:
+  jpa:
+    open-in-view: true
+
+accountConfig:
+  account[0]:
+    app_id: 15567265
+    api_key: LYjYRF3PBIjUZ14arDjQWuLk
+    secret_key: bUsyuffSfe3P7hc48AqXoTOajb067eFw
+  account[1]:
+    app_id: 15502232
+    api_key: DG2ACLY9GL3PUtCgTcINIRwG
+    secret_key: RIppKjEVGU6FvTuUnb6MrS9WQSx1i229

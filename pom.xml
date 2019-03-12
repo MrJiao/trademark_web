@@ -104,7 +104,7 @@
                 <version>3.6</version>
             </dependency>
 
-            <dependency>
+<!--            <dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger2</artifactId>
                 <version>${swagger}</version>
@@ -113,7 +113,7 @@
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger-ui</artifactId>
                 <version>${swagger}</version>
-            </dependency>
+            </dependency>-->
 
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>

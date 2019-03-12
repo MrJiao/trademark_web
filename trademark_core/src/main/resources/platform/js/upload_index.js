@@ -95,7 +95,7 @@ upload_index.P = (function (){
             var remark2 = $("#id_remark2").val();
             var remark3 = $("#id_remark3").val();
 
-            upload('name_file',"/upload/upload_trademark_ids",
+            upload('id_file',"/upload/upload_trademark_ids",
                 {'remark':remark,
                     'remark2':remark2,
                     'remark3':remark3

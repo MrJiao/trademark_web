@@ -58,9 +58,9 @@ public class BeanUtil {
 
 
     private static String getLeiBie(TrademarkBean picData) {
-        List<TrademarkBean.TrademarkType> choosedTrademarkTypeList = picData.getChoosedTrademarkType();
+        List<TrademarkBean.TrademarkType> trademarkTypeList = picData.getTrademarkType();
         String s="";
-        for (TrademarkBean.TrademarkType trademarkType : choosedTrademarkTypeList) {
+        for (TrademarkBean.TrademarkType trademarkType : trademarkTypeList) {
             int typeNum = trademarkType.getTypeNum();
             s = s+typeNum+",";
         }
