@@ -37,15 +37,15 @@ public class ZipUtil {
                 if (entry.isDirectory()) {
                     String dirPath = destDirPath + "/" + entry.getName();
                     File dir = new File(dirPath);
-                    dir.mkdirs();
+                    boolean mkdirs = dir.mkdirs();
                 } else {
                     // 如果是文件，就先创建一个文件，然后用io流把内容copy过去
                     File targetFile = new File(destDirPath + "/" + entry.getName());
                     // 保证这个文件的父文件夹必须要存在
                     if (!targetFile.getParentFile().exists()) {
-                        targetFile.getParentFile().mkdirs();
+                        boolean mkdirs = targetFile.getParentFile().mkdirs();
                     }
-                    targetFile.createNewFile();
+                    boolean newFile = targetFile.createNewFile();
                     // 将压缩文件内容写入到这个文件中
                     InputStream is = zipFile.getInputStream(entry);
                     FileOutputStream fos = new FileOutputStream(targetFile);
@@ -104,7 +104,7 @@ public class ZipUtil {
             if (file.isDirectory()) {//处理文件夹
                 parentPath += file.getName() + File.separator;
                 File[] files = file.listFiles();
-                if (files.length != 0) {
+                if (files!=null && files.length != 0) {
                     for (File f : files) {
                         writeZip(f, parentPath, zos);
                     }

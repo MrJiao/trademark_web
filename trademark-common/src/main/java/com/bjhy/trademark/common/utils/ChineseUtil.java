@@ -88,11 +88,11 @@ public class ChineseUtil {
     public static String matchEnglish(String str){
         if(StringUtils.isEmpty(str))return "";
         Matcher mat=CONTENT_ENGLISH_PATTERN.matcher(str);
-        String s = "";
+        StringBuilder sb = new StringBuilder();
         while (mat.find()){
-            s+=mat.group();
+            sb.append(mat.group());
         }
-        return s;
+        return sb.toString();
     }
 
 

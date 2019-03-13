@@ -115,6 +115,8 @@ public abstract class RequestAdapter<T> {
                 execute = httpClient.execute(post(getUrl(), getParams(), getHeaders()));
             }else if (StringUtils.equalsIgnoreCase(getType(),"get")){
                 execute = httpClient.execute(get(getUrl(), getParams(), getHeaders()));
+            }else {
+                return null;
             }
             HttpEntity entity = execute.getEntity();
             T parse = parse(entity);

@@ -168,7 +168,7 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
         String tempPath = trademarkConfig.getTempPath();
         //创建文件夹
         File folder = new File(tempPath, System.currentTimeMillis() + "");
-        folder.mkdirs();
+        boolean ismkdir = folder.mkdirs();
 
         HashMap<String, List<TrademarkBean>> hm = classify(trademarkBeanList);
         for (List<TrademarkBean> value : hm.values()) {
@@ -221,7 +221,7 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
         ArrayList<WordTrademarkBean> wordTrademarkBeanList = new ArrayList<>();
         TrademarkBean trademarkBean = trademarkBeanList.get(0);
         File ziFolder = new File(folder,getZipName(trademarkBean,liuShuiNum));
-        ziFolder.mkdirs();
+        boolean ismkdir = ziFolder.mkdirs();
         for (int i = 0; i < trademarkBeanList.size(); i++) {
             int index = i+1;
             TrademarkBean bean = trademarkBeanList.get(i);
@@ -412,32 +412,6 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
         if(StringUtils.isEmpty(name))return false;
         String s = ChineseUtil.matchEnglish(name);
         return s.length()>i;
-    }
-
-
-    private static class LeiBieAndmOrder implements Comparator<TrademarkBean>{
-
-        @Override
-        public int compare(TrademarkBean o1, TrademarkBean o2) {
-            if(o1.getmOrder()!=null && o2.getmOrder()!=null){
-                return o1.getmOrder()-o2.getmOrder();
-            }else if(o1.getmOrder()!=null){
-                return -1;
-            }else if (o2.getmOrder()!=null){
-                return 1;
-            }else {
-                List<TrademarkBean.TrademarkType> trademarkTypeList1 = o1.getTrademarkType();
-                if(trademarkTypeList1.size()>1)return -1;
-                List<TrademarkBean.TrademarkType> trademarkTypeList2 = o2.getTrademarkType();
-                if(trademarkTypeList2.size()>1)return -1;
-                if(trademarkTypeList1.size()==0)return -1;
-                TrademarkBean.TrademarkType type1 = trademarkTypeList1.get(0);
-                if(trademarkTypeList2.size()==0)return 1;
-                TrademarkBean.TrademarkType type2 = trademarkTypeList1.get(0);
-                return type1.getTypeNum()-type2.getTypeNum();
-            }
-
-        }
     }
 
 }

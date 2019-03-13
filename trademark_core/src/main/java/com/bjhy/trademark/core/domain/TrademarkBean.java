@@ -2,6 +2,7 @@ package com.bjhy.trademark.core.domain;
 
 import com.bjhy.jackson.fast.generator.annotation.FieldParam;
 import com.bjhy.jackson.fast.generator.annotation.TableName;
+import com.bjhy.tlevel.datax.common.utils.L;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
 import org.apel.gaia.commons.autocomplete.annotation.AutoCompleteField;
@@ -237,8 +238,8 @@ public class TrademarkBean implements Serializable {
         this.email = email;
     }
 
-    public static String ANALYS_NORMAL = "normal";
-    public static String ANALYS_GAO = "gao";
+    public static final String ANALYS_NORMAL = "normal";
+    public static final String ANALYS_GAO = "gao";
 
 
     @FieldParam(value = "创建时间",hidden = true)
@@ -430,7 +431,9 @@ public class TrademarkBean implements Serializable {
                     list.add(trademarkType);
                 }catch (Exception e){}
             }
-        }catch (Exception e){}
+        }catch (Exception e){
+            L.exception(e);
+        }
         return list;
     }
 

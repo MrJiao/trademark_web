@@ -107,7 +107,7 @@ public class TrademarkBeanController {
 				e.printStackTrace();
 			}
 		}
-		tempFolder.mkdirs();
+		boolean ismkdir = tempFolder.mkdirs();
 		return MessageUtil.message("common.delete.success");
 	}
 	
@@ -128,7 +128,7 @@ public class TrademarkBeanController {
 		if(StringUtils.isEmpty(path))return;
 		File file = new File(path);
 		if(file.exists()){
-			file.delete();
+			boolean isDelete =  file.delete();
 		}
 	}
 

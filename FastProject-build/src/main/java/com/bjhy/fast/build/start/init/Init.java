@@ -19,7 +19,7 @@ public class Init implements CommandLineRunner {
     @Autowired
     TrademarkConfig trademarkConfig;
     private void initFolder() {
-        new File(trademarkConfig.getStorePath()).mkdirs();
-        new File(trademarkConfig.getTempPath()).mkdirs();
+        boolean ismkdir = new File(trademarkConfig.getStorePath()).mkdirs();
+        boolean ismkdir2 = new File(trademarkConfig.getTempPath()).mkdirs();
     }
 }

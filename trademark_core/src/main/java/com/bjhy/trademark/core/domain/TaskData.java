@@ -32,10 +32,10 @@ public class TaskData {
     Integer picNumber;
     @FieldParam("执行状态")
     String exeState;//
-    public static String STATE_STARTING_DATA = "正在解析商标数据";
-    public static String STATE_STARTING_PIC = "正在解析图片";
-    public static String STATE_END = "执行完成";
-    public static String STATE_ERROR = "执行失败";
+    public static final String STATE_STARTING_DATA = "正在解析商标数据";
+    public static final String STATE_STARTING_PIC = "正在解析图片";
+    public static final String STATE_END = "执行完成";
+    public static final String STATE_ERROR = "执行失败";
 
     @FieldParam("创建时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")

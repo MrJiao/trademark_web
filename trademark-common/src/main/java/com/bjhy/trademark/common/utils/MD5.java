@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -26,7 +27,7 @@ public class MD5 {
      * @return md5
      */
     public String encode(String text){
-        byte[] buffer = digest.digest(text.getBytes());
+        byte[] buffer = digest.digest(text.getBytes(Charset.defaultCharset()));
         // byte -128 ---- 127
         StringBuffer sb = new StringBuffer();
         for (byte b : buffer) {

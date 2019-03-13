@@ -111,12 +111,19 @@ public class FileUploadController {
     private static void storeFile(byte[] file, String filePath, String fileName) throws IOException {
         File targetFile = new File(filePath);
         if (!targetFile.exists()) {
-            targetFile.mkdirs();
+            boolean ismkdir = targetFile.mkdirs();
         }
-        FileOutputStream out = new FileOutputStream(filePath + File.separator + fileName);
-        out.write(file);
-        out.flush();
-        out.close();
+        FileOutputStream out=null;
+        try {
+             out = new FileOutputStream(filePath + File.separator + fileName);
+            out.write(file);
+            out.flush();
+        }finally {
+            if(out!=null)
+                out.close();
+        }
+
+
     }
 
 

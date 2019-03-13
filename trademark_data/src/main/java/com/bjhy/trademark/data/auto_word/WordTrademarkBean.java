@@ -110,8 +110,8 @@ public class WordTrademarkBean {
         this.email = email;
     }
 
-    public static String ANALYS_NORMAL = "normal";
-    public static String ANALYS_GAO = "gao";
+    public static final String ANALYS_NORMAL = "normal";
+    public static final String ANALYS_GAO = "gao";
 
 
     private Date gmt_create;

@@ -52,8 +52,10 @@ public class WordUtils {
                 generateDoc(srcPath, map);
             }
         }
-        if(src2.exists())
-            src2.delete();
+        if(src2.exists()){
+            boolean isDelete =   src2.delete();
+        }
+
     }
 
     private static void generateDoc(String srcPath, Map<String, String> map) throws IOException {
