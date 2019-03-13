@@ -97,22 +97,6 @@ public class TaskData {
         this.exeState = exeState;
     }
 
-    public static String getStateEnd() {
-        return STATE_END;
-    }
-
-    public static void setStateEnd(String stateEnd) {
-        STATE_END = stateEnd;
-    }
-
-    public static String getStateError() {
-        return STATE_ERROR;
-    }
-
-    public static void setStateError(String stateError) {
-        STATE_ERROR = stateError;
-    }
-
     public Date getGmt_create() {
         return gmt_create;
     }
