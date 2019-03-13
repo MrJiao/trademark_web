@@ -9,6 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Create by: Jackson
@@ -138,11 +139,15 @@ public class SystemMenu implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if(obj instanceof SystemMenu){
-            SystemMenu s = (SystemMenu) obj;
-            return StringUtils.equals(id,s.getId());
-        }
-        return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SystemMenu that = (SystemMenu) o;
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

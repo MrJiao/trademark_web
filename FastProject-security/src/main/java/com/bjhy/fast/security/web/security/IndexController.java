@@ -6,6 +6,7 @@ import com.bjhy.tlevel.datax.common.utils.L;
 import com.bjhy.fast.security.domain.SystemMenu;
 import com.bjhy.fast.security.domain.UserInfo;
 import com.bjhy.fast.security.service.SecurityUserInfoService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -50,7 +51,7 @@ public class IndexController {
         model.addAttribute("username", userInfo.getUsername());
 
         String nickName = userInfo.getNickName();
-        if ((nickName == null) || (nickName == "")) {
+        if (StringUtils.isEmpty(nickName)) {
             nickName = userInfo.getUsername();
         }
         model.addAttribute("nickName", nickName);
