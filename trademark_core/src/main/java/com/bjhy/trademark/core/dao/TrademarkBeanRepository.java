@@ -5,15 +5,17 @@ import com.bjhy.trademark.core.domain.TrademarkBean;
 import org.apel.gaia.persist.dao.CommonRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 
-public interface TrademarkBeanRepository extends CommonRepository<TrademarkBean, String>{
+public interface TrademarkBeanRepository extends CommonRepository<TrademarkBean, String> {
 
-    List<TrademarkBean> findByAnNumAndNameIn(String annm,List<String> names);
+    List<TrademarkBean> findByAnNumAndNameIn(String annm, List<String> names);
 
     List<TrademarkBean> findByAnNum(String annm);
 
@@ -34,8 +36,14 @@ public interface TrademarkBeanRepository extends CommonRepository<TrademarkBean,
 
     List<TrademarkBean> findByPicEncode(String picEncode);
 
-    @Query(value = "select t.id from TRADEMARKBEAN t where t.id=:id",nativeQuery = true)
+    @Query(value = "select t.id from TRADEMARKBEAN t where t.id=:id", nativeQuery = true)
     List<String> findIds(@Param("id") String id);
 
     List<TrademarkBean> findByAnalysisName(String analysisName);
+
+    @Modifying
+    @Query(value = "update TRADEMARKBEAN SET mCount = :mCount  where analysisName=:analysisName", nativeQuery = true)
+    void saveCount(@Param("analysisName")String analysName, @Param("mCount")int mCount);
+
+
 }

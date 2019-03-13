@@ -403,6 +403,11 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
         return trademarkBean;
     }
 
+    @Override
+    public void saveCount(String analysName, int count) {
+        getRepository().saveCount(analysName,count);
+    }
+
     private boolean isEnglishLengthMore(String name, int i) {
         if(StringUtils.isEmpty(name))return false;
         String s = ChineseUtil.matchEnglish(name);
@@ -425,7 +430,9 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
                 if(trademarkTypeList1.size()>1)return -1;
                 List<TrademarkBean.TrademarkType> trademarkTypeList2 = o2.getTrademarkType();
                 if(trademarkTypeList2.size()>1)return -1;
+                if(trademarkTypeList1.size()==0)return -1;
                 TrademarkBean.TrademarkType type1 = trademarkTypeList1.get(0);
+                if(trademarkTypeList2.size()==0)return 1;
                 TrademarkBean.TrademarkType type2 = trademarkTypeList1.get(0);
                 return type1.getTypeNum()-type2.getTypeNum();
             }

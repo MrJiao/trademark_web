@@ -6,7 +6,7 @@ import java.io.File;
  * Create by: Jackson
  */
 public class RootPath {
-    private String  getRootPath() {
+    public static String  getRootPath() {
         String runtimePath;
         if(false){
             String path = RootPath.class.getProtectionDomain().getCodeSource().getLocation().getPath();
@@ -15,5 +15,10 @@ public class RootPath {
             runtimePath = System.getProperty("user.dir");
         }
         return runtimePath;
+    }
+
+
+    public static String  getSourcePath() {
+        return getRootPath()+File.separator+"config"+File.separator+"source";
     }
 }

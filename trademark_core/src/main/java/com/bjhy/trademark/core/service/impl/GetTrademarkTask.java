@@ -1,6 +1,5 @@
 package com.bjhy.trademark.core.service.impl;
 
-import com.bjhy.tlevel.datax.common.Encode;
 import com.bjhy.tlevel.datax.common.utils.L;
 import com.bjhy.trademark.common.MyEncoding;
 import com.bjhy.trademark.common.utils.DownloadUtil;
@@ -31,7 +30,10 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Create by: Jackson
@@ -104,9 +106,8 @@ public class GetTrademarkTask implements Runnable {
                                     StringUtils.equals(trademarkBean.getAnalysType(), TrademarkBean.ANALYS_GAO))) {
                         //图片文字识别
                         picTrademarkBean = orcPic(picTrademarkBean);
-                        initPicPath(picTrademarkBean);
-
                         if (picTrademarkBean == null) continue;//识别的数据失败,不做存储
+                        initPicPath(picTrademarkBean);
                         //匹配商标名称
                         if (trademarkBean == null)
                             trademarkBean = trademarkBeanService.findById(picTrademarkBean.getNumber());
@@ -354,6 +355,40 @@ public class GetTrademarkTask implements Runnable {
 
 
     private void storeData(ArrayList<TrademarkData.RowsBean> rowsBeans) {
+        List<TrademarkBean> trademarkBeanList = convert(rowsBeans);
+        ArrayList<TrademarkBean> arr = new ArrayList<>();
+        for (int i = 0; i <trademarkBeanList.size(); i++) {
+            if(i%400==0 && arr.size()>0){
+                trademarkBeanService.save(arr);
+                arr = new ArrayList<>();
+                continue;
+            }
+            arr.add(trademarkBeanList.get(i));
+        }
+        trademarkBeanService.save(arr);
+        saveCount(arr);
+
+    }
+
+    private void saveCount(ArrayList<TrademarkBean> arr) {
+        HashSet<String> hsAnalysName = convertHash(arr);
+        for (String analysName : hsAnalysName) {
+            List<TrademarkBean> trademarkBeanList = trademarkBeanService.findByAnalysisName(analysName);
+            trademarkBeanService.saveCount(analysName,trademarkBeanList.size());
+        }
+    }
+
+    private  HashSet<String> convertHash(List<TrademarkBean> trademarkBeanList) {
+        HashSet<String> hs = new HashSet<>();
+        for (TrademarkBean trademarkBean : trademarkBeanList) {
+            if(!StringUtils.isEmpty(trademarkBean.getAnalysisName())&&!hs.contains(trademarkBean.getAnalysisName()))
+                hs.add(trademarkBean.getAnalysisName());
+        }
+        return hs;
+    }
+
+
+    private List<TrademarkBean> convert(ArrayList<TrademarkData.RowsBean> rowsBeans){
         ArrayList<TrademarkBean> trademarkBeanArr = new ArrayList<>();
         HashSet<String> idsSet = new HashSet<>();
 
@@ -380,18 +415,14 @@ public class GetTrademarkTask implements Runnable {
             trademarkBean.setAnNum(row.getAnn_num());//期号
             trademarkBean.setName(row.getTmname());//商标名称
             trademarkBean.setAnalysisName(analysisName(row.getTmname()));
-            trademarkBean.setAnalysisCount(getAnalysisCount(trademarkBeanArr, trademarkBean.getAnalysisName()));
+            // trademarkBean.setAnalysisCount(getAnalysisCount(trademarkBeanArr, trademarkBean.getAnalysisName()));
             trademarkBean.setGmt_create(new Date());
             setRemark(trademarkBean, remarkObj);
             trademarkBeanArr.add(trademarkBean);
             idsSet.add(row.getReg_num());
-            if (trademarkBeanArr.size() > 300) {
-                trademarkBeanService.save(trademarkBeanArr);
-                trademarkBeanArr = new ArrayList<>();
-            }
+
         }
-        if (trademarkBeanArr.size() > 0)
-            trademarkBeanService.save(trademarkBeanArr);
+        return trademarkBeanArr;
     }
 
     private Integer getAnalysisCount(ArrayList<TrademarkBean> trademarkBeanArr, String analysisName) {

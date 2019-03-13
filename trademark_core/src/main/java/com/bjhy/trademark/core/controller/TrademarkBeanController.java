@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.bjhy.trademark.common.MyEncoding;
+import com.bjhy.trademark.common.RootPath;
 import com.bjhy.trademark.common.utils.ChineseUtil;
 import com.bjhy.trademark.core.TrademarkConfig;
 import com.bjhy.trademark.core.service.CacheService;
@@ -274,7 +275,9 @@ public class TrademarkBeanController {
 	@GetMapping("/image/{id}")
 	public ResponseEntity<InputStreamResource> getImage(@PathVariable String id) throws Exception {
 		TrademarkBean trademarkBean = trademarkBeanService.findById(id);
-		if(trademarkBean==null)return null;
+		if(StringUtils.isEmpty(trademarkBean.getPastePicPath())){
+			return downloadService.downloadFile(new File(RootPath.getSourcePath(),"notfound.jpg"),"notfound.jpg");
+		}
 		return downloadService.downloadFile(new File(trademarkBean.getPastePicPath()),trademarkBean.getName());
 	}
 

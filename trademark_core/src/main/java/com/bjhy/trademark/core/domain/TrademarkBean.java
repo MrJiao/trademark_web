@@ -80,7 +80,7 @@ public class TrademarkBean implements Serializable {
     @Column(length = 500)
     String choosedType;//
     @FieldParam(value="精度类别",hidden = true)
-    String analysType;
+    String analysType="";
     @FieldParam(value="外国申请人")
     String client;//外国申请人 可能有多个人 逗号分隔
     @FieldParam(value="外国代理所")
@@ -90,7 +90,7 @@ public class TrademarkBean implements Serializable {
 
     @FieldParam(value="相同商标个数")
     @Column(name = "mCount")
-    Integer analysisCount=0;
+    Integer analysisCount=1;
 
     @FieldParam(value="备注")
     @Column(name = "mRemark")
@@ -107,6 +107,7 @@ public class TrademarkBean implements Serializable {
     String picEncode;
 
     @FieldParam(value="国外")
+    @Column(name = "mForeign")
     String foreign;
 
     @FieldParam(value="排序")

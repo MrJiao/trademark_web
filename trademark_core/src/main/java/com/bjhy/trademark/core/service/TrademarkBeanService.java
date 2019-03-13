@@ -50,4 +50,6 @@ public interface TrademarkBeanService extends BizCommonService<TrademarkBean,Str
     boolean isFremdness(String address);
 
     TrademarkBean orcNormal(TrademarkBean trademarkBean);
+
+    void saveCount(String analysName, int size);
 }

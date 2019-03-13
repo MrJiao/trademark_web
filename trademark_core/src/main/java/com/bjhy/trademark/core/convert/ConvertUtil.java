@@ -35,7 +35,7 @@ public class ConvertUtil {
                     continue;
                 }
 
-                if(words.matches("第\\s*(?<value>\\d+)\\s*号")){
+                if(words.matches("第\\s*(?<value>[\\d\\w]+)\\s*号")){
                     String num = getNum(words);
                     trademarkBean.setNumber(num);
                     trademarkBean.setId(num);
@@ -132,7 +132,7 @@ public class ConvertUtil {
 
 
     private static String getNum(String words) {
-        Pattern pattern = Pattern.compile("第\\s*(?<value>\\d+)\\s*号");
+        Pattern pattern = Pattern.compile("第\\s*(?<value>[\\d\\w]+)\\s*号");
         Matcher matcher = pattern.matcher(words);
         if(matcher.find()){
             String num = matcher.group("value");

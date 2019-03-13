@@ -64,7 +64,8 @@ public class BeanUtil {
             int typeNum = trademarkType.getTypeNum();
             s = s+typeNum+",";
         }
-        return s;
+        if(StringUtils.isEmpty(s))return s;
+        return s.substring(0,s.length()-1);
     }
 
 }

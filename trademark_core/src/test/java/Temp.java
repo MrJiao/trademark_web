@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Create by: Jackson
@@ -102,7 +104,13 @@ public class Temp {
 
     @Test
     public void inttest(){
-
+        String rex = "(?<value>[\\d\\w]+)";
+        String value= "12332A";
+        Pattern compile = Pattern.compile(rex);
+        Matcher matcher = compile.matcher(value);
+        if(matcher.find()){
+            System.out.println(matcher.group("value"));
+        }
     }
 
 }
