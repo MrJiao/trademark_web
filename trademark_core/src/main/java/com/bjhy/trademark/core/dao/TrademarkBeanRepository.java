@@ -45,5 +45,7 @@ public interface TrademarkBeanRepository extends CommonRepository<TrademarkBean,
     @Query(value = "update TRADEMARKBEAN SET mCount = :mCount  where analysisName=:analysisName", nativeQuery = true)
     void saveCount(@Param("analysisName")String analysName, @Param("mCount")int mCount);
 
+    @Query(value = "select count(0) from TRADEMARKBEAN where analysisName = :analysisName",nativeQuery = true)
+    int findCountByAnalysisName(@Param("analysisName") String analysisName);
 
 }

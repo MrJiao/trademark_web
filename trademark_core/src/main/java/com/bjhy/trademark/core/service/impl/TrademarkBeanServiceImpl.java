@@ -408,6 +408,11 @@ public class TrademarkBeanServiceImpl extends AbstractBizCommonService<Trademark
         getRepository().saveCount(analysName,count);
     }
 
+    @Override
+    public int findCountByAnalysisName(String analysName) {
+        return getRepository().findCountByAnalysisName(analysName);
+    }
+
     private boolean isEnglishLengthMore(String name, int i) {
         if(StringUtils.isEmpty(name))return false;
         String s = ChineseUtil.matchEnglish(name);

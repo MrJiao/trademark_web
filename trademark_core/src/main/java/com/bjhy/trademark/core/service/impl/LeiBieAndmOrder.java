@@ -24,9 +24,9 @@ public class LeiBieAndmOrder implements Comparator<TrademarkBean> {
             List<TrademarkBean.TrademarkType> trademarkTypeList2 = o2.getTrademarkType();
             if(trademarkTypeList2.size()>1)return -1;
             if(trademarkTypeList1.size()==0)return -1;
-            TrademarkBean.TrademarkType type1 = trademarkTypeList1.get(0);
             if(trademarkTypeList2.size()==0)return 1;
-            TrademarkBean.TrademarkType type2 = trademarkTypeList1.get(0);
+            TrademarkBean.TrademarkType type1 = trademarkTypeList1.get(0);
+            TrademarkBean.TrademarkType type2 = trademarkTypeList2.get(0);
             return type1.getTypeNum()-type2.getTypeNum();
         }
 

@@ -360,30 +360,30 @@ public class GetTrademarkTask implements Runnable {
         List<TrademarkBean> trademarkBeanList = convert(rowsBeans);
         ArrayList<TrademarkBean> arr = new ArrayList<>();
         for (int i = 0; i < trademarkBeanList.size(); i++) {
-            if (i % 400 == 0 && arr.size() > 0) {
+            arr.add(trademarkBeanList.get(i));
+            if (i % 400 == 0) {
                 trademarkBeanService.save(arr);
                 arr = new ArrayList<>();
                 continue;
             }
-            arr.add(trademarkBeanList.get(i));
         }
         trademarkBeanService.save(arr);
-        saveCount(arr);
+        saveCount(trademarkBeanList);
 
     }
 
-    private void saveCount(ArrayList<TrademarkBean> arr) {
+    private void saveCount(List<TrademarkBean> arr) {
         HashSet<String> hsAnalysName = convertHash(arr);
         for (String analysName : hsAnalysName) {
-            List<TrademarkBean> trademarkBeanList = trademarkBeanService.findByAnalysisName(analysName);
-            trademarkBeanService.saveCount(analysName, trademarkBeanList.size());
+            int count = trademarkBeanService.findCountByAnalysisName(analysName);
+            trademarkBeanService.saveCount(analysName, count);
         }
     }
 
     private HashSet<String> convertHash(List<TrademarkBean> trademarkBeanList) {
         HashSet<String> hs = new HashSet<>();
         for (TrademarkBean trademarkBean : trademarkBeanList) {
-            if (!StringUtils.isEmpty(trademarkBean.getAnalysisName()) && !hs.contains(trademarkBean.getAnalysisName()))
+            if (!StringUtils.isEmpty(trademarkBean.getAnalysisName()))
                 hs.add(trademarkBean.getAnalysisName());
         }
         return hs;

@@ -52,4 +52,6 @@ public interface TrademarkBeanService extends BizCommonService<TrademarkBean,Str
     TrademarkBean orcNormal(TrademarkBean trademarkBean);
 
     void saveCount(String analysName, int size);
+
+    int findCountByAnalysisName(String analysName);
 }
